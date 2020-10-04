@@ -1,0 +1,6 @@
+
+spring:
+  application:
+    name: pollAlgorand
+
+server.port: ${PORT:5000}
