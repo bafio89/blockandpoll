@@ -1,6 +1,9 @@
 package com.pollalgorand.rest;
 
 
+import java.util.Optional;
+import java.util.function.Function;
+
 public class CreatePollUseCase {
 
   private final BlockChainRepository blockChainRepository;
@@ -13,9 +16,13 @@ public class CreatePollUseCase {
     this.postgresRepository = postgresRepository;
   }
 
-  public Poll create(CreatePollRequest createPollRequest){
+  public Optional<Poll> create(CreatePollRequest createPollRequest){
 
-    return new Poll();
+    Optional<Poll> poll = blockChainRepository.save(createPollRequest);
+
+    poll.ifPresent(postgresRepository::save);
+
+    return poll;
   }
 
 }

@@ -1,6 +1,8 @@
 package com.pollalgorand.rest;
 
+import java.util.Optional;
+
 public interface BlockChainRepository {
 
-  Poll save(CreatePollRequest createPollRequest);
+  Optional<Poll> save(CreatePollRequest createPollRequest);
 }

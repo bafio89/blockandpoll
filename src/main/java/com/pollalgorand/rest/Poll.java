@@ -6,6 +6,13 @@ public class Poll {
 
   private String name;
 
+  public Poll() {
+  }
+
+  public Poll(String name) {
+    this.name = name;
+  }
+
   @Override
   public String toString() {
     return "Poll{" +
