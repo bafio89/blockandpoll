@@ -2,7 +2,6 @@ package com.pollalgorand.rest;
 
 
 import java.util.Optional;
-import java.util.function.Function;
 
 public class CreatePollUseCase {
 

@@ -73,4 +73,9 @@ public class CreatePollUseCaseTest {
 
     assertThat(poll, is(Optional.empty()));
   }
+
+  @Test
+  public void whenPostGresRepositorySavingFails() {
+
+  }
 }
