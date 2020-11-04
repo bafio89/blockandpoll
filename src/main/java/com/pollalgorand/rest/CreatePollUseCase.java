@@ -5,19 +5,19 @@ import java.util.Optional;
 
 public class CreatePollUseCase {
 
-  private final BlockChainRepository blockChainRepository;
+  private final BlockChainPollRepository blockChainPollRepository;
   private final PollRepository postgresRepository;
 
-  public CreatePollUseCase(BlockChainRepository blockChainRepository,
+  public CreatePollUseCase(BlockChainPollRepository blockChainPollRepository,
       PollRepository postgresRepository) {
 
-    this.blockChainRepository = blockChainRepository;
+    this.blockChainPollRepository = blockChainPollRepository;
     this.postgresRepository = postgresRepository;
   }
 
   public Optional<Poll> create(CreatePollRequest createPollRequest){
 
-    Optional<Poll> poll = blockChainRepository.save(createPollRequest);
+    Optional<Poll> poll = blockChainPollRepository.save(createPollRequest);
 
     poll.ifPresent(postgresRepository::save);
 

@@ -3,6 +3,7 @@ package com.pollalgorand.rest;
 import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
+
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -12,14 +13,17 @@ import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class CreatePollUseCaseTest {
 
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
+  @Rule public ExpectedException expectedException = ExpectedException.none();
+
   @Mock
-  private BlockChainRepository blockChainRepository;
+  private BlockChainPollRepository blockChainPollRepository;
 
   @Mock
   private PollRepository postgresRepository;
@@ -28,7 +32,7 @@ public class CreatePollUseCaseTest {
 
   @Before
   public void setUp() {
-    createPollUseCase = new CreatePollUseCase(blockChainRepository, postgresRepository);
+    createPollUseCase = new CreatePollUseCase(blockChainPollRepository, postgresRepository);
   }
 
   @Test
@@ -39,9 +43,9 @@ public class CreatePollUseCaseTest {
 
     Poll pollGeneratedFromBlockchain = new Poll("A POLL NAME");
 
-    context.checking(new Expectations(){{
+    context.checking(new Expectations() {{
 
-      oneOf(blockChainRepository).save(createPollRequest);
+      oneOf(blockChainPollRepository).save(createPollRequest);
       will(returnValue(Optional.of(pollGeneratedFromBlockchain)));
 
       oneOf(postgresRepository).save(pollGeneratedFromBlockchain);
@@ -61,9 +65,9 @@ public class CreatePollUseCaseTest {
     CreatePollRequest createPollRequest = new CreatePollRequest("A POLL NAME", new Date(),
         new Date(), new Date(), new Date(), asList("Option 1", "Option 2"));
 
-    context.checking(new Expectations(){{
+    context.checking(new Expectations() {{
 
-      oneOf(blockChainRepository).save(createPollRequest);
+      oneOf(blockChainPollRepository).save(createPollRequest);
       will(returnValue(Optional.empty()));
 
       never(postgresRepository);
@@ -75,7 +79,25 @@ public class CreatePollUseCaseTest {
   }
 
   @Test
-  public void whenPostGresRepositorySavingFails() {
+  public void whenPostgresRepositorySavingFails() {
+
+    CreatePollRequest createPollRequest = new CreatePollRequest("A POLL NAME", new Date(),
+        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"));
+
+    Poll pollGeneratedFromBlockchain = new Poll("A POLL NAME");
+
+    context.checking(new Expectations() {{
+
+      oneOf(blockChainPollRepository).save(createPollRequest);
+      will(returnValue(Optional.of(pollGeneratedFromBlockchain)));
+
+      oneOf(postgresRepository).save(pollGeneratedFromBlockchain);
+      will(throwException(new SavingPollException()));
+    }});
+
+    expectedException.expect(SavingPollException.class);
+
+    createPollUseCase.create(createPollRequest);
 
   }
 }
