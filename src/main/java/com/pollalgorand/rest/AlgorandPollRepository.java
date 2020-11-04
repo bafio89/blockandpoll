@@ -1,21 +1,21 @@
 package com.pollalgorand.rest;
 
-import com.algorand.algosdk.algod.client.api.AlgodApi;
+import com.algorand.algosdk.v2.client.common.AlgodClient;
 import java.util.Optional;
 
-public class AlgorandPollRepository implements BlockChainPollRepository {
+public class AlgorandPollRepository implements PollRepository {
 
-  private AlgodApi algodApi;
+  private AlgodClient algodClient;
   private String srcAccount;
 
-  public AlgorandPollRepository(AlgodApi algodApi, String srcAccount) {
+  public AlgorandPollRepository(AlgodClient algodClient, String srcAccount) {
 
-    this.algodApi = algodApi;
+    this.algodClient = algodClient;
     this.srcAccount = srcAccount;
   }
 
   @Override
-  public Optional<Poll> save(CreatePollRequest createPollRequest) {
+  public Optional<Poll> save(Poll poll) {
     return Optional.empty();
   }
 }

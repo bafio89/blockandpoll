@@ -1,6 +1,8 @@
 package com.pollalgorand.rest;
 
+import java.util.Optional;
+
 public interface PollRepository {
 
-  void save(Poll poll);
+  Optional<Poll> save(Poll blockchainPoll);
 }

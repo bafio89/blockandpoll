@@ -4,5 +4,5 @@ import java.util.Optional;
 
 public interface BlockChainPollRepository {
 
-  Optional<Poll> save(CreatePollRequest createPollRequest);
+  Optional<BlockchainPoll> save(Poll poll);
 }

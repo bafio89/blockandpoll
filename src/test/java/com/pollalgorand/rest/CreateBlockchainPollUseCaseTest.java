@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class CreatePollUseCaseTest {
+public class CreateBlockchainPollUseCaseTest {
 
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
@@ -38,31 +38,31 @@ public class CreatePollUseCaseTest {
   @Test
   public void happyPath() {
 
-    CreatePollRequest createPollRequest = new CreatePollRequest("A POLL NAME", new Date(),
+    Poll createPollRequest = new Poll("A POLL NAME", new Date(),
         new Date(), new Date(), new Date(), asList("Option 1", "Option 2"));
 
-    Poll pollGeneratedFromBlockchain = new Poll("A POLL NAME");
+    BlockchainPoll blockchainPollGeneratedFromBlockchain = new BlockchainPoll("A POLL NAME");
 
     context.checking(new Expectations() {{
 
       oneOf(blockChainPollRepository).save(createPollRequest);
-      will(returnValue(Optional.of(pollGeneratedFromBlockchain)));
+      will(returnValue(Optional.of(blockchainPollGeneratedFromBlockchain)));
 
-      oneOf(postgresRepository).save(pollGeneratedFromBlockchain);
+      oneOf(postgresRepository).save(blockchainPollGeneratedFromBlockchain);
     }});
 
-    Optional<Poll> poll = createPollUseCase.create(createPollRequest);
+    Optional<BlockchainPoll> poll = createPollUseCase.create(createPollRequest);
 
-    Poll expectedPoll = new Poll("A POLL NAME");
+    BlockchainPoll expectedBlockchainPoll = new BlockchainPoll("A POLL NAME");
 
-    assertThat(poll, is(Optional.of(expectedPoll)));
+    assertThat(poll, is(Optional.of(expectedBlockchainPoll)));
 
   }
 
   @Test
   public void whenBlockchainPollCreationFails() {
 
-    CreatePollRequest createPollRequest = new CreatePollRequest("A POLL NAME", new Date(),
+    Poll createPollRequest = new Poll("A POLL NAME", new Date(),
         new Date(), new Date(), new Date(), asList("Option 1", "Option 2"));
 
     context.checking(new Expectations() {{
@@ -73,7 +73,7 @@ public class CreatePollUseCaseTest {
       never(postgresRepository);
     }});
 
-    Optional<Poll> poll = createPollUseCase.create(createPollRequest);
+    Optional<BlockchainPoll> poll = createPollUseCase.create(createPollRequest);
 
     assertThat(poll, is(Optional.empty()));
   }
@@ -81,23 +81,23 @@ public class CreatePollUseCaseTest {
   @Test
   public void whenPostgresRepositorySavingFails() {
 
-    CreatePollRequest createPollRequest = new CreatePollRequest("A POLL NAME", new Date(),
+    Poll poll = new Poll("A POLL NAME", new Date(),
         new Date(), new Date(), new Date(), asList("Option 1", "Option 2"));
 
-    Poll pollGeneratedFromBlockchain = new Poll("A POLL NAME");
+    BlockchainPoll blockchainPollGeneratedFromBlockchain = new BlockchainPoll("A POLL NAME");
 
     context.checking(new Expectations() {{
 
-      oneOf(blockChainPollRepository).save(createPollRequest);
-      will(returnValue(Optional.of(pollGeneratedFromBlockchain)));
+      oneOf(blockChainPollRepository).save(poll);
+      will(returnValue(Optional.of(blockchainPollGeneratedFromBlockchain)));
 
-      oneOf(postgresRepository).save(pollGeneratedFromBlockchain);
+      oneOf(postgresRepository).save(blockchainPollGeneratedFromBlockchain);
       will(throwException(new SavingPollException()));
     }});
 
     expectedException.expect(SavingPollException.class);
 
-    createPollUseCase.create(createPollRequest);
+    createPollUseCase.create(poll);
 
   }
 }

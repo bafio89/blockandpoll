@@ -1,39 +1,28 @@
 package com.pollalgorand.rest;
 
-import java.util.Objects;
+import java.util.Date;
+import java.util.List;
 
 public class Poll {
 
   private String name;
+  private Date startVotingTime;
+  private Date endVotingTime;
+  private Date startSubscriptionTime;
+  private Date endSubscriptionTime;
+  private List<String> options;
 
   public Poll() {
+
   }
 
-  public Poll(String name) {
+  public Poll(String name, Date startVotingTime, Date endVotingTime,
+      Date startSubscriptionTime, Date endSubscriptionTime, List<String> options) {
     this.name = name;
-  }
-
-  @Override
-  public String toString() {
-    return "Poll{" +
-        "name='" + name + '\'' +
-        '}';
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Poll poll = (Poll) o;
-    return Objects.equals(name, poll.name);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(name);
+    this.startVotingTime = startVotingTime;
+    this.endVotingTime = endVotingTime;
+    this.startSubscriptionTime = startSubscriptionTime;
+    this.endSubscriptionTime = endSubscriptionTime;
+    this.options = options;
   }
 }
