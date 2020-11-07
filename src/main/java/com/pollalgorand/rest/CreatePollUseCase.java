@@ -1,6 +1,7 @@
 package com.pollalgorand.rest;
 
 
+import com.algorand.algosdk.transaction.Transaction;
 import java.util.Optional;
 
 public class CreatePollUseCase {
@@ -22,6 +23,11 @@ public class CreatePollUseCase {
     blockchainPoll.ifPresent(postgresRepository::save);
 
     return blockchainPoll;
+  }
+
+  public Transaction createUnsignedTx(Poll poll){
+
+    return blockChainPollRepository.createUnsignedTx(poll);
   }
 
 }

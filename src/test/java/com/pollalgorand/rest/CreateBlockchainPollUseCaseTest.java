@@ -23,7 +23,7 @@ public class CreateBlockchainPollUseCaseTest {
   @Rule public ExpectedException expectedException = ExpectedException.none();
 
   @Mock
-  private BlockChainPollRepository blockChainPollRepository;
+  private PollRepository blockChainPollRepository;
 
   @Mock
   private PollRepository postgresRepository;
@@ -39,7 +39,7 @@ public class CreateBlockchainPollUseCaseTest {
   public void happyPath() {
 
     Poll createPollRequest = new Poll("A POLL NAME", new Date(),
-        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"));
+        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"), "sender");
 
     BlockchainPoll blockchainPollGeneratedFromBlockchain = new BlockchainPoll("A POLL NAME");
 
@@ -51,7 +51,7 @@ public class CreateBlockchainPollUseCaseTest {
       oneOf(postgresRepository).save(blockchainPollGeneratedFromBlockchain);
     }});
 
-    Optional<BlockchainPoll> poll = createPollUseCase.create(createPollRequest);
+    Optional<Poll> poll = createPollUseCase.create(createPollRequest);
 
     BlockchainPoll expectedBlockchainPoll = new BlockchainPoll("A POLL NAME");
 
@@ -63,7 +63,7 @@ public class CreateBlockchainPollUseCaseTest {
   public void whenBlockchainPollCreationFails() {
 
     Poll createPollRequest = new Poll("A POLL NAME", new Date(),
-        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"));
+        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"), "sender");
 
     context.checking(new Expectations() {{
 
@@ -73,7 +73,7 @@ public class CreateBlockchainPollUseCaseTest {
       never(postgresRepository);
     }});
 
-    Optional<BlockchainPoll> poll = createPollUseCase.create(createPollRequest);
+    Optional<Poll> poll = createPollUseCase.create(createPollRequest);
 
     assertThat(poll, is(Optional.empty()));
   }
@@ -82,7 +82,7 @@ public class CreateBlockchainPollUseCaseTest {
   public void whenPostgresRepositorySavingFails() {
 
     Poll poll = new Poll("A POLL NAME", new Date(),
-        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"));
+        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"), "sender");
 
     BlockchainPoll blockchainPollGeneratedFromBlockchain = new BlockchainPoll("A POLL NAME");
 
@@ -98,6 +98,20 @@ public class CreateBlockchainPollUseCaseTest {
     expectedException.expect(SavingPollException.class);
 
     createPollUseCase.create(poll);
+
+  }
+
+
+  @Test
+  public void createTransactionHappyPath() {
+    Poll poll = new Poll("A POLL NAME", new Date(),
+        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"), "sender");
+
+    context.checking(new Expectations(){{
+      oneOf(blockChainPollRepository).createUnsignedTx(poll);
+    }});
+
+    createPollUseCase.createUnsignedTx(poll);
 
   }
 }
