@@ -1,5 +1,7 @@
 package com.pollalgorand.rest;
 
+import com.algorand.algosdk.crypto.TEALProgram;
+import com.algorand.algosdk.logic.StateSchema;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import java.util.Optional;
@@ -32,10 +34,29 @@ public class AlgorandPollRepository implements PollRepository {
   @Override
   public Transaction createUnsignedTx(Poll poll) {
 
-    tealProgramFactory.createApprovalProgramFrom(pollBlockchainParamsAdapter.fromPollToTransactionPoll(poll));
+    Transaction transaction = null;
+    PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToTransactionPoll(poll);
+    TEALProgram approvalProgramFrom = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
 
-    tealProgramFactory.createClearStateProgram();
+    TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();
 
-    return new Transaction();
+    try {
+     transaction = Transaction.ApplicationCreateTransactionBuilder()
+          .sender(poll.getSender())
+          .suggestedParams(algodClient.TransactionParams().execute().body())
+          .approvalProgram(approvalProgramFrom)
+          .clearStateProgram(clearStateProgram)
+          .globalStateSchema(new StateSchema(6, 1))
+          .localStateSchema(new StateSchema(0, 1))
+          .build();
+    }catch (IllegalArgumentException e) {
+      e.printStackTrace();
+      throw new InvalidSenderAddressException(e);
+    }catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+
+    return transaction;
   }
 }

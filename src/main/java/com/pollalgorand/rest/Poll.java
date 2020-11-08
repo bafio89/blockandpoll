@@ -29,6 +29,30 @@ public class Poll {
     this.sender = sender;
   }
 
+  public String getName() {
+    return name;
+  }
+
+  public Date getStartVotingTime() {
+    return startVotingTime;
+  }
+
+  public Date getEndVotingTime() {
+    return endVotingTime;
+  }
+
+  public Date getStartSubscriptionTime() {
+    return startSubscriptionTime;
+  }
+
+  public Date getEndSubscriptionTime() {
+    return endSubscriptionTime;
+  }
+
+  public String getSender() {
+    return sender;
+  }
+
   public List<String> getOptions() {
     return options;
   }
