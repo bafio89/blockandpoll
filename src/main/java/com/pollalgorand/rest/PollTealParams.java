@@ -27,6 +27,10 @@ public class PollTealParams {
     this.sender = sender;
   }
 
+  public List<byte[]> getOptionsInByte() {
+    return optionsInByte;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

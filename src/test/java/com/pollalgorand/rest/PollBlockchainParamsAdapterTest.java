@@ -39,6 +39,12 @@ public class PollBlockchainParamsAdapterTest {
 
     PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToPollTealParams(poll);
 
+    assertThat(pollTealParams.getOptionsInByte().get(0),
+        is(expectedTealParams.getOptionsInByte().get(0)));
+
+    assertThat(pollTealParams.getOptionsInByte().get(1),
+        is(expectedTealParams.getOptionsInByte().get(1)));
+
     assertThat(pollTealParams, is(expectedTealParams));
   }
 }
