@@ -9,7 +9,7 @@ public class PollBlockchainParamsAdapter {
 
   public PollTealParams fromPollToPollTealParams(Poll poll) {
 
-    List<byte[]> optionsInBytes = poll.getOptions().stream().map(String::getBytes)
+    List<byte[]> optionsInBytes = poll.getOptions().stream().map(option -> option.getBytes(UTF_8))
         .collect(toList());
 
     return new PollTealParams(poll.getName().getBytes(UTF_8), poll.getStartVotingTime(),
