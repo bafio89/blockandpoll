@@ -1,5 +1,6 @@
 package com.pollalgorand.rest;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -13,7 +14,7 @@ import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.model.TransactionParametersResponse;
 import java.util.Date;
-import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi.EC;
+import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -48,6 +49,7 @@ public class AlgorandBlockchainPollRepositoryTest {
   private Response response;
 
   private AlgorandPollRepository algorandPollRepository;
+  public static final List<byte[]> OPTIONS_IN_BYTE = asList("OPTION_1".getBytes(UTF_8), "OPTION_2".getBytes(UTF_8));
 
   @Before
   public void setUp() {
@@ -69,11 +71,12 @@ public class AlgorandBlockchainPollRepositoryTest {
 
     Poll poll = aPollWith(SENDER_ADDRESS);
 
-    PollTealParams pollTealParams = new PollTealParams(SENDER_ADDRESS);
+    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8), new Date(),
+        new Date(), new Date(), new Date(), OPTIONS_IN_BYTE, SENDER_ADDRESS.getBytes());
 
     context.checking(new Expectations(){{
 
-      oneOf(pollBlockchainParamsAdapter).fromPollToTransactionPoll(poll);
+      oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll);
       will(returnValue(pollTealParams));
 
       oneOf(tealProgramFactory).createApprovalProgramFrom(pollTealParams);
@@ -108,11 +111,14 @@ public class AlgorandBlockchainPollRepositoryTest {
     TEALProgram approvalProgram = new TEALProgram();
     TEALProgram clearStateProgram = new TEALProgram();
     Poll poll = aPollWith(INVALID_SENDER_ADDRESS);
-    PollTealParams pollTealParams = new PollTealParams(INVALID_SENDER_ADDRESS);
+
+    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8), new Date(),
+        new Date(), new Date(), new Date(), OPTIONS_IN_BYTE,
+        INVALID_SENDER_ADDRESS.getBytes());
 
     context.checking(new Expectations(){{
 
-      oneOf(pollBlockchainParamsAdapter).fromPollToTransactionPoll(poll);
+      oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll);
       will(returnValue(pollTealParams));
 
       oneOf(tealProgramFactory).createApprovalProgramFrom(pollTealParams);
