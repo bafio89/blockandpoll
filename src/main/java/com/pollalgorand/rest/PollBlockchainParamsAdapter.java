@@ -1,20 +1,28 @@
 package com.pollalgorand.rest;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
 
 public class PollBlockchainParamsAdapter {
 
-  public PollTealParams fromPollToPollTealParams(Poll poll) {
+  private AlgorandDateAdapter algorandDateAdapter;
 
-    List<byte[]> optionsInBytes = poll.getOptions().stream().map(option -> option.getBytes(UTF_8))
-        .collect(toList());
+  public PollBlockchainParamsAdapter(AlgorandDateAdapter algorandDateAdapter) {
 
-    return new PollTealParams(poll.getName().getBytes(UTF_8), poll.getStartVotingTime(),
-        poll.getEndVotingTime(),
-        poll.getStartSubscriptionTime(), poll.getEndSubscriptionTime(), optionsInBytes,
+    this.algorandDateAdapter = algorandDateAdapter;
+  }
+
+  public PollTealParams fromPollToPollTealParams(Poll poll, Long lastRound) {
+
+    Long startSubscriptionBlockNumber = algorandDateAdapter
+        .fromDateToBlockNumber(poll.getStartSubscriptionTime(), lastRound);
+    Long endSubscriptionBlockNumber = algorandDateAdapter
+        .fromDateToBlockNumber(poll.getEndSubscriptionTime(), lastRound);
+    Long startVotingBlockNumber = algorandDateAdapter.fromDateToBlockNumber(poll.getStartVotingTime(), lastRound);
+    Long endVotingBlockNumber = algorandDateAdapter.fromDateToBlockNumber(poll.getEndVotingTime(), lastRound);
+
+    return new PollTealParams(poll.getName().getBytes(UTF_8), startVotingBlockNumber,
+        endVotingBlockNumber,
+        startSubscriptionBlockNumber, endSubscriptionBlockNumber, poll.getOptions(),
         poll.getSender().getBytes(UTF_8));
   }
 }

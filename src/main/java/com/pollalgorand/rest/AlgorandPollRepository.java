@@ -34,8 +34,9 @@ public class AlgorandPollRepository implements PollRepository {
   @Override
   public Transaction createUnsignedTx(Poll poll) {
 
+//    Long lastRound = algodClient.GetStatus().execute().body().lastRound;
     Transaction transaction = null;
-    PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToPollTealParams(poll);
+    PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToPollTealParams(poll, null);
     TEALProgram approvalProgramFrom = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
 
     TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();

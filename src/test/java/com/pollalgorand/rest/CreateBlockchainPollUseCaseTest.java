@@ -1,5 +1,7 @@
 package com.pollalgorand.rest;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -17,6 +19,7 @@ import org.junit.rules.ExpectedException;
 
 public class CreateBlockchainPollUseCaseTest {
 
+  public static final LocalDateTime DATE = LocalDateTime.now();
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
@@ -38,8 +41,8 @@ public class CreateBlockchainPollUseCaseTest {
   @Test
   public void happyPath() {
 
-    Poll createPollRequest = new Poll("A POLL NAME", new Date(),
-        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"), "sender");
+    Poll createPollRequest = new Poll("A POLL NAME", DATE,
+        DATE, DATE, DATE, asList("Option 1", "Option 2"), "sender");
 
     BlockchainPoll blockchainPollGeneratedFromBlockchain = new BlockchainPoll("A POLL NAME");
 
@@ -62,8 +65,8 @@ public class CreateBlockchainPollUseCaseTest {
   @Test
   public void whenBlockchainPollCreationFails() {
 
-    Poll createPollRequest = new Poll("A POLL NAME", new Date(),
-        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"), "sender");
+    Poll createPollRequest = new Poll("A POLL NAME", DATE,
+        DATE, DATE, DATE, asList("Option 1", "Option 2"), "sender");
 
     context.checking(new Expectations() {{
 
@@ -81,8 +84,8 @@ public class CreateBlockchainPollUseCaseTest {
   @Test
   public void whenPostgresRepositorySavingFails() {
 
-    Poll poll = new Poll("A POLL NAME", new Date(),
-        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"), "sender");
+    Poll poll = new Poll("A POLL NAME", DATE,
+        DATE, DATE, DATE, asList("Option 1", "Option 2"), "sender");
 
     BlockchainPoll blockchainPollGeneratedFromBlockchain = new BlockchainPoll("A POLL NAME");
 
@@ -104,8 +107,8 @@ public class CreateBlockchainPollUseCaseTest {
 
   @Test
   public void createTransactionHappyPath() {
-    Poll poll = new Poll("A POLL NAME", new Date(),
-        new Date(), new Date(), new Date(), asList("Option 1", "Option 2"), "sender");
+    Poll poll = new Poll("A POLL NAME", DATE,
+        DATE, DATE, DATE, asList("Option 1", "Option 2"), "sender");
 
     context.checking(new Expectations(){{
       oneOf(blockChainPollRepository).createUnsignedTx(poll);

@@ -13,6 +13,8 @@ import com.algorand.algosdk.v2.client.algod.TransactionParams;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.model.TransactionParametersResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import org.jmock.Expectations;
@@ -29,6 +31,8 @@ public class AlgorandBlockchainPollRepositoryTest {
   public static final String SENDER_ADDRESS = "GM5YGY4ICDLE27NCVFR6OS7JIIXSGYI6SQIF5IPKQTTGO2YIJU5YOZDP2A";
   public static final String INVALID_SENDER_ADDRESS = "INVALID SENDER ADDRESS";
   public static final String WRONG_SENDER_ADDRESS_ERROR_MESSAGE = "Something went wrong with sender address during transaction creation: Last encoded character (before the paddings if any) is a valid base 32 alphabet but not a possible value. Expected the discarded bits to be zero.";
+  public static final long LAST_ROUND = 1L;
+  public static final long A_BLOCK_NUMBER = 1L;
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery(){{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -49,7 +53,7 @@ public class AlgorandBlockchainPollRepositoryTest {
   private Response response;
 
   private AlgorandPollRepository algorandPollRepository;
-  public static final List<byte[]> OPTIONS_IN_BYTE = asList("OPTION_1".getBytes(UTF_8), "OPTION_2".getBytes(UTF_8));
+  public static final List<String> OPTIONS_IN_BYTE = asList("OPTION_1", "OPTION_2");
 
   @Before
   public void setUp() {
@@ -71,12 +75,12 @@ public class AlgorandBlockchainPollRepositoryTest {
 
     Poll poll = aPollWith(SENDER_ADDRESS);
 
-    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8), new Date(),
-        new Date(), new Date(), new Date(), OPTIONS_IN_BYTE, SENDER_ADDRESS.getBytes());
+    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8),
+        A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, OPTIONS_IN_BYTE, SENDER_ADDRESS.getBytes());
 
     context.checking(new Expectations(){{
 
-      oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll);
+      oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
       will(returnValue(pollTealParams));
 
       oneOf(tealProgramFactory).createApprovalProgramFrom(pollTealParams);
@@ -102,7 +106,7 @@ public class AlgorandBlockchainPollRepositoryTest {
   }
 
   private Poll aPollWith(String sender) {
-    return new Poll("A_POLL", new Date(), new Date(), new Date(), new Date(), asList("OPTION_1", "OPTION_2"),
+    return new Poll("A_POLL", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), asList("OPTION_1", "OPTION_2"),
         sender);
   }
 
@@ -112,13 +116,13 @@ public class AlgorandBlockchainPollRepositoryTest {
     TEALProgram clearStateProgram = new TEALProgram();
     Poll poll = aPollWith(INVALID_SENDER_ADDRESS);
 
-    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8), new Date(),
-        new Date(), new Date(), new Date(), OPTIONS_IN_BYTE,
+    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8), A_BLOCK_NUMBER,
+        A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, OPTIONS_IN_BYTE,
         INVALID_SENDER_ADDRESS.getBytes());
 
     context.checking(new Expectations(){{
 
-      oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll);
+      oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
       will(returnValue(pollTealParams));
 
       oneOf(tealProgramFactory).createApprovalProgramFrom(pollTealParams);
@@ -135,8 +139,6 @@ public class AlgorandBlockchainPollRepositoryTest {
     algorandPollRepository.createUnsignedTx(poll);
 
   }
-
-
 
   private TransactionParametersResponse aTransactionParametersResponse() {
     TransactionParametersResponse transactionParametersResponse = new TransactionParametersResponse();

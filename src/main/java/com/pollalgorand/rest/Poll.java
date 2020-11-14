@@ -1,15 +1,15 @@
 package com.pollalgorand.rest;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Poll {
 
   private String name;
-  private Date startVotingTime;
-  private Date endVotingTime;
-  private Date startSubscriptionTime;
-  private Date endSubscriptionTime;
+  private LocalDateTime startVotingTime;
+  private LocalDateTime endVotingTime;
+  private LocalDateTime startSubscriptionTime;
+  private LocalDateTime endSubscriptionTime;
   private List<String> options;
   private String sender;
 
@@ -17,8 +17,8 @@ public class Poll {
 
   }
 
-  public Poll(String name, Date startVotingTime, Date endVotingTime,
-      Date startSubscriptionTime, Date endSubscriptionTime, List<String> options,
+  public Poll(String name, LocalDateTime startVotingTime, LocalDateTime endVotingTime,
+      LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime, List<String> options,
       String sender) {
     this.name = name;
     this.startVotingTime = startVotingTime;
@@ -33,19 +33,19 @@ public class Poll {
     return name;
   }
 
-  public Date getStartVotingTime() {
+  public LocalDateTime getStartVotingTime() {
     return startVotingTime;
   }
 
-  public Date getEndVotingTime() {
+  public LocalDateTime getEndVotingTime() {
     return endVotingTime;
   }
 
-  public Date getStartSubscriptionTime() {
+  public LocalDateTime getStartSubscriptionTime() {
     return startSubscriptionTime;
   }
 
-  public Date getEndSubscriptionTime() {
+  public LocalDateTime getEndSubscriptionTime() {
     return endSubscriptionTime;
   }
 

@@ -5,3 +5,12 @@ usare comando: heroku deploy:jar target/pollAlgorand-0.0.1-SNAPSHOT.jar --app po
 
 
 link utile di algorand per callableTransaction https://developer.algorand.org/docs/features/asc1/stateful/sdks/
+
+
+Algoritmo per calcolo date.
+
+- data 
+- tempo = data - data attuale (in secondi)
+- n. blocchi = tempo / block time algorand (tempo medio generazione blocchi)
+- blocco attuale = leggi blocco attuale della Block chain.
+- blocco scelto = blocco attuale + n.blocchi.

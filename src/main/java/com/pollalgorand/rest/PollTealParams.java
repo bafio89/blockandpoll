@@ -1,34 +1,33 @@
 package com.pollalgorand.rest;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 public class PollTealParams {
 
   private final byte[] name;
-  private final Date startVotingTime;
-  private final Date endVotingTime;
-  private final Date startSubscriptionTime;
-  private final Date endSubscriptionTime;
-  private final List<byte[]> optionsInByte;
+  private final Long startVotingTime;
+  private final Long endVotingTime;
+  private final Long startSubscriptionTime;
+  private final Long endSubscriptionTime;
+  private final List<String> options;
   private final byte[] sender;
 
-  public PollTealParams(byte[] name, Date startVotingTime, Date endVotingTime,
-      Date startSubscriptionTime, Date endSubscriptionTime,
-      List<byte[]> optionsInByte, byte[] sender) {
+  public PollTealParams(byte[] name, Long startVotingTime, Long endVotingTime,
+      Long startSubscriptionTime, Long endSubscriptionTime,
+      List<String> options, byte[] sender) {
     this.name = name;
     this.startVotingTime = startVotingTime;
     this.endVotingTime = endVotingTime;
     this.startSubscriptionTime = startSubscriptionTime;
     this.endSubscriptionTime = endSubscriptionTime;
-    this.optionsInByte = optionsInByte;
+    this.options = options;
     this.sender = sender;
   }
 
-  public List<byte[]> getOptionsInByte() {
-    return optionsInByte;
+  public List<String> getOptions() {
+    return options;
   }
 
   @Override
@@ -52,7 +51,7 @@ public class PollTealParams {
   public int hashCode() {
     int result = Objects
         .hash(startVotingTime, endVotingTime, startSubscriptionTime, endSubscriptionTime,
-            optionsInByte);
+            options);
     result = 31 * result + Arrays.hashCode(name);
     result = 31 * result + Arrays.hashCode(sender);
     return result;
@@ -66,7 +65,7 @@ public class PollTealParams {
         ", endVotingTime=" + endVotingTime +
         ", startSubscriptionTime=" + startSubscriptionTime +
         ", endSubscriptionTime=" + endSubscriptionTime +
-        ", optionsInByte=" + optionsInByte +
+        ", optionsInByte=" + options +
         ", sender=" + Arrays.toString(sender) +
         '}';
   }
