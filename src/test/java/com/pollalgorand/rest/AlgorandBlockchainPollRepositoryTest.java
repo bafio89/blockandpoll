@@ -9,9 +9,11 @@ import static org.junit.rules.ExpectedException.none;
 import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.logic.StateSchema;
 import com.algorand.algosdk.transaction.Transaction;
+import com.algorand.algosdk.v2.client.algod.GetStatus;
 import com.algorand.algosdk.v2.client.algod.TransactionParams;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.algorand.algosdk.v2.client.common.Response;
+import com.algorand.algosdk.v2.client.model.NodeStatusResponse;
 import com.algorand.algosdk.v2.client.model.TransactionParametersResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,13 +53,20 @@ public class AlgorandBlockchainPollRepositoryTest {
   private TransactionParams transactionParams;
   @Mock
   private Response response;
+  @Mock
+  private Response statusResponse;
+  @Mock
+  private GetStatus getStatus;
 
   private AlgorandPollRepository algorandPollRepository;
-  public static final List<String> OPTIONS_IN_BYTE = asList("OPTION_1", "OPTION_2");
+  private static final List<String> OPTIONS_IN_BYTE = asList("OPTION_1", "OPTION_2");
+  private NodeStatusResponse nodeStatusResponse = new NodeStatusResponse();
+
 
   @Before
   public void setUp() {
 
+    nodeStatusResponse.lastRound = LAST_ROUND;
 
     algorandPollRepository = new AlgorandPollRepository(algodClient,
         tealProgramFactory, pollBlockchainParamsAdapter);
@@ -79,6 +88,15 @@ public class AlgorandBlockchainPollRepositoryTest {
         A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, OPTIONS_IN_BYTE, SENDER_ADDRESS.getBytes());
 
     context.checking(new Expectations(){{
+
+      oneOf(algodClient).GetStatus();
+      will(returnValue(getStatus));
+
+      oneOf(getStatus).execute();
+      will(returnValue(statusResponse));
+
+      oneOf(statusResponse).body();
+      will(returnValue(nodeStatusResponse));
 
       oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
       will(returnValue(pollTealParams));
@@ -111,7 +129,7 @@ public class AlgorandBlockchainPollRepositoryTest {
   }
 
   @Test
-  public void whenSenderAddressIsNotValid() {
+  public void whenSenderAddressIsNotValid() throws Exception {
     TEALProgram approvalProgram = new TEALProgram();
     TEALProgram clearStateProgram = new TEALProgram();
     Poll poll = aPollWith(INVALID_SENDER_ADDRESS);
@@ -121,6 +139,15 @@ public class AlgorandBlockchainPollRepositoryTest {
         INVALID_SENDER_ADDRESS.getBytes());
 
     context.checking(new Expectations(){{
+
+      oneOf(algodClient).GetStatus();
+      will(returnValue(getStatus));
+
+      oneOf(getStatus).execute();
+      will(returnValue(statusResponse));
+
+      oneOf(statusResponse).body();
+      will(returnValue(nodeStatusResponse));
 
       oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
       will(returnValue(pollTealParams));

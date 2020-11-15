@@ -106,7 +106,7 @@ public class CreateBlockchainPollUseCaseTest {
 
 
   @Test
-  public void createTransactionHappyPath() {
+  public void createTransactionHappyPath() throws Exception {
     Poll poll = new Poll("A POLL NAME", DATE,
         DATE, DATE, DATE, asList("Option 1", "Option 2"), "sender");
 

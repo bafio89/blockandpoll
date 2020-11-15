@@ -32,11 +32,13 @@ public class AlgorandPollRepository implements PollRepository {
   }
 
   @Override
-  public Transaction createUnsignedTx(Poll poll) {
+  public Transaction createUnsignedTx(Poll poll) throws Exception {
 
-//    Long lastRound = algodClient.GetStatus().execute().body().lastRound;
     Transaction transaction = null;
-    PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToPollTealParams(poll, null);
+
+    Long lastRound = algodClient.GetStatus().execute().body().lastRound;
+
+    PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToPollTealParams(poll, lastRound);
     TEALProgram approvalProgramFrom = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
 
     TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();

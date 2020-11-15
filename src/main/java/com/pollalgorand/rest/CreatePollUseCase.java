@@ -25,7 +25,7 @@ public class CreatePollUseCase {
     return blockchainPoll;
   }
 
-  public Transaction createUnsignedTx(Poll poll){
+  public Transaction createUnsignedTx(Poll poll) throws Exception {
 
     return blockChainPollRepository.createUnsignedTx(poll);
   }
