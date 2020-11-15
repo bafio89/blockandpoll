@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 
 public class AlgorandDateAdapter {
 
+  public static final double MEAN_TIME_FOR_BLOCK_GENERATION_IN_SECOND = 4.5;
   private final LocalDateTime now;
 
   public AlgorandDateAdapter(LocalDateTime now) {
@@ -15,7 +16,11 @@ public class AlgorandDateAdapter {
 
     long duration = ChronoUnit.SECONDS.between(now, date);
 
-    long round = Math.round(duration / 4.5);
+    if(duration <= 0){
+      throw new PastDateException(String.format("Something gone wrong with date selection. Date %s is previous than now", date));
+    }
+
+    long round = Math.round(duration / MEAN_TIME_FOR_BLOCK_GENERATION_IN_SECOND);
 
     return lastRound + round;
   }
