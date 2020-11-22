@@ -1,30 +1,90 @@
 package com.pollalgorand.rest;
 
-import com.google.common.io.CharStreams;
+import static java.util.Arrays.asList;
+import static org.junit.rules.ExpectedException.none;
+
+import com.algorand.algosdk.v2.client.algod.TealCompile;
+import com.algorand.algosdk.v2.client.common.AlgodClient;
+import com.algorand.algosdk.v2.client.common.Response;
+import com.algorand.algosdk.v2.client.model.CompileResponse;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import org.jmock.Expectations;
+import org.jmock.auto.Mock;
+import org.jmock.integration.junit4.JUnitRuleMockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class TealProgramFactoryTest {
 
+  public static final String compiledResult = "AiAEAegHgL2DFMDa2yQmASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADEQIhIxBygSEDEBIw4QMQgkEjEIJRIREA==";
+  @Rule
+  public JUnitRuleMockery context = new JUnitRuleMockery(){{
+    setImposteriser(ClassImposteriser.INSTANCE);
+  }};
+
+  @Rule public final ExpectedException expectedException = none();
+
+  @Mock
+  private AlgodClient algodClient;
+
+  @Mock
+  private TealCompile tealCompile;
+
+  @Mock
+  private Response compileResponse;
+
+  @Mock
+  private Response response;
+
+  public static final String OPTION_1_REPLACED_BY_TEST = "option1_replaced_by_test";
+  public static final String OPTION_2_REPLACED_BY_TEST = "option2_replaced_by_test";
   private final String PATH = "teal/vote.teal";
+  private TealProgramFactory tealProgramFactory;
+
+  @Before
+  public void setUp() {
+    tealProgramFactory = new TealProgramFactory(algodClient);
+  }
 
   @Test
   public void happyPath() throws Exception {
-    String tealProgram = readFile();
+    byte[] tealProgram = readFile();
 
-    System.out.println(tealProgram);
+    CompileResponse response = new CompileResponse();
+    response.result = compiledResult;
+
+    context.checking(new Expectations(){{
+      oneOf(algodClient).TealCompile();
+      will(returnValue(tealCompile));
+
+      oneOf(tealCompile).source(tealProgram);
+      will(returnValue(tealCompile));
+
+      oneOf(tealCompile).execute();
+      will(returnValue(compileResponse));
+
+      oneOf(compileResponse).body();
+      will(returnValue(response));
+
+    }});
+
+    tealProgramFactory.createApprovalProgramFrom(aPollTealParams());
   }
 
-  private String readFile() throws IOException, URISyntaxException {
-    return Files.lines(Paths.get(ClassLoader.getSystemResource(PATH).toURI())).collect(
-          Collectors.joining("\n"));
+  private PollTealParams aPollTealParams() {
+    long dateLongRepresentation = 123L;
+    return new PollTealParams("A_NAME".getBytes(), dateLongRepresentation, dateLongRepresentation, dateLongRepresentation,dateLongRepresentation, asList(
+        OPTION_1_REPLACED_BY_TEST, OPTION_2_REPLACED_BY_TEST), "A_SENDER".getBytes());
+  }
+
+  private byte[] readFile() throws IOException, URISyntaxException {
+    return Files.readAllBytes(Paths.get(ClassLoader.getSystemResource(PATH).toURI()));
   }
 
 }

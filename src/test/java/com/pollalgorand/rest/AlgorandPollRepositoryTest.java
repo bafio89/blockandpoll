@@ -28,7 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class AlgorandBlockchainPollRepositoryTest {
+public class AlgorandPollRepositoryTest {
 
   public static final String SENDER_ADDRESS = "GM5YGY4ICDLE27NCVFR6OS7JIIXSGYI6SQIF5IPKQTTGO2YIJU5YOZDP2A";
   public static final String INVALID_SENDER_ADDRESS = "INVALID SENDER ADDRESS";
