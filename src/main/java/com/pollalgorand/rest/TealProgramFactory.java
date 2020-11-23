@@ -27,7 +27,8 @@ public class TealProgramFactory {
 
   public TEALProgram createApprovalProgramFrom(PollTealParams pollTealParams) {
 
-    String tealProgram = readFile().replace(PLACEHOLDER_1, pollTealParams.getOptions().get(0))
+    String tealProgram = readFile()
+        .replace(PLACEHOLDER_1, pollTealParams.getOptions().get(0))
         .replace(PLACEHOLDER_2, pollTealParams.getOptions().get(1));
 
     Response<CompileResponse> compileResponse;
@@ -35,7 +36,7 @@ public class TealProgramFactory {
       compileResponse = algodClient.TealCompile()
           .source(tealProgram.getBytes(UTF_8)).execute();
     } catch (Exception e) {
-      throw new RuntimeException();
+      throw new CompileTealProgramException(e);
     }
 
     return new TEALProgram(compileResponse.body().result);

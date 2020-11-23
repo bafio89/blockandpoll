@@ -22,7 +22,6 @@ import org.junit.rules.ExpectedException;
 
 public class TealProgramFactoryTest {
 
-  public static final String compiledResult = "AiAEAegHgL2DFMDa2yQmASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADEQIhIxBygSEDEBIw4QMQgkEjEIJRIREA==";
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery(){{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -39,24 +38,23 @@ public class TealProgramFactoryTest {
   @Mock
   private Response compileResponse;
 
-  @Mock
-  private Response response;
-
+  public static final String compiledResult = "AiAEAegHgL2DFMDa2yQmASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADEQIhIxBygSEDEBIw4QMQgkEjEIJRIREA==";
   public static final String OPTION_1_REPLACED_BY_TEST = "option1_replaced_by_test";
   public static final String OPTION_2_REPLACED_BY_TEST = "option2_replaced_by_test";
   private final String PATH = "teal/vote.teal";
   private TealProgramFactory tealProgramFactory;
+  private CompileResponse response;
 
   @Before
   public void setUp() {
     tealProgramFactory = new TealProgramFactory(algodClient);
+    response = new CompileResponse();
   }
 
   @Test
   public void happyPath() throws Exception {
     byte[] tealProgram = readFile();
 
-    CompileResponse response = new CompileResponse();
     response.result = compiledResult;
 
     context.checking(new Expectations(){{
@@ -75,6 +73,32 @@ public class TealProgramFactoryTest {
     }});
 
     tealProgramFactory.createApprovalProgramFrom(aPollTealParams());
+  }
+
+  @Test
+  public void whenClientGoesInError() throws Exception {
+    byte[] tealProgram = readFile();
+
+    response.result = compiledResult;
+
+    Exception exception = new Exception("An error message");
+
+    context.checking(new Expectations(){{
+      oneOf(algodClient).TealCompile();
+      will(returnValue(tealCompile));
+
+      oneOf(tealCompile).source(tealProgram);
+      will(returnValue(tealCompile));
+
+      oneOf(tealCompile).execute();
+      will(throwException(exception));
+    }});
+
+    expectedException.expect(CompileTealProgramException.class);
+    expectedException.expectMessage("Something goes wrong during TEAL program compilation: An error message");
+
+    tealProgramFactory.createApprovalProgramFrom(aPollTealParams());
+
   }
 
   private PollTealParams aPollTealParams() {
