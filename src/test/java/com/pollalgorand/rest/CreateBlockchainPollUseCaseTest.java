@@ -1,16 +1,13 @@
 package com.pollalgorand.rest;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import org.jmock.Expectations;
-import org.jmock.auto.Mock;
-
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import org.jmock.Expectations;
+import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
 import org.junit.Rule;
@@ -111,7 +108,7 @@ public class CreateBlockchainPollUseCaseTest {
         DATE, DATE, DATE, asList("Option 1", "Option 2"), "sender");
 
     context.checking(new Expectations(){{
-      oneOf(blockChainPollRepository).createUnsignedTx(poll);
+      oneOf(blockChainPollRepository).createUnsignedTxFor(poll);
     }});
 
     createPollUseCase.createUnsignedTx(poll);

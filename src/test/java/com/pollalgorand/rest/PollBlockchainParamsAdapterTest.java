@@ -1,13 +1,12 @@
 package com.pollalgorand.rest;
 
+import static com.pollalgorand.rest.ByteConverteUtil.convertLongToByteArray;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -19,9 +18,13 @@ import org.junit.Test;
 
 public class PollBlockchainParamsAdapterTest {
 
-  public static final long A_BLOCK_NUMBER = 1L;
+  public static final Long A_START_SUBS_BLOCK_NUMBER = 1L;
+  public static final Long A_END_SUBS_BLOCK_NUMBER = 2L;
+  public static final Long A_START_VOTE_BLOCK_NUMBER = 3L;
+  public static final Long A_END_VOTE_BLOCK_NUMBER = 4L;
+
   @Rule
-  public JUnitRuleMockery context = new JUnitRuleMockery(){{
+  public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setImposteriser(ClassImposteriser.INSTANCE);
   }};
 
@@ -44,29 +47,32 @@ public class PollBlockchainParamsAdapterTest {
   @Test
   public void adaptToPollTealParams() {
 
-    LocalDateTime startVotingTime = LocalDateTime.now();
-    LocalDateTime endVotingTime = LocalDateTime.now();
-    LocalDateTime startSubscriptionTime = LocalDateTime.now();
-    LocalDateTime endSubscriptionTime = LocalDateTime.now();
+    LocalDateTime startSubscriptionTime = LocalDateTime.now().minusDays(2L);
+    LocalDateTime endSubscriptionTime = LocalDateTime.now().minusDays(1L);
+    LocalDateTime startVotingTime = LocalDateTime.now().minusHours(1L);
+    LocalDateTime endVotingTime = LocalDateTime.now().plusDays(1L);
     List<String> options = asList("Option1", "Option2");
 
-    PollTealParams expectedTealParams = new PollTealParams(A_POLL.getBytes(UTF_8), A_BLOCK_NUMBER,
-        A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, options,
+    PollTealParams expectedTealParams = new PollTealParams(A_POLL.getBytes(UTF_8),
+        convertLongToByteArray(A_START_SUBS_BLOCK_NUMBER),
+        convertLongToByteArray(A_END_SUBS_BLOCK_NUMBER),
+        convertLongToByteArray(A_START_VOTE_BLOCK_NUMBER),
+        convertLongToByteArray(A_END_VOTE_BLOCK_NUMBER), options,
         SENDER.getBytes(UTF_8));
 
     Poll poll = new Poll(
         A_POLL, startVotingTime, endVotingTime, startSubscriptionTime,
         endSubscriptionTime, options, SENDER);
 
-    context.checking(new Expectations(){{
+    context.checking(new Expectations() {{
       oneOf(algorandDateAdapter).fromDateToBlockNumber(startSubscriptionTime, LAST_ROUND);
-      will(returnValue(A_BLOCK_NUMBER));
+      will(returnValue(A_START_SUBS_BLOCK_NUMBER));
       oneOf(algorandDateAdapter).fromDateToBlockNumber(endSubscriptionTime, LAST_ROUND);
-      will(returnValue(A_BLOCK_NUMBER));
+      will(returnValue(A_END_SUBS_BLOCK_NUMBER));
       oneOf(algorandDateAdapter).fromDateToBlockNumber(startVotingTime, LAST_ROUND);
-      will(returnValue(A_BLOCK_NUMBER));
+      will(returnValue(A_START_VOTE_BLOCK_NUMBER));
       oneOf(algorandDateAdapter).fromDateToBlockNumber(endVotingTime, LAST_ROUND);
-      will(returnValue(A_BLOCK_NUMBER));
+      will(returnValue(A_END_VOTE_BLOCK_NUMBER));
     }});
 
     PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToPollTealParams(poll,

@@ -1,16 +1,12 @@
 package com.pollalgorand.rest;
 
-import static java.util.stream.Collectors.joining;
+import static java.util.Arrays.asList;
 
 import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.logic.StateSchema;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
-import com.algorand.algosdk.v2.client.model.CompileResponse;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 public class AlgorandPollRepository implements PollRepository {
@@ -39,34 +35,47 @@ public class AlgorandPollRepository implements PollRepository {
   }
 
   @Override
-  public Transaction createUnsignedTx(Poll poll) throws Exception {
+  public Transaction createUnsignedTxFor(Poll poll) {
 
-    Transaction transaction = null;
+    Transaction transaction;
 
-    Long lastRound = algodClient.GetStatus().execute().body().lastRound;
+    Long lastRound;
+    try {
+      lastRound = algodClient.GetStatus().execute().body().lastRound;
+    } catch (Exception e) {
+      throw new NodeStatusException(e);
+    }
 
-    PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToPollTealParams(poll, lastRound);
+    PollTealParams pollTealParams = pollBlockchainParamsAdapter
+        .fromPollToPollTealParams(poll, lastRound);
+
     TEALProgram approvalProgramFrom = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
-
     TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();
 
     try {
-     transaction = Transaction.ApplicationCreateTransactionBuilder()
+      transaction = Transaction.ApplicationCreateTransactionBuilder()
           .sender(poll.getSender())
+          .args(arguments(pollTealParams))
           .suggestedParams(algodClient.TransactionParams().execute().body())
           .approvalProgram(approvalProgramFrom)
           .clearStateProgram(clearStateProgram)
           .globalStateSchema(new StateSchema(6, 1))
           .localStateSchema(new StateSchema(0, 1))
           .build();
-    }catch (IllegalArgumentException e) {
-      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
       throw new InvalidSenderAddressException(e);
-    }catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException(e);
+    } catch (Exception e) {
+      throw new BlockChainParameterException(e);
     }
 
     return transaction;
+  }
+
+  private List<byte[]> arguments(PollTealParams pollTealParams) {
+
+    return asList(pollTealParams.getStartSubscriptionTime(),
+        pollTealParams.getEndSubscriptionTime(),
+        pollTealParams.getStartVotingTime(),
+        pollTealParams.getEndVotingTime());
   }
 }

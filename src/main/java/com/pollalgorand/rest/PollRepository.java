@@ -7,5 +7,5 @@ public interface PollRepository {
 
   Optional<Poll> save(Poll poll);
 
-  Transaction createUnsignedTx(Poll poll) throws Exception;
+  Transaction createUnsignedTxFor(Poll poll) throws Exception;
 }

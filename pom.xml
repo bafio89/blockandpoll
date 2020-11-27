@@ -15,7 +15,7 @@
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
-		<java.version>8</java.version>
+		<java.version>11</java.version>
 		<node.version>v8.4.0</node.version>
 		<npm.version>5.3.0</npm.version>
 	</properties>

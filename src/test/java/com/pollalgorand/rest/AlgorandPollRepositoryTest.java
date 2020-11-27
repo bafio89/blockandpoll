@@ -1,5 +1,6 @@
 package com.pollalgorand.rest;
 
+import static com.pollalgorand.rest.ByteConverteUtil.convertLongToByteArray;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,9 +16,7 @@ import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.model.NodeStatusResponse;
 import com.algorand.algosdk.v2.client.model.TransactionParametersResponse;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -34,7 +33,13 @@ public class AlgorandPollRepositoryTest {
   public static final String INVALID_SENDER_ADDRESS = "INVALID SENDER ADDRESS";
   public static final String WRONG_SENDER_ADDRESS_ERROR_MESSAGE = "Something went wrong with sender address during transaction creation: Last encoded character (before the paddings if any) is a valid base 32 alphabet but not a possible value. Expected the discarded bits to be zero.";
   public static final long LAST_ROUND = 1L;
-  public static final long A_BLOCK_NUMBER = 1L;
+  public static byte [] A_BLOCK_NUMBER;
+  public static byte [] A_START_SUBS_BLOCK_NUMBER;
+  public static byte [] A_END_SUBS_BLOCK_NUMBER;
+  public static byte [] A_START_VOTE_BLOCK_NUMBER;
+  public static byte [] A_END_VOTE_BLOCK_NUMBER;
+  public static final String NODE_STATUS_ERROR_MESSAGE = "Something goes wrong getting node status: AN_ERROR";
+
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery(){{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -70,6 +75,12 @@ public class AlgorandPollRepositoryTest {
 
     algorandPollRepository = new AlgorandPollRepository(algodClient,
         tealProgramFactory, pollBlockchainParamsAdapter);
+
+    A_BLOCK_NUMBER = convertLongToByteArray(1L);
+    A_START_SUBS_BLOCK_NUMBER = convertLongToByteArray(1L);
+    A_END_SUBS_BLOCK_NUMBER = convertLongToByteArray(2L);
+    A_START_VOTE_BLOCK_NUMBER = convertLongToByteArray(3L);
+    A_END_VOTE_BLOCK_NUMBER = convertLongToByteArray(4L);
   }
 
   @Test
@@ -85,7 +96,8 @@ public class AlgorandPollRepositoryTest {
     Poll poll = aPollWith(SENDER_ADDRESS);
 
     PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8),
-        A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, OPTIONS_IN_BYTE, SENDER_ADDRESS.getBytes());
+        A_START_SUBS_BLOCK_NUMBER, A_END_SUBS_BLOCK_NUMBER, A_START_VOTE_BLOCK_NUMBER,
+        A_END_VOTE_BLOCK_NUMBER, OPTIONS_IN_BYTE, SENDER_ADDRESS.getBytes());
 
     context.checking(new Expectations(){{
 
@@ -117,10 +129,13 @@ public class AlgorandPollRepositoryTest {
       will(returnValue(transactionParametersResponse));
     }});
 
-    Transaction unsignedTx = algorandPollRepository.createUnsignedTx(poll);
+    Transaction unsignedTx = algorandPollRepository.createUnsignedTxFor(poll);
 
     assertThat(unsignedTx, is(expectedTransaction));
-
+//    assertThat(unsignedTx.applicationArgs.get(0), is(expectedTransaction.applicationArgs.get(0)));
+//    assertThat(unsignedTx.applicationArgs.get(1), is(expectedTransaction.applicationArgs.get(1)));
+//    assertThat(unsignedTx.applicationArgs.get(2), is(expectedTransaction.applicationArgs.get(2)));
+//    assertThat(unsignedTx.applicationArgs.get(3), is(expectedTransaction.applicationArgs.get(3)));
   }
 
   private Poll aPollWith(String sender) {
@@ -134,8 +149,9 @@ public class AlgorandPollRepositoryTest {
     TEALProgram clearStateProgram = new TEALProgram();
     Poll poll = aPollWith(INVALID_SENDER_ADDRESS);
 
-    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8), A_BLOCK_NUMBER,
-        A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER, OPTIONS_IN_BYTE,
+    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8),
+        A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER,
+        A_BLOCK_NUMBER, OPTIONS_IN_BYTE,
         INVALID_SENDER_ADDRESS.getBytes());
 
     context.checking(new Expectations(){{
@@ -163,7 +179,42 @@ public class AlgorandPollRepositoryTest {
     expectedException.expectMessage(
         WRONG_SENDER_ADDRESS_ERROR_MESSAGE);
 
-    algorandPollRepository.createUnsignedTx(poll);
+    algorandPollRepository.createUnsignedTxFor(poll);
+
+  }
+
+  @Test
+  public void whenGettingNodeStatusFails() throws Exception {
+    Poll poll = aPollWith(INVALID_SENDER_ADDRESS);
+
+    PollTealParams pollTealParams = new PollTealParams(poll.getName().getBytes(UTF_8),
+        A_BLOCK_NUMBER, A_BLOCK_NUMBER, A_BLOCK_NUMBER,
+        A_BLOCK_NUMBER, OPTIONS_IN_BYTE,
+        INVALID_SENDER_ADDRESS.getBytes());
+
+    context.checking(new Expectations(){{
+
+      oneOf(algodClient).GetStatus();
+      will(returnValue(getStatus));
+
+      oneOf(getStatus).execute();
+      will(throwException(new Exception("AN_ERROR")));
+
+      never(statusResponse).body();
+
+      never(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
+
+      never(tealProgramFactory).createApprovalProgramFrom(pollTealParams);
+
+      never(tealProgramFactory).createClearStateProgram();
+
+    }});
+
+    expectedException.expect(NodeStatusException.class);
+    expectedException.expectMessage(
+        NODE_STATUS_ERROR_MESSAGE);
+
+    algorandPollRepository.createUnsignedTxFor(poll);
 
   }
 
@@ -181,6 +232,10 @@ public class AlgorandPollRepositoryTest {
       TransactionParametersResponse transactionParametersResponse) {
     return Transaction.ApplicationCreateTransactionBuilder()
         .sender(SENDER_ADDRESS)
+        .args(asList(A_START_SUBS_BLOCK_NUMBER,
+            A_END_SUBS_BLOCK_NUMBER,
+            A_START_VOTE_BLOCK_NUMBER,
+            A_END_VOTE_BLOCK_NUMBER))
         .suggestedParams(transactionParametersResponse)
         .approvalProgram(approvalProgram)
         .clearStateProgram(clearStateProgram)
@@ -188,5 +243,4 @@ public class AlgorandPollRepositoryTest {
         .localStateSchema(new StateSchema())
         .build();
   }
-
 }

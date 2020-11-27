@@ -1,5 +1,6 @@
 package com.pollalgorand.rest;
 
+import static com.pollalgorand.rest.ByteConverteUtil.convertLongToByteArray;
 import static java.util.Arrays.asList;
 import static org.junit.rules.ExpectedException.none;
 
@@ -23,11 +24,12 @@ import org.junit.rules.ExpectedException;
 public class TealProgramFactoryTest {
 
   @Rule
-  public JUnitRuleMockery context = new JUnitRuleMockery(){{
+  public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setImposteriser(ClassImposteriser.INSTANCE);
   }};
 
-  @Rule public final ExpectedException expectedException = none();
+  @Rule
+  public final ExpectedException expectedException = none();
 
   @Mock
   private AlgodClient algodClient;
@@ -57,7 +59,7 @@ public class TealProgramFactoryTest {
 
     response.result = compiledResult;
 
-    context.checking(new Expectations(){{
+    context.checking(new Expectations() {{
       oneOf(algodClient).TealCompile();
       will(returnValue(tealCompile));
 
@@ -83,7 +85,7 @@ public class TealProgramFactoryTest {
 
     Exception exception = new Exception("An error message");
 
-    context.checking(new Expectations(){{
+    context.checking(new Expectations() {{
       oneOf(algodClient).TealCompile();
       will(returnValue(tealCompile));
 
@@ -95,7 +97,8 @@ public class TealProgramFactoryTest {
     }});
 
     expectedException.expect(CompileTealProgramException.class);
-    expectedException.expectMessage("Something goes wrong during TEAL program compilation: An error message");
+    expectedException
+        .expectMessage("Something goes wrong during TEAL program compilation: An error message");
 
     tealProgramFactory.createApprovalProgramFrom(aPollTealParams());
 
@@ -103,7 +106,11 @@ public class TealProgramFactoryTest {
 
   private PollTealParams aPollTealParams() {
     long dateLongRepresentation = 123L;
-    return new PollTealParams("A_NAME".getBytes(), dateLongRepresentation, dateLongRepresentation, dateLongRepresentation,dateLongRepresentation, asList(
+    return new PollTealParams("A_NAME".getBytes(),
+        convertLongToByteArray(dateLongRepresentation),
+        convertLongToByteArray(dateLongRepresentation),
+        convertLongToByteArray(dateLongRepresentation),
+        convertLongToByteArray(dateLongRepresentation), asList(
         OPTION_1_REPLACED_BY_TEST, OPTION_2_REPLACED_BY_TEST), "A_SENDER".getBytes());
   }
 
