@@ -47,10 +47,10 @@ public class PollBlockchainParamsAdapterTest {
   @Test
   public void adaptToPollTealParams() {
 
-    LocalDateTime startSubscriptionTime = LocalDateTime.now().minusDays(2L);
-    LocalDateTime endSubscriptionTime = LocalDateTime.now().minusDays(1L);
-    LocalDateTime startVotingTime = LocalDateTime.now().minusHours(1L);
-    LocalDateTime endVotingTime = LocalDateTime.now().plusDays(1L);
+    LocalDateTime startSubscriptionTime = LocalDateTime.now().plusDays(1L);
+    LocalDateTime endSubscriptionTime = LocalDateTime.now().plusDays(2L);
+    LocalDateTime startVotingTime = LocalDateTime.now().plusDays(3L);
+    LocalDateTime endVotingTime = LocalDateTime.now().plusDays(4L);
     List<String> options = asList("Option1", "Option2");
 
     PollTealParams expectedTealParams = new PollTealParams(A_POLL.getBytes(UTF_8),

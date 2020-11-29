@@ -3,6 +3,7 @@ package com.pollalgorand.rest;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,9 +62,29 @@ public class PollEndPointTest {
     mockMvc.perform(MockMvcRequestBuilders.post("/createpoll/unsignedtx")
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
         .content(content))
-        .andExpect(status().isPreconditionFailed());
-//        .andExpect(content().json("ciao"));
+        .andExpect(status().isPreconditionFailed())
+        .andExpect(content().string("Invalid poll parameters: A MESSAGE"));
 
+  }
+
+  @Test
+  public void whenThereIsAnInternalServerError() throws Exception {
+
+    LocalDateTime now = LocalDateTime.of(2020, 11, 30, 0,0);
+    PollRequest pollRequest = aPollRequest(now);
+    Poll poll = aPoll(now);
+
+    context.checking(new Expectations(){{
+      oneOf(createPollUseCase).createUnsignedTx(poll);
+      will(throwException(new RuntimeException("A MESSAGE")));
+    }});
+
+    String content = objectMapper.writeValueAsString(pollRequest);
+    mockMvc.perform(MockMvcRequestBuilders.post("/createpoll/unsignedtx")
+        .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
+        .content(content))
+        .andExpect(status().isInternalServerError())
+        .andExpect(content().string("A MESSAGE"));
   }
 
   private PollRequest aPollRequest(LocalDateTime now) {

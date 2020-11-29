@@ -25,17 +25,20 @@ public class PollEndPoint {
   }
 
   @PostMapping("/createpoll/unsignedtx")
-  public ResponseEntity<Transaction> createPollUnsignedTransaction(@RequestBody PollRequest poll){
+  public ResponseEntity<byte[]> createPollUnsignedTransaction(@RequestBody PollRequest pollRequest) {
 
-    return ResponseEntity.ok(createPollUseCase
-        .createUnsignedTx(pollRequestAdapter.fromRequestToDomain(poll)));
+    Poll poll = pollRequestAdapter.fromRequestToDomain(pollRequest);
+    Transaction unsignedTx = createPollUseCase.createUnsignedTx(poll);
+    return ResponseEntity.ok(pollRequestAdapter.fromDomainToRequest(unsignedTx));
   }
 
-  @ExceptionHandler(
-      value = {
-          IllegalPollParameterException.class
-      })
+  @ExceptionHandler(value = {IllegalPollParameterException.class})
   public ResponseEntity preconditionFailedExceptionHandler(RuntimeException e) {
     return status(HttpStatus.PRECONDITION_FAILED).body(e.getMessage());
+  }
+
+  @ExceptionHandler(value = {RuntimeException.class})
+  public ResponseEntity genericErrorExceptionHandler(RuntimeException e){
+    return status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
   }
 }
