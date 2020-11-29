@@ -61,8 +61,8 @@ public class PollBlockchainParamsAdapterTest {
         SENDER.getBytes(UTF_8));
 
     Poll poll = new Poll(
-        A_POLL, startVotingTime, endVotingTime, startSubscriptionTime,
-        endSubscriptionTime, options, SENDER);
+        A_POLL, startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime,
+        options, SENDER);
 
     context.checking(new Expectations() {{
       oneOf(algorandDateAdapter).fromDateToBlockNumber(startSubscriptionTime, LAST_ROUND);

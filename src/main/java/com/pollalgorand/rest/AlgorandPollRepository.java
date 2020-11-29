@@ -39,12 +39,7 @@ public class AlgorandPollRepository implements PollRepository {
 
     Transaction transaction;
 
-    Long lastRound;
-    try {
-      lastRound = algodClient.GetStatus().execute().body().lastRound;
-    } catch (Exception e) {
-      throw new NodeStatusException(e);
-    }
+    Long lastRound = getBlockChainLastRound();
 
     PollTealParams pollTealParams = pollBlockchainParamsAdapter
         .fromPollToPollTealParams(poll, lastRound);
@@ -69,6 +64,16 @@ public class AlgorandPollRepository implements PollRepository {
     }
 
     return transaction;
+  }
+
+  private Long getBlockChainLastRound() {
+    Long lastRound;
+    try {
+      lastRound = algodClient.GetStatus().execute().body().lastRound;
+    } catch (Exception e) {
+      throw new NodeStatusException(e);
+    }
+    return lastRound;
   }
 
   private List<byte[]> arguments(PollTealParams pollTealParams) {

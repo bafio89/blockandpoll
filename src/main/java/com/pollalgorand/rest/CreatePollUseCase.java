@@ -16,7 +16,7 @@ public class CreatePollUseCase {
     this.postgresRepository = postgresRepository;
   }
 
-  public Optional<Poll> create(Poll poll){
+  public Optional<Poll> create(Poll poll) {
 
     Optional<Poll> blockchainPoll = blockChainPollRepository.save(poll);
 
@@ -25,7 +25,7 @@ public class CreatePollUseCase {
     return blockchainPoll;
   }
 
-  public Transaction createUnsignedTx(Poll poll) throws Exception {
+  public Transaction createUnsignedTx(Poll poll) {
 
     return blockChainPollRepository.createUnsignedTxFor(poll);
   }

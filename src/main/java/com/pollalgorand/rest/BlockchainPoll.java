@@ -6,11 +6,10 @@ public class BlockchainPoll extends Poll {
 
   private String transactionId;
 
-  public BlockchainPoll() {
-    super();
-  }
 
   public BlockchainPoll(String transactionId) {
+    //TODO implement it.
+    super("",null,null,null,null,null,null);
     this.transactionId = transactionId;
   }
 
