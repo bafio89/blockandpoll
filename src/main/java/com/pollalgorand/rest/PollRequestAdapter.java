@@ -1,6 +1,6 @@
 package com.pollalgorand.rest;
 
-public class PollRequestConverter {
+public class PollRequestAdapter {
 
   public Poll fromRequestToDomain(PollRequest poll) {
     return new Poll(poll.getName(),

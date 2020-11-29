@@ -1,6 +1,6 @@
 
 TODO
-- [ ] Mettere tx di v2 nellenpoint.
+- [ ] Mettere tx di v2 nell enpoint.
 - [ ] Test per endpoint
 - [ ] corner case
 - [ ] configurazioni 

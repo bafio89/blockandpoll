@@ -16,6 +16,18 @@ public class PollRequest {
   public PollRequest() {
   }
 
+  public PollRequest(String name, LocalDateTime startSubscriptionTime,
+      LocalDateTime endSubscriptionTime, LocalDateTime startVotingTime,
+      LocalDateTime endVotingTime, List<String> options, String sender) {
+    this.name = name;
+    this.startSubscriptionTime = startSubscriptionTime;
+    this.endSubscriptionTime = endSubscriptionTime;
+    this.startVotingTime = startVotingTime;
+    this.endVotingTime = endVotingTime;
+    this.options = options;
+    this.sender = sender;
+  }
+
   public String getName() {
     return name;
   }
@@ -70,5 +82,18 @@ public class PollRequest {
 
   public void setSender(String sender) {
     this.sender = sender;
+  }
+
+  @Override
+  public String toString() {
+    return "PollRequest{" +
+        "name='" + name + '\'' +
+        ", startSubscriptionTime=" + startSubscriptionTime +
+        ", endSubscriptionTime=" + endSubscriptionTime +
+        ", startVotingTime=" + startVotingTime +
+        ", endVotingTime=" + endVotingTime +
+        ", options=" + options +
+        ", sender='" + sender + '\'' +
+        '}';
   }
 }
