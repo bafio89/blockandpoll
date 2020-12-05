@@ -16,6 +16,14 @@ public class BlockchainPoll extends Poll {
     this.appId = appId;
   }
 
+  public Long getAppId() {
+    return appId;
+  }
+
+  public void setAppId(Long appId) {
+    this.appId = appId;
+  }
+
   @Override
   public String toString() {
     return "BlockchainPoll{" +
