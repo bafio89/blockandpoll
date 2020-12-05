@@ -6,20 +6,20 @@ import java.util.Objects;
 
 public class BlockchainPoll extends Poll {
 
-  private String transactionId;
+  private Long appId;
 
-  public BlockchainPoll(String transactionId, String name, String sender,
+  public BlockchainPoll(Long appId, String name, String sender,
       LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
       LocalDateTime startVotingTime, LocalDateTime endVotingTime,
       List<String> options, String mnemonicKey) {
     super(name,startSubscriptionTime,endSubscriptionTime,startVotingTime,endVotingTime,options,sender, mnemonicKey);
-    this.transactionId = transactionId;
+    this.appId = appId;
   }
 
   @Override
   public String toString() {
-    return "Poll{" +
-        "name='" + transactionId + '\'' +
+    return "BlockchainPoll{" +
+        "appId=" + appId +
         '}';
   }
 
@@ -31,12 +31,15 @@ public class BlockchainPoll extends Poll {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BlockchainPoll blockchainPoll = (BlockchainPoll) o;
-    return Objects.equals(transactionId, blockchainPoll.transactionId);
+    if (!super.equals(o)) {
+      return false;
+    }
+    BlockchainPoll that = (BlockchainPoll) o;
+    return Objects.equals(appId, that.appId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionId);
+    return Objects.hash(super.hashCode(), appId);
   }
 }

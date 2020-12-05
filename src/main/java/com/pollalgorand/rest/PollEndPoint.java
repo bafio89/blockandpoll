@@ -30,12 +30,12 @@ public class PollEndPoint {
   }
 
   @PostMapping("/createpoll/signedtx")
-  public ResponseEntity<Optional<Poll>> createPollTransaction(@RequestBody PollRequest pollRequest) {
+  public ResponseEntity<Poll> createPollTransaction(@RequestBody PollRequest pollRequest) {
 
     logger.info("Arrived request");
     Poll poll = pollRequestAdapter.fromRequestToDomain(pollRequest);
     Optional<Poll> createdPoll = createPollUseCase.create(poll);
-    return ResponseEntity.ok(createdPoll);
+    return ResponseEntity.ok(createdPoll.get());
   }
 
   @PostMapping("/createpoll/unsignedtx")
