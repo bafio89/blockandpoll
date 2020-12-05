@@ -6,6 +6,7 @@ TODO
 - [ ] Creare frontend
 - [ ] attaccarci database.
 - [ ] parte di voto 
+- [ ] Dire all sdk di restituire errori piu parlanti 
 
 - [x] configurazioni 
 - [x] Test per endpoint
