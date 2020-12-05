@@ -100,9 +100,9 @@ public class CreateBlockchainPollUseCaseTest {
 
 
   @Test
-  public void createTransactionHappyPath() throws Exception {
+  public void createTransactionHappyPath() {
     Poll poll = new Poll("A POLL NAME", DATE, DATE, DATE,
-        DATE, asList("Option 1", "Option 2"), "sender");
+        DATE, asList("Option 1", "Option 2"), "sender", "mnemonicKey");
 
     context.checking(new Expectations(){{
       oneOf(blockChainPollRepository).createUnsignedTxFor(poll);

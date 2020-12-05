@@ -20,7 +20,7 @@ public class CreatePollUseCase {
 
     Optional<Poll> blockchainPoll = blockChainPollRepository.save(poll);
 
-    blockchainPoll.ifPresent(postgresRepository::save);
+//    blockchainPoll.ifPresent(postgresRepository::save);
 
     return blockchainPoll;
   }

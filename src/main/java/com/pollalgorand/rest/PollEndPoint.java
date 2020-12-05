@@ -3,6 +3,9 @@ package com.pollalgorand.rest;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.algorand.algosdk.transaction.Transaction;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,10 +21,21 @@ public class PollEndPoint {
   private CreatePollUseCase createPollUseCase;
   private PollRequestAdapter pollRequestAdapter;
 
+  private Logger logger = LoggerFactory.getLogger(PollEndPoint.class);
+
   public PollEndPoint(CreatePollUseCase createPollUseCase,
       PollRequestAdapter pollRequestAdapter) {
     this.createPollUseCase = createPollUseCase;
     this.pollRequestAdapter = pollRequestAdapter;
+  }
+
+  @PostMapping("/createpoll/signedtx")
+  public ResponseEntity<Optional<Poll>> createPollTransaction(@RequestBody PollRequest pollRequest) {
+
+    logger.info("Arrived request");
+    Poll poll = pollRequestAdapter.fromRequestToDomain(pollRequest);
+    Optional<Poll> createdPoll = createPollUseCase.create(poll);
+    return ResponseEntity.ok(createdPoll);
   }
 
   @PostMapping("/createpoll/unsignedtx")

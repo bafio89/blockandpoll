@@ -2,18 +2,33 @@ package com.pollalgorand.rest;
 
 import static java.util.Arrays.asList;
 
+import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.logic.StateSchema;
+import com.algorand.algosdk.transaction.SignedTransaction;
 import com.algorand.algosdk.transaction.Transaction;
+import com.algorand.algosdk.util.Encoder;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
+import com.algorand.algosdk.v2.client.common.Response;
+import com.algorand.algosdk.v2.client.model.PendingTransactionResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AlgorandPollRepository implements PollRepository {
+
+  private Logger logger = LoggerFactory.getLogger(AlgorandPollRepository.class);
 
   private AlgodClient algodClient;
   private TealProgramFactory tealProgramFactory;
   private PollBlockchainParamsAdapter pollBlockchainParamsAdapter;
+
+  private final String[] headers = {"X-API-Key"};
+  private final String[] values = {"KmeYVcOTUFayYL9uVy9mI9d7dDewlWth7pprTlo9"};
 
   public AlgorandPollRepository(AlgodClient algodClient,
       TealProgramFactory tealProgramFactory,
@@ -27,11 +42,37 @@ public class AlgorandPollRepository implements PollRepository {
   @Override
   public Optional<Poll> save(Poll poll) {
 
-//    tealProgramFactory.createFrom(poll);
-//
-//    return Optional.of(new BlockchainPoll());
+    Transaction unsignedTx = createUnsignedTxFor(poll);
 
-    return null;
+    Account account;
+    SignedTransaction signedTx;
+    try {
+      account = new Account(poll.getMnemonicKey());
+
+      signedTx = account.signTransaction(unsignedTx);
+
+      byte[] encodedTxBytes = Encoder.encodeToMsgPack(signedTx);
+      String id = algodClient.RawTransaction().rawtxn(encodedTxBytes).execute(headers, values).body().txId;
+
+      waitForConfirmation(id);
+
+      return Optional.of(new BlockchainPoll(id, poll.getName(), poll.getSender(), poll.getStartSubscriptionTime(), poll.getEndSubscriptionTime(),
+          poll.getStartVotingTime(), poll.getEndVotingTime(), poll.getOptions(), poll.getMnemonicKey()));
+
+    } catch (NoSuchAlgorithmException e) {
+      logger.error("Something goes wrong signing transaction", e);
+      throw new SignTransactionException(e, poll.getName());
+    } catch (GeneralSecurityException e) {
+      logger.error("Something goes wrong with mnemonic key transaction", e);
+      throw new InvalidMnemonicKeyException(e, poll.getName());
+    } catch (JsonProcessingException e) {
+      logger.error("Something goes wrong encoding transaction", e);
+      throw new EncodeTransactionException(e, poll.getName());
+    } catch (Exception e) {
+      logger.error("Something goes wrong sending transaction", e);
+      throw new SendingTransactionException(e, poll.getName());
+    }
+
   }
 
   @Override
@@ -44,22 +85,24 @@ public class AlgorandPollRepository implements PollRepository {
     PollTealParams pollTealParams = pollBlockchainParamsAdapter
         .fromPollToPollTealParams(poll, lastRound);
 
-    TEALProgram approvalProgramFrom = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
+    TEALProgram approvalProgram = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
     TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();
 
     try {
       transaction = Transaction.ApplicationCreateTransactionBuilder()
           .sender(poll.getSender())
           .args(arguments(pollTealParams))
-          .suggestedParams(algodClient.TransactionParams().execute().body())
-          .approvalProgram(approvalProgramFrom)
+          .suggestedParams(algodClient.TransactionParams().execute(headers, values).body())
+          .approvalProgram(approvalProgram)
           .clearStateProgram(clearStateProgram)
           .globalStateSchema(new StateSchema(6, 1))
           .localStateSchema(new StateSchema(0, 1))
           .build();
     } catch (IllegalArgumentException e) {
+      logger.error("Something goes wrong with Sender Address transaction", e);
       throw new InvalidSenderAddressException(e);
     } catch (Exception e) {
+      logger.error("Something goes wrong getting blockchain parameters transaction", e);
       throw new BlockChainParameterException(e);
     }
 
@@ -67,10 +110,12 @@ public class AlgorandPollRepository implements PollRepository {
   }
 
   private Long getBlockChainLastRound() {
+
     Long lastRound;
     try {
-      lastRound = algodClient.GetStatus().execute().body().lastRound;
+      lastRound = algodClient.GetStatus().execute(headers, values).body().lastRound;
     } catch (Exception e) {
+      logger.error("Something goes wrong getting last blockchain round", e);
       throw new NodeStatusException(e);
     }
     return lastRound;
@@ -82,5 +127,28 @@ public class AlgorandPollRepository implements PollRepository {
         pollTealParams.getEndSubscriptionTime(),
         pollTealParams.getStartVotingTime(),
         pollTealParams.getEndVotingTime());
+  }
+
+  private void waitForConfirmation(String txID) {
+
+    try {
+      Long lastRound = algodClient.GetStatus().execute(headers,values).body().lastRound;
+      while (true) {
+
+        // Check the pending transactions
+        Response<PendingTransactionResponse> pendingInfo = algodClient
+            .PendingTransactionInformation(txID).execute();
+        if (pendingInfo.body().confirmedRound != null && pendingInfo.body().confirmedRound > 0) {
+          // Got the completed Transaction
+          System.out.println(
+              "Transaction " + txID + " confirmed in round " + pendingInfo.body().confirmedRound);
+          break;
+        }
+        lastRound++;
+        algodClient.WaitForBlock(lastRound).execute();
+      }
+    } catch (Exception e) {
+      throw new WaitingTransactionConfirmationException(e, e.getMessage());
+    }
   }
 }

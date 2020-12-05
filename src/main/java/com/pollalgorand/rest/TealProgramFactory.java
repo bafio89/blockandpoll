@@ -16,7 +16,12 @@ public class TealProgramFactory {
 
   public static final String PLACEHOLDER_1 = "OPTION_1";
   public static final String PLACEHOLDER_2 = "OPTION_2";
-  private final String PATH = "teal/vote.teal";
+  private final String APPROVAL_PROGRAM_PATH = "teal/vote.teal";
+  private final String CLEAR_STATE_PROGRAM_PATH = "teal/vote_opt_out.teal";
+
+  private final String[] headers = {"X-API-Key"};
+  private final String[] values = {"KmeYVcOTUFayYL9uVy9mI9d7dDewlWth7pprTlo9"};
+
 
   private AlgodClient algodClient;
 
@@ -27,14 +32,25 @@ public class TealProgramFactory {
 
   public TEALProgram createApprovalProgramFrom(PollTealParams pollTealParams) {
 
-    String tealProgram = readFile()
+    String tealProgramAsString = readFile(APPROVAL_PROGRAM_PATH)
         .replace(PLACEHOLDER_1, pollTealParams.getOptions().get(0))
         .replace(PLACEHOLDER_2, pollTealParams.getOptions().get(1));
 
+    return compileProgram(tealProgramAsString);
+  }
+
+  public TEALProgram createClearStateProgram() {
+
+    String clearStateProgramAsString = readFile(CLEAR_STATE_PROGRAM_PATH);
+    return compileProgram(clearStateProgramAsString);
+
+  }
+
+  private TEALProgram compileProgram(String tealProgramAsStream) {
     Response<CompileResponse> compileResponse;
     try {
       compileResponse = algodClient.TealCompile()
-          .source(tealProgram.getBytes(UTF_8)).execute();
+          .source(tealProgramAsStream.getBytes(UTF_8)).execute(headers, values);
     } catch (Exception e) {
       throw new CompileTealProgramException(e);
     }
@@ -42,11 +58,7 @@ public class TealProgramFactory {
     return new TEALProgram(compileResponse.body().result);
   }
 
-  public TEALProgram createClearStateProgram() {
-    return null;
-  }
-
-  private String readFile() {
+  private String readFile(String PATH) {
     try {
       return Files.lines(Paths.get(ClassLoader.getSystemResource(PATH).toURI())).collect(
           joining("\n"));

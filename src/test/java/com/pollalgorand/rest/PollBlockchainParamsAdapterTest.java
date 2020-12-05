@@ -62,7 +62,7 @@ public class PollBlockchainParamsAdapterTest {
 
     Poll poll = new Poll(
         A_POLL, startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime,
-        options, SENDER);
+        options, SENDER, "mnemonicKey");
 
     context.checking(new Expectations() {{
       oneOf(algorandDateAdapter).fromDateToBlockNumber(startSubscriptionTime, LAST_ROUND);

@@ -15,13 +15,15 @@ public class Poll {
   private LocalDateTime endVotingTime;
   private List<String> options;
   private String sender;
+  private String mnemonicKey;
 
 
   public Poll(String name, LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
       LocalDateTime startVotingTime,
       LocalDateTime endVotingTime,
       List<String> options,
-      String sender) {
+      String sender,
+      String mnemonicKey) {
     this.name = name;
     this.startSubscriptionTime = startSubscriptionTime;
     this.endSubscriptionTime = endSubscriptionTime;
@@ -29,6 +31,7 @@ public class Poll {
     this.endVotingTime = endVotingTime;
     this.options = options;
     this.sender = sender;
+    this.mnemonicKey = mnemonicKey;
 
     validateName();
     validateOptions();
@@ -122,5 +125,9 @@ public class Poll {
         ", options=" + options +
         ", sender='" + sender + '\'' +
         '}';
+  }
+
+  public String getMnemonicKey() {
+    return mnemonicKey;
   }
 }

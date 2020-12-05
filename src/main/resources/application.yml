@@ -1,6 +1,6 @@
 
 spring:
   application:
-    name: pollAlgorand
+    name: pollalgorand
 
 server.port: ${PORT:5000}

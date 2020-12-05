@@ -27,8 +27,9 @@ public class Config {
 
   @Bean
   public PollRepository pollRepository(){
-    //TODO
-    AlgodClient algodClient = new AlgodClient("TODO", 0, "");
+
+    AlgodClient algodClient = new AlgodClient("https://testnet-algorand.api.purestake.io/ps2", 443, "");
+
     return new AlgorandPollRepository(algodClient, new TealProgramFactory(algodClient), new PollBlockchainParamsAdapter(new AlgorandDateAdapter(new Clock())));
   }
 

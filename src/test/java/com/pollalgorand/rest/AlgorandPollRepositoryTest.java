@@ -127,6 +127,7 @@ public class AlgorandPollRepositoryTest {
 
       oneOf(response).body();
       will(returnValue(transactionParametersResponse));
+
     }});
 
     Transaction unsignedTx = algorandPollRepository.createUnsignedTxFor(poll);
@@ -141,7 +142,7 @@ public class AlgorandPollRepositoryTest {
   private Poll aPollWith(String sender) {
     return new Poll("A_POLL", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
         asList("OPTION_1", "OPTION_2"),
-        sender);
+        sender, "mnemonicKey");
   }
 
   @Test
