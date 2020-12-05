@@ -2,12 +2,12 @@
 TODO
 
 - [ ] Rimouvere mnemonic key dalla response
-- [ ] avere AppId nella risposta.
 - [ ] Creare frontend
 - [ ] attaccarci database.
 - [ ] parte di voto 
 - [ ] Dire all sdk di restituire errori piu parlanti 
 
+- [x] avere AppId nella risposta.
 - [x] configurazioni 
 - [x] Test per endpoint
 - [x] corner case
