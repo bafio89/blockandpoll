@@ -15,6 +15,7 @@
     "promise-polyfill": "^7.1.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-router-dom": "^5.2.0",
     "rest": "^2.0.0",
     "url-search-params-polyfill": "^3.0.0",
     "webpack": "^3.5.6",

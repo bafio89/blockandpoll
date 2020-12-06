@@ -1,6 +1,12 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import FirstComponent from "./FirstComponent";
+import {HashRouter, Route, Switch} from "react-router-dom";
+import CreatePoll from "./CreatePoll";
 
-ReactDOM.render(<FirstComponent/>,
+ReactDOM.render(
+    <HashRouter>
+      <Switch>
+        <Route path="/createPoll" component={CreatePoll}/>
+      </Switch>
+    </HashRouter>,
     document.getElementById('react'));

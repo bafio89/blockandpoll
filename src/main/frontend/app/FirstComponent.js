@@ -12,10 +12,10 @@ class FirstComponent extends React.Component {
 
   componentDidMount() {
 
-     fetch("/bo/helloworld").then(function (response) {console.log(" ciao " + response)
+     fetch("/bo/helloworld").then(function (response) {
       if (response.ok) {
-        response.text().then(function (data) {console.log(" a tutti" + data)
-          this.setState({
+        response.text().then(function (data) {
+           this.setState({
             txt: data
           });
         }.bind(this));
@@ -32,7 +32,7 @@ class FirstComponent extends React.Component {
   }
 
   render() {
-    return <h1>Algo App: {this.state.txt}</h1>
+    return <h1>Algo CIAO App: {this.state.txt}</h1>
   }
 }
 
