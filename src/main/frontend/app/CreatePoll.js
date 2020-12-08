@@ -16,7 +16,7 @@ class CreatePoll extends React.Component{
     this.state = {name: ''}
     this.state = {option1: ''}
     this.state = {option2: ''}
-    this.state = {startSubDate: nowValues}
+    this.state = {startSubDate: ''}
     this.state = {endSubDate: ''}
     this.state = {startVotingDate: ''}
     this.state = {endVotingDate: ''}
@@ -32,6 +32,18 @@ class CreatePoll extends React.Component{
     this.handleEndVotingDateChange = this.handleEndVotingDateChange.bind(this);
 
     this.createPoll = this.createPoll.bind(this);
+
+  }
+
+  componentDidMount() {
+    this.setDefault()
+  }
+
+  setDefault(){
+    this.setState({startSubDate: nowValues.now})
+    this.setState({endSubDate: nowValues.now})
+    this.setState({startVotingDate: nowValues.now})
+    this.setState({endVotingDate: nowValues.now})
   }
 
   handleSenderChange(event) {
@@ -55,7 +67,7 @@ class CreatePoll extends React.Component{
     this.setState({option2: event.target.value})
   }
 
-  handleStartSubDateChange(event){
+  handleStartSubDateChange(event){console.log("onload")
     this.setState({startSubDate: event.target.value})
   }
 
@@ -72,7 +84,7 @@ class CreatePoll extends React.Component{
     this.setState({endVotingDate: event.target.value})
   }
 
-  createPoll(event) {console.log(this.state.startSubDate)
+  createPoll(event) {console.log("MADONNA " + this.state.startVotingDate)
     return fetch("/createpoll/signedtx",
         {
           method: 'POST',
@@ -104,7 +116,7 @@ class CreatePoll extends React.Component{
     return (
         <div>
           <form className="createPoll" noValidate autoComplete="off" onSubmit={this.createPoll}>
-            <TextField id="sender" label="Creator address" variant="outlined" value={this.state.sender || ''} onChange={this.handleSenderChange} />
+            <TextField id="sender" label="Creator address" variant="outlined" value={this.state.sender} onChange={this.handleSenderChange} />
             <TextField id="mnemonicKey" label="Passphrase" variant="outlined" value={this.state.mnemonicKey || ''} onChange={this.handleMnemonicKeyChange}/>
             <br/>
             <TextField id="pollName" label="Name" variant="outlined" value={this.state.name || ''} onChange={this.handleNameChange}/>
@@ -117,44 +129,44 @@ class CreatePoll extends React.Component{
                 id="date"
                 label="start subscription date"
                 type="date"
-                defaultValue={nowValues.now}
                 className= "start subscription"
                 InputLabelProps={{
                   shrink: true,
                 }}
+                value={this.state.startSubDate || ''}
                 onChange={this.handleStartSubDateChange}
             />
             <TextField
                 id="date"
                 label="end subscription date"
                 type="date"
-                defaultValue={nowValues.now}
                 className= "end subscription"
                 InputLabelProps={{
                   shrink: true,
                 }}
+                value={this.state.endSubDate || ''}
                 onChange={this.handleEndSubDateChange}
             />
             <TextField
                 id="date"
                 label="start voting date"
                 type="date"
-                defaultValue={nowValues.now}
                 className= "start voting"
                 InputLabelProps={{
                   shrink: true,
                 }}
+                value={this.state.startVotingDate || ''}
                 onChange={this.handleStartVotingDateChange}
             />
             <TextField
                 id="date"
                 label="end voting date"
                 type="date"
-                defaultValue={nowValues.now}
                 className= "end voting"
                 InputLabelProps={{
                   shrink: true,
                 }}
+                value={this.state.endVotingDate || ''}
                 onChange={this.handleEndVotingDateChange}
             />
             <Button variant="contained" color="primary" type="submit">
