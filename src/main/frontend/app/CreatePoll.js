@@ -1,6 +1,11 @@
 import * as React from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import moment from "moment";
+
+const nowValues = {
+  now: moment().format("yyyy-MM-DD")
+};
 
 class CreatePoll extends React.Component{
 
@@ -11,7 +16,7 @@ class CreatePoll extends React.Component{
     this.state = {name: ''}
     this.state = {option1: ''}
     this.state = {option2: ''}
-    this.state = {startSubDate: ''}
+    this.state = {startSubDate: nowValues}
     this.state = {endSubDate: ''}
     this.state = {startVotingDate: ''}
     this.state = {endVotingDate: ''}
@@ -67,15 +72,39 @@ class CreatePoll extends React.Component{
     this.setState({endVotingDate: event.target.value})
   }
 
-  createPoll(event) {
-    console.log("babab " + this.state.sender);
+  createPoll(event) {console.log(this.state.startSubDate)
+    return fetch("/createpoll/signedtx",
+        {
+          method: 'POST',
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            sender: this.state.sender,
+            mnemonicKey: this.state.mnemonicKey,
+            name: this.state.name,
+            startSubscriptionTime: this.state.startSubDate + "T00:00:00",
+            endSubscriptionTime: this.state.endSubDate + "T00:00:00",
+            startVotingTime: this.state.startVotingDate + "T00:00:00",
+            endVotingTime: this.state.endVotingDate + "T00:00:00",
+            options: [this.state.option1, this.state.option2]
+          })
+        }).then(function (response) {console.log(response.body)
+      if (response.ok) {
+        response.text().then(function (data) {
+          this.setState({
+            txt: data
+          });
+        }.bind(this));
+  }});
   }
 
   render() {
     return (
         <div>
           <form className="createPoll" noValidate autoComplete="off" onSubmit={this.createPoll}>
-            <TextField id="sender" label="Creator address" variant="outlined" value={this.state.sender || ''} onChange={this.handleSenderChange}/>
+            <TextField id="sender" label="Creator address" variant="outlined" value={this.state.sender || ''} onChange={this.handleSenderChange} />
             <TextField id="mnemonicKey" label="Passphrase" variant="outlined" value={this.state.mnemonicKey || ''} onChange={this.handleMnemonicKeyChange}/>
             <br/>
             <TextField id="pollName" label="Name" variant="outlined" value={this.state.name || ''} onChange={this.handleNameChange}/>
@@ -88,48 +117,44 @@ class CreatePoll extends React.Component{
                 id="date"
                 label="start subscription date"
                 type="date"
-                defaultValue=""
+                defaultValue={nowValues.now}
                 className= "start subscription"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={this.state.startSubDate || ''}
                 onChange={this.handleStartSubDateChange}
             />
             <TextField
                 id="date"
                 label="end subscription date"
                 type="date"
-                defaultValue=""
+                defaultValue={nowValues.now}
                 className= "end subscription"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={this.state.endSubDate || ''}
                 onChange={this.handleEndSubDateChange}
             />
             <TextField
                 id="date"
                 label="start voting date"
                 type="date"
-                defaultValue=""
+                defaultValue={nowValues.now}
                 className= "start voting"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={this.state.startVotingDate || ''}
                 onChange={this.handleStartVotingDateChange}
             />
             <TextField
                 id="date"
                 label="end voting date"
                 type="date"
-                defaultValue=""
+                defaultValue={nowValues.now}
                 className= "end voting"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={this.state.endVotingDate || ''}
                 onChange={this.handleEndVotingDateChange}
             />
             <Button variant="contained" color="primary" type="submit">

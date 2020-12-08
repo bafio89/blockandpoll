@@ -6,7 +6,7 @@ import CreatePoll from "./CreatePoll";
 ReactDOM.render(
     <HashRouter>
       <Switch>
-        <Route path="/createPoll" component={CreatePoll}/>
+        <Route path="/" component={CreatePoll}/>
       </Switch>
     </HashRouter>,
     document.getElementById('react'));
