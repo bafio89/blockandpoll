@@ -1,12 +1,9 @@
 package com.pollalgorand.rest.domain.repository;
 
-import com.algorand.algosdk.transaction.Transaction;
-import com.pollalgorand.rest.domain.model.Poll;
-import java.util.Optional;
+import com.pollalgorand.rest.domain.model.BlockchainPoll;
 
 public interface PollRepository {
 
-  Optional<Poll> save(Poll poll);
+   void save(BlockchainPoll poll);
 
-  Transaction createUnsignedTxFor(Poll poll);
 }

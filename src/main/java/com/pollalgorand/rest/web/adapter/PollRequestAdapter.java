@@ -17,7 +17,7 @@ public class PollRequestAdapter {
         poll.getEndVotingTime(),
         poll.getOptions(),
         poll.getSender(),
-        poll.getMnemonicKey());
+        poll.getMnemonicKey(), poll.getDescription());
   }
 
   public byte [] fromDomainToRequest(Transaction transaction){

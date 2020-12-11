@@ -2,6 +2,7 @@
 spring:
   application:
     name: pollalgorand
+
   datasource:
     url: jdbc:postgresql://localhost:5432/algoproject
     username: postgres

@@ -4,6 +4,7 @@ import static org.springframework.http.ResponseEntity.status;
 
 import com.algorand.algosdk.transaction.Transaction;
 import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
+import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
 import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
@@ -35,11 +36,11 @@ public class PollEndPoint {
   }
 
   @PostMapping("/createpoll/signedtx")
-  public ResponseEntity<Poll> createPollTransaction(@RequestBody PollRequest pollRequest) {
+  public ResponseEntity<BlockchainPoll> createPollTransaction(@RequestBody PollRequest pollRequest) {
 
     logger.info("Arrived request");
     Poll poll = pollRequestAdapter.fromRequestToDomain(pollRequest);
-    Optional<Poll> createdPoll = createPollUseCase.create(poll);
+    Optional<BlockchainPoll> createdPoll = createPollUseCase.create(poll);
     return ResponseEntity.ok(createdPoll.get());
   }
 

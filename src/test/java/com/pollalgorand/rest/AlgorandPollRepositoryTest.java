@@ -149,7 +149,7 @@ public class AlgorandPollRepositoryTest {
   private Poll aPollWith(String sender) {
     return new Poll("A_POLL", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
         asList("OPTION_1", "OPTION_2"),
-        sender, "mnemonicKey");
+        sender, "mnemonicKey", "description");
   }
 
   @Test

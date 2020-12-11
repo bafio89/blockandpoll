@@ -13,6 +13,7 @@ public class PollRequest {
   private List<String> options;
   private String sender;
   private String mnemonicKey;
+  private String description;
 
   public PollRequest() {
   }
@@ -20,7 +21,7 @@ public class PollRequest {
   public PollRequest(String name, LocalDateTime startSubscriptionTime,
       LocalDateTime endSubscriptionTime, LocalDateTime startVotingTime,
       LocalDateTime endVotingTime, List<String> options, String sender,
-      String mnemonicKey) {
+      String mnemonicKey, String description) {
     this.name = name;
     this.startSubscriptionTime = startSubscriptionTime;
     this.endSubscriptionTime = endSubscriptionTime;
@@ -29,6 +30,7 @@ public class PollRequest {
     this.options = options;
     this.sender = sender;
     this.mnemonicKey = mnemonicKey;
+    this.description = description;
   }
 
   public String getName() {
@@ -87,6 +89,18 @@ public class PollRequest {
     this.sender = sender;
   }
 
+  public String getMnemonicKey() {
+    return mnemonicKey;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
   @Override
   public String toString() {
     return "PollRequest{" +
@@ -97,10 +111,8 @@ public class PollRequest {
         ", endVotingTime=" + endVotingTime +
         ", options=" + options +
         ", sender='" + sender + '\'' +
+        ", mnemonicKey='" + mnemonicKey + '\'' +
+        ", description='" + description + '\'' +
         '}';
-  }
-
-  public String getMnemonicKey() {
-    return mnemonicKey;
   }
 }

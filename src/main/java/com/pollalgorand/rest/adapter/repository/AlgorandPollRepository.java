@@ -26,7 +26,7 @@ import com.pollalgorand.rest.adapter.exceptions.SignTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.WaitingTransactionConfirmationException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
-import com.pollalgorand.rest.domain.repository.PollRepository;
+import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -35,7 +35,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AlgorandPollRepository implements PollRepository {
+public class AlgorandPollRepository implements BlockchainPollRepository {
 
   private Logger logger = LoggerFactory.getLogger(AlgorandPollRepository.class);
 
@@ -58,7 +58,7 @@ public class AlgorandPollRepository implements PollRepository {
   }
 
   @Override
-  public Optional<Poll> save(Poll poll) {
+  public Optional<BlockchainPoll> save(Poll poll) {
 
     Transaction unsignedTx = createUnsignedTxFor(poll);
 
@@ -77,7 +77,7 @@ public class AlgorandPollRepository implements PollRepository {
       Long appId = getApplicationId(transactionId);
 
       return Optional.of(new BlockchainPoll(appId, poll.getName(), poll.getSender(), poll.getStartSubscriptionTime(), poll.getEndSubscriptionTime(),
-          poll.getStartVotingTime(), poll.getEndVotingTime(), poll.getOptions(), poll.getMnemonicKey()));
+          poll.getStartVotingTime(), poll.getEndVotingTime(), poll.getOptions(), poll.getMnemonicKey(), poll.getDescription()));
 
     } catch (NoSuchAlgorithmException e) {
       logger.error("Something goes wrong signing transaction", e);

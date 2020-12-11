@@ -3,6 +3,7 @@ package com.pollalgorand.rest;
 import static java.util.Arrays.asList;
 
 import com.pollalgorand.rest.domain.model.Poll;
+import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ public class CreateBlockchainPollUseCaseTest {
   @Rule public ExpectedException expectedException = ExpectedException.none();
 
   @Mock
-  private PollRepository blockChainPollRepository;
+  private BlockchainPollRepository blockChainPollRepository;
 
   @Mock
   private PollRepository postgresRepository;
@@ -105,7 +106,7 @@ public class CreateBlockchainPollUseCaseTest {
   @Test
   public void createTransactionHappyPath() {
     Poll poll = new Poll("A POLL NAME", DATE, DATE, DATE,
-        DATE, asList("Option 1", "Option 2"), "sender", "mnemonicKey");
+        DATE, asList("Option 1", "Option 2"), "sender", "mnemonicKey", "description");
 
     context.checking(new Expectations(){{
       oneOf(blockChainPollRepository).createUnsignedTxFor(poll);

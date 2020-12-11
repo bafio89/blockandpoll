@@ -11,8 +11,9 @@ public class BlockchainPoll extends Poll {
   public BlockchainPoll(Long appId, String name, String sender,
       LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
       LocalDateTime startVotingTime, LocalDateTime endVotingTime,
-      List<String> options, String mnemonicKey) {
-    super(name,startSubscriptionTime,endSubscriptionTime,startVotingTime,endVotingTime,options,sender, mnemonicKey);
+      List<String> options, String mnemonicKey, String description) {
+    super(name,startSubscriptionTime,endSubscriptionTime,startVotingTime,endVotingTime,options,sender, mnemonicKey,
+        description);
     this.appId = appId;
   }
 

@@ -26,7 +26,7 @@ public class PollTest {
 
     new Poll(A_NAME, LocalDateTime.of(2020,11, 29, 0,0),
         LocalDateTime.of(2020,11, 11, 0,0),
-        null, null, emptyList(), "", "mnemonicKey");
+        null, null, emptyList(), "", "mnemonicKey", "description");
 
   }
 
@@ -41,7 +41,7 @@ public class PollTest {
         LocalDateTime.of(2020,11, 29, 0,0),
         LocalDateTime.of(2020,11, 11, 0,0),
         emptyList(),
-        "", "mnemonicKey");
+        "", "mnemonicKey", "description");
 
   }
 
@@ -51,7 +51,7 @@ public class PollTest {
     expectedException.expect(IllegalPollParameterException.class);
     expectedException.expectMessage("Invalid poll parameters: poll name is too long");
 
-    new Poll(INVALID_POLL_NAME, null,null,null,null,null,null, "mnemonicKey");
+    new Poll(INVALID_POLL_NAME, null,null,null,null,null,null, "mnemonicKey", "description");
   }
 
   @Test
@@ -59,7 +59,8 @@ public class PollTest {
     expectedException.expect(IllegalPollParameterException.class);
     expectedException.expectMessage("Invalid poll parameters: at least an option name is too long");
 
-    new Poll(A_NAME, null,null,null,null, asList(INVALID_OPTION_NAME),null, "mnemonicKey");
+    new Poll(A_NAME, null,null,null,null, asList(INVALID_OPTION_NAME),null, "mnemonicKey",
+        "description");
 
   }
 }

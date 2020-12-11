@@ -17,6 +17,7 @@ public class Poll {
   private List<String> options;
   private String sender;
   private String mnemonicKey;
+  private String description;
 
 
   public Poll(String name, LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
@@ -24,7 +25,7 @@ public class Poll {
       LocalDateTime endVotingTime,
       List<String> options,
       String sender,
-      String mnemonicKey) {
+      String mnemonicKey, String description) {
     this.name = name;
     this.startSubscriptionTime = startSubscriptionTime;
     this.endSubscriptionTime = endSubscriptionTime;
@@ -33,6 +34,7 @@ public class Poll {
     this.options = options;
     this.sender = sender;
     this.mnemonicKey = mnemonicKey;
+    this.description = description;
 
     validateName();
     validateOptions();
@@ -90,6 +92,18 @@ public class Poll {
     return options;
   }
 
+  public String getMnemonicKey() {
+    return mnemonicKey;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -126,9 +140,5 @@ public class Poll {
         ", options=" + options +
         ", sender='" + sender + '\'' +
         '}';
-  }
-
-  public String getMnemonicKey() {
-    return mnemonicKey;
   }
 }

@@ -97,13 +97,13 @@ public class PollEndPointTest {
     return new PollRequest("A NAME",
         now, now, now, now,
         singletonList("AN OPTION"),
-        "A SENDER", "mnemonicKey");
+        "A SENDER", "mnemonicKey", "description");
   }
 
   private Poll aPoll(LocalDateTime now){
     return new Poll("A NAME",
         now, now, now, now,
         singletonList("AN OPTION"),
-        "A SENDER", "mnemonicKey");
+        "A SENDER", "mnemonicKey", "description");
   }
 }

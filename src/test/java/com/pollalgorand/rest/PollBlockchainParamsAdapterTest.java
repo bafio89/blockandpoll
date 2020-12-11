@@ -26,6 +26,8 @@ public class PollBlockchainParamsAdapterTest {
   public static final Long A_END_SUBS_BLOCK_NUMBER = 2L;
   public static final Long A_START_VOTE_BLOCK_NUMBER = 3L;
   public static final Long A_END_VOTE_BLOCK_NUMBER = 4L;
+  public static final String MNEMONIC_KEY = "mnemonicKey";
+  public static final String DESCRIPTION = "description";
 
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
@@ -66,7 +68,7 @@ public class PollBlockchainParamsAdapterTest {
 
     Poll poll = new Poll(
         A_POLL, startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime,
-        options, SENDER, "mnemonicKey");
+        options, SENDER, MNEMONIC_KEY, DESCRIPTION);
 
     context.checking(new Expectations() {{
       oneOf(algorandDateAdapter).fromDateToBlockNumber(startSubscriptionTime, LAST_ROUND);
