@@ -6,6 +6,10 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import com.pollalgorand.rest.adapter.PollTealParams;
+import com.pollalgorand.rest.adapter.converter.AlgorandDateAdapter;
+import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
+import com.pollalgorand.rest.domain.model.Poll;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.jmock.Expectations;

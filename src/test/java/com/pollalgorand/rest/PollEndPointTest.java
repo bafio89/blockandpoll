@@ -8,6 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
+import com.pollalgorand.rest.domain.model.Poll;
+import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
+import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
+import com.pollalgorand.rest.web.endpoint.PollEndPoint;
+import com.pollalgorand.rest.web.request.PollRequest;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import org.jmock.Expectations;

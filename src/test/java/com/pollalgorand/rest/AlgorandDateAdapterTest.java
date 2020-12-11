@@ -4,6 +4,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.rules.ExpectedException.none;
 
+import com.pollalgorand.rest.adapter.Clock;
+import com.pollalgorand.rest.adapter.converter.AlgorandDateAdapter;
+import com.pollalgorand.rest.adapter.exceptions.PastDateException;
 import java.time.LocalDateTime;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;

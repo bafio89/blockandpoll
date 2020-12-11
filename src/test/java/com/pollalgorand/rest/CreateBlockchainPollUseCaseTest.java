@@ -2,6 +2,9 @@ package com.pollalgorand.rest;
 
 import static java.util.Arrays.asList;
 
+import com.pollalgorand.rest.domain.model.Poll;
+import com.pollalgorand.rest.domain.repository.PollRepository;
+import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
 import java.time.LocalDateTime;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;

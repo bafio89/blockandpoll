@@ -1,14 +1,14 @@
 package com.pollalgorand.rest.config;
 
 import com.algorand.algosdk.v2.client.common.AlgodClient;
-import com.pollalgorand.rest.AlgorandDateAdapter;
-import com.pollalgorand.rest.AlgorandPollRepository;
-import com.pollalgorand.rest.Clock;
-import com.pollalgorand.rest.CreatePollUseCase;
-import com.pollalgorand.rest.PollBlockchainParamsAdapter;
-import com.pollalgorand.rest.PollRepository;
-import com.pollalgorand.rest.PollRequestAdapter;
-import com.pollalgorand.rest.TealProgramFactory;
+import com.pollalgorand.rest.adapter.Clock;
+import com.pollalgorand.rest.adapter.TealProgramFactory;
+import com.pollalgorand.rest.adapter.converter.AlgorandDateAdapter;
+import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
+import com.pollalgorand.rest.adapter.repository.AlgorandPollRepository;
+import com.pollalgorand.rest.domain.repository.PollRepository;
+import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
+import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

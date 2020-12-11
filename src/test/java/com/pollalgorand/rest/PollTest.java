@@ -3,6 +3,8 @@ package com.pollalgorand.rest;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
+import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
+import com.pollalgorand.rest.domain.model.Poll;
 import java.time.LocalDateTime;
 import org.junit.Rule;
 import org.junit.Test;

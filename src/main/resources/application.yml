@@ -2,5 +2,10 @@
 spring:
   application:
     name: pollalgorand
+  datasource:
+    url: jdbc:postgresql://localhost:5432/algoproject
+    username: postgres
+    password: developer
+    max-connections: 10
 
 server.port: ${PORT:5000}
