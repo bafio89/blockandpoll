@@ -9,6 +9,13 @@ aggiunto system.properties  con proprietà java.runtime.version=11, per dire a h
 link utile di algorand per callableTransaction https://developer.algorand.org/docs/features/asc1/stateful/sdks/
 
 
+STARTARE L'app in locale
+
+per startare il backend: play da intellj
+per il frontend mettersi nel path .../pollgorand/src/main/frontend e lanciare comando npm start 
+accedere da (localhost:9091)
+
+
 Algoritmo per calcolo date.
 
 - data 

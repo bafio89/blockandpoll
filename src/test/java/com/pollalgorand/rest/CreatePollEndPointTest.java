@@ -12,7 +12,7 @@ import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
 import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
-import com.pollalgorand.rest.web.endpoint.PollEndPoint;
+import com.pollalgorand.rest.web.endpoint.CreatePollEndPoint;
 import com.pollalgorand.rest.web.request.PollRequest;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class PollEndPointTest {
+public class CreatePollEndPointTest {
 
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery(){{
@@ -43,7 +43,7 @@ public class PollEndPointTest {
   @Before
   public void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(
-        new PollEndPoint(createPollUseCase, new PollRequestAdapter())
+        new CreatePollEndPoint(createPollUseCase, new PollRequestAdapter())
     ).build();
 
     objectMapper = new ObjectMapper();

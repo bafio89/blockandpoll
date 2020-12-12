@@ -19,6 +19,8 @@ public class Poll {
   private String mnemonicKey;
   private String description;
 
+  public Poll() {
+  }
 
   public Poll(String name, LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
       LocalDateTime startVotingTime,

@@ -22,14 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(headers = "Accept=application/json")
-public class PollEndPoint {
+public class CreatePollEndPoint {
 
   private CreatePollUseCase createPollUseCase;
   private PollRequestAdapter pollRequestAdapter;
 
-  private Logger logger = LoggerFactory.getLogger(PollEndPoint.class);
+  private Logger logger = LoggerFactory.getLogger(CreatePollEndPoint.class);
 
-  public PollEndPoint(CreatePollUseCase createPollUseCase,
+  public CreatePollEndPoint(CreatePollUseCase createPollUseCase,
       PollRequestAdapter pollRequestAdapter) {
     this.createPollUseCase = createPollUseCase;
     this.pollRequestAdapter = pollRequestAdapter;
@@ -40,6 +40,7 @@ public class PollEndPoint {
 
     logger.info("Arrived request");
     Poll poll = pollRequestAdapter.fromRequestToDomain(pollRequest);
+    logger.info("Request adapted to poll");
     Optional<BlockchainPoll> createdPoll = createPollUseCase.create(poll);
     return ResponseEntity.ok(createdPoll.get());
   }
@@ -54,11 +55,13 @@ public class PollEndPoint {
 
   @ExceptionHandler(value = {IllegalPollParameterException.class})
   public ResponseEntity preconditionFailedExceptionHandler(RuntimeException e) {
+    logger.error("An error occurred caused by wrong parameters. " , e);
     return status(HttpStatus.PRECONDITION_FAILED).body(e.getMessage());
   }
 
   @ExceptionHandler(value = {RuntimeException.class})
   public ResponseEntity genericErrorExceptionHandler(RuntimeException e){
+    logger.error("An error occurred. " , e);
     return status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
   }
 }

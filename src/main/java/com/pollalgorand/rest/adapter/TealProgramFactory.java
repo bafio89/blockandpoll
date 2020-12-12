@@ -59,14 +59,13 @@ public class TealProgramFactory {
     return new TEALProgram(compileResponse.body().result);
   }
 
-  private String readFile(String PATH) {
+  private String readFile(String path) {
     try {
-      return Files.lines(Paths.get(ClassLoader.getSystemResource(PATH).toURI())).collect(
+      return Files.lines(Paths.get(ClassLoader.getSystemResource(path).toURI())).collect(
           joining("\n"));
     } catch (IOException | URISyntaxException e) {
       throw new RuntimeException(e);
     }
   }
-
 }
 

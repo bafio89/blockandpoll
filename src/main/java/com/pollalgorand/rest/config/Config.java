@@ -9,6 +9,7 @@ import com.pollalgorand.rest.adapter.repository.AlgorandPollRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
+import com.pollalgorand.rest.domain.usecase.RetrievePollUseCase;
 import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,11 @@ public class Config {
   @Bean
   public CreatePollUseCase createPollUseCase(BlockchainPollRepository blockchainPollRepository, PollRepository postgresPollRepository){
     return new CreatePollUseCase(blockchainPollRepository, postgresPollRepository);
+  }
+
+  @Bean
+  public RetrievePollUseCase retrievePollUseCase(PollRepository postgresPollRepository){
+    return new RetrievePollUseCase(postgresPollRepository);
   }
 
   @Bean

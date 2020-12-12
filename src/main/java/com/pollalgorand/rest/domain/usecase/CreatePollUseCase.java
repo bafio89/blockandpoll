@@ -7,8 +7,12 @@ import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreatePollUseCase {
+
+  private Logger logger = LoggerFactory.getLogger(CreatePollUseCase.class);
 
   private final BlockchainPollRepository blockChainBlockchainPollRepository;
   private final PollRepository postgresRepository;
@@ -23,6 +27,8 @@ public class CreatePollUseCase {
   public Optional<BlockchainPoll> create(Poll poll) {
 
     Optional<BlockchainPoll> blockchainPoll = blockChainBlockchainPollRepository.save(poll);
+
+    logger.info(String.format("Created poll with app id: %s", blockchainPoll.map(BlockchainPoll::getAppId)));
 
     blockchainPoll.ifPresent(postgresRepository::save);
 

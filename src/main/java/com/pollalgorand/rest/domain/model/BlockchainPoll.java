@@ -8,6 +8,9 @@ public class BlockchainPoll extends Poll {
 
   private Long appId;
 
+  public BlockchainPoll() {
+  }
+
   public BlockchainPoll(Long appId, String name, String sender,
       LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
       LocalDateTime startVotingTime, LocalDateTime endVotingTime,
