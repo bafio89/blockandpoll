@@ -32,7 +32,7 @@ class Poll extends React.Component{
 
   render(){
     return <div>
-      <Card className={useStyles.root} variant="outlined">
+      <Card className={useStyles.root} variant="outlined" style={{'maxWidth': '300px'}}>
         <CardContent>
           <Typography className={useStyles.title} color="textSecondary" gutterBottom>
             Permissionless
