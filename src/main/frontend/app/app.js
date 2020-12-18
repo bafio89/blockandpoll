@@ -7,7 +7,7 @@ import CreatePoll from "./CreatePoll";
 ReactDOM.render(
     <HashRouter>
       <Switch>
-        <Route path="/home" component={Home}/>
+        <Route exact path="/" component={Home}/>
         <Route path="/createpoll/" component={CreatePoll}/>
       </Switch>
     </HashRouter>,
