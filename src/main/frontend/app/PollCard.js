@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
 });
 
-class Poll extends React.Component{
+class PollCard extends React.Component{
 
   constructor(props) {
     super(props);
@@ -31,8 +31,8 @@ class Poll extends React.Component{
   }
 
   render(){
-    return <div>
-      <Card className={useStyles.root} variant="outlined" style={{'maxWidth': '300px'}}>
+    return <div style={{'alignContent':'center'}}>
+      <Card className={useStyles.root} variant="outlined" style={{'margin': '15px',  'height': '180px'}}>
         <CardContent>
           <Typography className={useStyles.title} color="textSecondary" gutterBottom>
             Permissionless
@@ -57,4 +57,4 @@ class Poll extends React.Component{
   }
 }
 
-export default Poll;
+export default PollCard;

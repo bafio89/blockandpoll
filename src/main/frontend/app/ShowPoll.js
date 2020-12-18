@@ -1,7 +1,8 @@
 import React from "react";
-import Poll from "./Poll";
+import PollCard from "./PollCard";
+import Grid from "@material-ui/core/Grid";
 
-class ShowPoll extends React.Component{
+class ShowPoll extends React.Component {
 
   constructor(props) {
     super(props);
@@ -14,23 +15,27 @@ class ShowPoll extends React.Component{
     this.fetchPoll();
   }
 
-  fetchPoll(){
-    fetch("/polls").then(function(response){
+  fetchPoll() {
+    fetch("/polls").then(function (response) {
       if (response.ok) {
         response.json().then(function (data) {
           this.setState({
             polls: data,
           });
         }.bind(this));
-      }
-      else {
+      } else {
         throw new Error(response.status);
       }
     }.bind(this));
   }
 
-  render() {this.state.polls.map(poll => console.log(  "polls " + poll.name));
-    return this.state.polls.map( poll => (<Poll poll={poll}/>))
+  render() {
+    this.state.polls.map(poll => console.log("polls " + poll.name));
+    return this.state.polls.map(poll => (
+        <Grid item xs={4}>
+          <PollCard poll={poll}/>
+        </Grid>
+    ))
   }
 }
 
