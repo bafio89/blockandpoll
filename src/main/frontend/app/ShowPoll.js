@@ -30,9 +30,9 @@ class ShowPoll extends React.Component {
   }
 
   render() {
-    this.state.polls.map(poll => console.log("polls " + poll.name));
+    this.state.polls.map(poll => console.log("polls " + poll.appId));
     return this.state.polls.map(poll => (
-        <Grid item xs={4}>
+        <Grid key={poll.appId} item xs={4}>
           <PollCard poll={poll}/>
         </Grid>
     ))

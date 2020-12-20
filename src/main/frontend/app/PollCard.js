@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import CardActions from "@material-ui/core/CardActions";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -37,6 +38,13 @@ class PollCard extends React.Component{
           <Typography className={useStyles.title} color="textSecondary" gutterBottom>
             Permissionless
           </Typography>
+          <Link to={
+            {
+              pathname: "/poll/" + this.props.poll.appId,
+              poll: this.props.poll
+            }
+          }>
+            {this.props.poll.name}</Link>
           <Typography variant="h5" component="h2">
             {this.props.poll.name}
           </Typography>
