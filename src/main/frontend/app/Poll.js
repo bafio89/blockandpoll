@@ -8,6 +8,8 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
+import Brightness1Icon from '@material-ui/icons/Brightness1';
+import {green} from '@material-ui/core/colors';
 
 class Poll extends React.Component {
 
@@ -33,8 +35,13 @@ class Poll extends React.Component {
       <Grid item xs={3}/>
       <Grid item xs={6}>
         <Paper>
-          <Typography variant="h5" component="h2">
+          <Typography variant="h4" component="h2">
             {this.state.poll.name}
+          </Typography>
+          <Brightness1Icon style={{ color: green[500] }}/>
+          <br/>
+          <Typography variant="h6" component="h3">
+            {this.state.poll.description}
           </Typography>
           <FormControl component="fieldset">
             <FormLabel component="legend">Express your vote</FormLabel>
@@ -44,7 +51,10 @@ class Poll extends React.Component {
             </RadioGroup>
           </FormControl>
         </Paper>
-        <Button onClick={this.submit}>ciao</Button>
+        <br/>
+        <div style={{textAlign:'center'}}>
+        <Button onClick={this.submit} variant="contained" color="primary">Vote</Button>
+        </div>
       </Grid>
       <Grid item xs={3}/>
     </Grid>
