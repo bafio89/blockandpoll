@@ -9,4 +9,5 @@ public interface PollRepository {
 
    List<BlockchainPoll> find();
 
+   BlockchainPoll findBy(long appId);
 }

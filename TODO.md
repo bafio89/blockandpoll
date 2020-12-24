@@ -1,6 +1,7 @@
 
 TODO
 
+- [ ] Aggiungere validazioni sulla data all'optin
 - [ ] Sistemare grafica
 - [ ] Aggiungere descrizione del poll - frontend creazione poll.
 - [ ] Aggiungere field question 

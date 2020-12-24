@@ -68,6 +68,11 @@ public class PostgresPollRepository implements PollRepository {
     return fromEntityToDomain(pollEntities);
   }
 
+  @Override
+  public BlockchainPoll findBy(long appId) {
+    return null;
+  }
+
   private List<BlockchainPoll> fromEntityToDomain(List<PollEntity> pollEntities) {
 
     return pollEntities.stream().map(pollEntity -> new BlockchainPoll(pollEntity.getAppId(), pollEntity.getName(), pollEntity.getSender(),
