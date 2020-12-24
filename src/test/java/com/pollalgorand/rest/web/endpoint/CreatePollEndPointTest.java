@@ -1,4 +1,4 @@
-package com.pollalgorand.rest;
+package com.pollalgorand.rest.web.endpoint;
 
 
 import static java.util.Collections.singletonList;
@@ -12,7 +12,6 @@ import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
 import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
-import com.pollalgorand.rest.web.endpoint.CreatePollEndPoint;
 import com.pollalgorand.rest.web.request.PollRequest;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;

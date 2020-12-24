@@ -5,7 +5,7 @@ import com.pollalgorand.rest.adapter.Clock;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.AlgorandDateAdapter;
 import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
-import com.pollalgorand.rest.adapter.repository.AlgorandPollRepository;
+import com.pollalgorand.rest.adapter.repository.AlgorandASCPollRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
@@ -38,7 +38,7 @@ public class Config {
     AlgodClient algodClient = new AlgodClient("https://testnet-algorand.api.purestake.io/ps2", 443, "");
 //    AlgodClient algodClient = new AlgodClient("https://localhost", 8080, "5a645468dffe417d4ea0682b4ded3a58d2984dcef199a6bb7a70316ba42ac9f5");
 
-    return new AlgorandPollRepository(algodClient, new TealProgramFactory(algodClient), new PollBlockchainParamsAdapter(new AlgorandDateAdapter(new Clock())));
+    return new AlgorandASCPollRepository(algodClient, new TealProgramFactory(algodClient), new PollBlockchainParamsAdapter(new AlgorandDateAdapter(new Clock())));
   }
 
 }

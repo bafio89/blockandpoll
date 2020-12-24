@@ -23,3 +23,7 @@ Algoritmo per calcolo date.
 - n. blocchi = tempo / block time algorand (tempo medio generazione blocchi)
 - blocco attuale = leggi blocco attuale della Block chain.
 - blocco scelto = blocco attuale + n.blocchi.
+
+
+
+https://developer.algorand.org/tutorials/asa-java/#part-3-opt-in

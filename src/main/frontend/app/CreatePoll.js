@@ -133,7 +133,8 @@ class CreatePoll extends React.Component {
           <Grid container>
             <Grid item xs={2}/>
             <Grid item xs={8}>
-              <Typography align={'center'} variant="h1"> Create your poll </Typography>
+              <Typography align={'center'} variant="h1"> Create your
+                poll </Typography>
             </Grid>
             <Grid item xs={2}/>
           </Grid>
@@ -214,7 +215,8 @@ class CreatePoll extends React.Component {
                   />
 
                   <br/>
-                  <Button variant="contained" color="primary" type="submit" className={classes.spaces}>
+                  <Button variant="contained" color="primary" type="submit"
+                          className={classes.spaces}>
                     Create poll
                   </Button>
                   <br/>

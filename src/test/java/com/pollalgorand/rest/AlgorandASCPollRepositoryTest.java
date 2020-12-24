@@ -21,7 +21,7 @@ import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
 import com.pollalgorand.rest.adapter.exceptions.InvalidSenderAddressException;
 import com.pollalgorand.rest.adapter.exceptions.NodeStatusException;
-import com.pollalgorand.rest.adapter.repository.AlgorandPollRepository;
+import com.pollalgorand.rest.adapter.repository.AlgorandASCPollRepository;
 import com.pollalgorand.rest.domain.model.Poll;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,7 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class AlgorandPollRepositoryTest {
+public class AlgorandASCPollRepositoryTest {
 
   public static final String SENDER_ADDRESS = "GM5YGY4ICDLE27NCVFR6OS7JIIXSGYI6SQIF5IPKQTTGO2YIJU5YOZDP2A";
   public static final String INVALID_SENDER_ADDRESS = "INVALID SENDER ADDRESS";
@@ -70,7 +70,7 @@ public class AlgorandPollRepositoryTest {
   @Mock
   private GetStatus getStatus;
 
-  private AlgorandPollRepository algorandPollRepository;
+  private AlgorandASCPollRepository algorandASCPollRepository;
   private static final List<String> OPTIONS_IN_BYTE = asList("OPTION_1", "OPTION_2");
   private NodeStatusResponse nodeStatusResponse = new NodeStatusResponse();
 
@@ -80,7 +80,7 @@ public class AlgorandPollRepositoryTest {
 
     nodeStatusResponse.lastRound = LAST_ROUND;
 
-    algorandPollRepository = new AlgorandPollRepository(algodClient,
+    algorandASCPollRepository = new AlgorandASCPollRepository(algodClient,
         tealProgramFactory, pollBlockchainParamsAdapter);
 
     A_BLOCK_NUMBER = convertLongToByteArray(1L);
@@ -137,7 +137,7 @@ public class AlgorandPollRepositoryTest {
 
     }});
 
-    Transaction unsignedTx = algorandPollRepository.createUnsignedTxFor(poll);
+    Transaction unsignedTx = algorandASCPollRepository.createUnsignedTxFor(poll);
 
     assertThat(unsignedTx, is(expectedTransaction));
 //    assertThat(unsignedTx.applicationArgs.get(0), is(expectedTransaction.applicationArgs.get(0)));
@@ -188,7 +188,7 @@ public class AlgorandPollRepositoryTest {
     expectedException.expectMessage(
         WRONG_SENDER_ADDRESS_ERROR_MESSAGE);
 
-    algorandPollRepository.createUnsignedTxFor(poll);
+    algorandASCPollRepository.createUnsignedTxFor(poll);
 
   }
 
@@ -223,7 +223,7 @@ public class AlgorandPollRepositoryTest {
     expectedException.expectMessage(
         NODE_STATUS_ERROR_MESSAGE);
 
-    algorandPollRepository.createUnsignedTxFor(poll);
+    algorandASCPollRepository.createUnsignedTxFor(poll);
 
   }
 

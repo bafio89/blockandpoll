@@ -35,9 +35,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AlgorandPollRepository implements BlockchainPollRepository {
+public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
-  private Logger logger = LoggerFactory.getLogger(AlgorandPollRepository.class);
+  private Logger logger = LoggerFactory.getLogger(AlgorandASCPollRepository.class);
 
   private AlgodClient algodClient;
   private TealProgramFactory tealProgramFactory;
@@ -48,7 +48,7 @@ public class AlgorandPollRepository implements BlockchainPollRepository {
   private final String[] txHeaders = ArrayUtils.add(headers, "Content-Type");
   private final String[] txValues = ArrayUtils.add(values, "application/x-binary");
 
-  public AlgorandPollRepository(AlgodClient algodClient,
+  public AlgorandASCPollRepository(AlgodClient algodClient,
       TealProgramFactory tealProgramFactory,
       PollBlockchainParamsAdapter pollBlockchainParamsAdapter) {
 
@@ -65,17 +65,21 @@ public class AlgorandPollRepository implements BlockchainPollRepository {
     Account account;
     SignedTransaction signedTx;
     try {
+
+      //signer service? con collaboratore che crea account
       account = new Account(poll.getMnemonicKey());
-
       signedTx = account.signTransaction(unsignedTx);
-
       byte[] encodedTxBytes = Encoder.encodeToMsgPack(signedTx);
+
+
       String transactionId = algodClient.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues).body().txId;
 
+      //collaboratore
       waitForConfirmation(transactionId);
 
       Long appId = getApplicationId(transactionId);
 
+      //introduce adapter
       return Optional.of(new BlockchainPoll(appId, poll.getName(), poll.getSender(), poll.getStartSubscriptionTime(), poll.getEndSubscriptionTime(),
           poll.getStartVotingTime(), poll.getEndVotingTime(), poll.getOptions(), poll.getMnemonicKey(), poll.getDescription()));
 
@@ -119,6 +123,7 @@ public class AlgorandPollRepository implements BlockchainPollRepository {
     TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();
 
     try {
+      //collab per app create tx builder?
       transaction = Transaction.ApplicationCreateTransactionBuilder()
           .sender(poll.getSender())
           .args(arguments(pollTealParams))
