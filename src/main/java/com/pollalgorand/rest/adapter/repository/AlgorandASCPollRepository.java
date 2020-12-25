@@ -5,17 +5,15 @@ import static com.pollalgorand.rest.adapter.AlgorandUtils.txHeaders;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.txValues;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.values;
 
-import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.crypto.TEALProgram;
-import com.algorand.algosdk.transaction.SignedTransaction;
 import com.algorand.algosdk.transaction.Transaction;
-import com.algorand.algosdk.util.Encoder;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.model.PendingTransactionResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
+import com.pollalgorand.rest.adapter.converter.PollAdapter;
 import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
 import com.pollalgorand.rest.adapter.exceptions.EncodeTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
@@ -25,6 +23,7 @@ import com.pollalgorand.rest.adapter.exceptions.SendingTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.SignTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.WaitingTransactionConfirmationException;
 import com.pollalgorand.rest.adapter.service.BuildTransactionService;
+import com.pollalgorand.rest.adapter.service.TransactionSignerService;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
@@ -36,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
+  private final TransactionSignerService transactionSignerService = new TransactionSignerService();
+  private final PollAdapter pollAdapter = new PollAdapter();
   private Logger logger = LoggerFactory.getLogger(AlgorandASCPollRepository.class);
 
   private AlgodClient algodClient;
@@ -59,15 +60,8 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
     Transaction unsignedTx = createUnsignedTxFor(poll);
 
-    Account account;
-    SignedTransaction signedTx;
-
     try {
-
-      //signer service? con collaboratore che crea account
-      account = new Account(poll.getMnemonicKey());
-      signedTx = account.signTransaction(unsignedTx);
-      byte[] encodedTxBytes = Encoder.encodeToMsgPack(signedTx);
+      byte[] encodedTxBytes = transactionSignerService.sign(unsignedTx, poll.getMnemonicKey());
 
       String transactionId = algodClient.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues).body().txId;
 
@@ -77,8 +71,7 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
       Long appId = getApplicationId(transactionId);
 
       //introduce adapter
-      return Optional.of(new BlockchainPoll(appId, poll.getName(), poll.getSender(), poll.getStartSubscriptionTime(), poll.getEndSubscriptionTime(),
-          poll.getStartVotingTime(), poll.getEndVotingTime(), poll.getOptions(), poll.getMnemonicKey(), poll.getDescription()));
+      return pollAdapter.fromPollToBlockchainPoll(poll, appId);
 
     } catch (NoSuchAlgorithmException e) {
       logger.error("Something goes wrong signing transaction", e);
