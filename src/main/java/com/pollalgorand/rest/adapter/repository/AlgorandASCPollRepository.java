@@ -1,10 +1,12 @@
 package com.pollalgorand.rest.adapter.repository;
 
-import static java.util.Arrays.asList;
+import static com.pollalgorand.rest.adapter.AlgorandUtils.headers;
+import static com.pollalgorand.rest.adapter.AlgorandUtils.txHeaders;
+import static com.pollalgorand.rest.adapter.AlgorandUtils.txValues;
+import static com.pollalgorand.rest.adapter.AlgorandUtils.values;
 
 import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.crypto.TEALProgram;
-import com.algorand.algosdk.logic.StateSchema;
 import com.algorand.algosdk.transaction.SignedTransaction;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.util.Encoder;
@@ -15,23 +17,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
-import com.pollalgorand.rest.adapter.exceptions.BlockChainParameterException;
 import com.pollalgorand.rest.adapter.exceptions.EncodeTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
-import com.pollalgorand.rest.adapter.exceptions.InvalidSenderAddressException;
 import com.pollalgorand.rest.adapter.exceptions.NodeStatusException;
 import com.pollalgorand.rest.adapter.exceptions.RetrievingApplicationIdException;
 import com.pollalgorand.rest.adapter.exceptions.SendingTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.SignTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.WaitingTransactionConfirmationException;
+import com.pollalgorand.rest.adapter.service.BuildTransactionService;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Optional;
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,19 +41,17 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
   private AlgodClient algodClient;
   private TealProgramFactory tealProgramFactory;
   private PollBlockchainParamsAdapter pollBlockchainParamsAdapter;
-
-  private final String[] headers = {"X-API-Key"};
-  private final String[] values = {"KmeYVcOTUFayYL9uVy9mI9d7dDewlWth7pprTlo9"};
-  private final String[] txHeaders = ArrayUtils.add(headers, "Content-Type");
-  private final String[] txValues = ArrayUtils.add(values, "application/x-binary");
+  private BuildTransactionService buildTransactionService;
 
   public AlgorandASCPollRepository(AlgodClient algodClient,
       TealProgramFactory tealProgramFactory,
-      PollBlockchainParamsAdapter pollBlockchainParamsAdapter) {
+      PollBlockchainParamsAdapter pollBlockchainParamsAdapter,
+      BuildTransactionService buildTransactionService) {
 
     this.algodClient = algodClient;
     this.tealProgramFactory = tealProgramFactory;
     this.pollBlockchainParamsAdapter = pollBlockchainParamsAdapter;
+    this.buildTransactionService = buildTransactionService;
   }
 
   @Override
@@ -64,13 +61,13 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
     Account account;
     SignedTransaction signedTx;
+
     try {
 
       //signer service? con collaboratore che crea account
       account = new Account(poll.getMnemonicKey());
       signedTx = account.signTransaction(unsignedTx);
       byte[] encodedTxBytes = Encoder.encodeToMsgPack(signedTx);
-
 
       String transactionId = algodClient.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues).body().txId;
 
@@ -112,8 +109,6 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
   @Override
   public Transaction createUnsignedTxFor(Poll poll) {
 
-    Transaction transaction;
-
     Long lastRound = getBlockChainLastRound();
 
     PollTealParams pollTealParams = pollBlockchainParamsAdapter
@@ -122,26 +117,7 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
     TEALProgram approvalProgram = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
     TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();
 
-    try {
-      //collab per app create tx builder?
-      transaction = Transaction.ApplicationCreateTransactionBuilder()
-          .sender(poll.getSender())
-          .args(arguments(pollTealParams))
-          .suggestedParams(algodClient.TransactionParams().execute(headers, values).body())
-          .approvalProgram(approvalProgram)
-          .clearStateProgram(clearStateProgram)
-          .globalStateSchema(new StateSchema(6, 1))
-          .localStateSchema(new StateSchema(0, 1))
-          .build();
-    } catch (IllegalArgumentException e) {
-      logger.error("Something goes wrong with Sender Address transaction", e);
-      throw new InvalidSenderAddressException(e);
-    } catch (Exception e) {
-      logger.error("Something goes wrong getting blockchain parameters transaction", e);
-      throw new BlockChainParameterException(e);
-    }
-
-    return transaction;
+    return buildTransactionService.buildTransaction(pollTealParams, approvalProgram, clearStateProgram, poll.getSender());
   }
 
   private Long getBlockChainLastRound() {
@@ -154,14 +130,6 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
       throw new NodeStatusException(e);
     }
     return lastRound;
-  }
-
-  private List<byte[]> arguments(PollTealParams pollTealParams) {
-
-    return asList(pollTealParams.getStartSubscriptionTime(),
-        pollTealParams.getEndSubscriptionTime(),
-        pollTealParams.getStartVotingTime(),
-        pollTealParams.getEndVotingTime());
   }
 
   private void waitForConfirmation(String txID) {

@@ -6,13 +6,16 @@ import java.util.Objects;
 
 public class PollTealParams {
 
-  private final byte[] name;
-  private final byte[] startSubscriptionTime;
-  private final byte[] endSubscriptionTime;
-  private final byte[] startVotingTime;
-  private final byte[] endVotingTime;
-  private final List<String> options;
-  private final byte[] sender;
+  private byte[] name;
+  private byte[] startSubscriptionTime;
+  private byte[] endSubscriptionTime;
+  private byte[] startVotingTime;
+  private byte[] endVotingTime;
+  private List<String> options;
+  private byte[] sender;
+
+  public PollTealParams() {
+  }
 
   public PollTealParams(byte[] name, byte[] startSubscriptionTime, byte[] endSubscriptionTime,
       byte[] startVotingTime,
@@ -45,6 +48,10 @@ public class PollTealParams {
 
   public List<String> getOptions() {
     return options;
+  }
+
+  public byte[] getSender() {
+    return sender;
   }
 
   @Override
