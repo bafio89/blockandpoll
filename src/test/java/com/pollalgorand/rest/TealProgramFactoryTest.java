@@ -1,6 +1,8 @@
 package com.pollalgorand.rest;
 
 import static com.pollalgorand.rest.ByteConverteUtil.convertLongToByteArray;
+import static com.pollalgorand.rest.adapter.AlgorandUtils.headers;
+import static com.pollalgorand.rest.adapter.AlgorandUtils.values;
 import static java.util.Arrays.asList;
 import static org.junit.rules.ExpectedException.none;
 
@@ -69,7 +71,7 @@ public class TealProgramFactoryTest {
       oneOf(tealCompile).source(tealProgram);
       will(returnValue(tealCompile));
 
-      oneOf(tealCompile).execute();
+      oneOf(tealCompile).execute(headers, values);
       will(returnValue(compileResponse));
 
       oneOf(compileResponse).body();
@@ -95,7 +97,7 @@ public class TealProgramFactoryTest {
       oneOf(tealCompile).source(tealProgram);
       will(returnValue(tealCompile));
 
-      oneOf(tealCompile).execute();
+      oneOf(tealCompile).execute(headers, values);
       will(throwException(exception));
     }});
 

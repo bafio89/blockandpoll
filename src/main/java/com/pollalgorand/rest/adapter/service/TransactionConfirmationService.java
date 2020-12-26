@@ -1,4 +1,4 @@
-package com.pollalgorand.rest.adapter.repository;
+package com.pollalgorand.rest.adapter.service;
 
 import static com.pollalgorand.rest.adapter.AlgorandUtils.headers;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.values;
@@ -17,7 +17,7 @@ public class TransactionConfirmationService {
     this.algodClient = algodClient;
   }
 
-  void waitForConfirmation(String txID) {
+  public void waitForConfirmation(String txID) {
 
     try {
 

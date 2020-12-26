@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,9 +21,13 @@ public class CreateBlockchainPollUseCaseTest {
 
   public static final LocalDateTime DATE = LocalDateTime.now();
   @Rule
-  public JUnitRuleMockery context = new JUnitRuleMockery();
+  public JUnitRuleMockery context = new JUnitRuleMockery() {{
+    setImposteriser(ClassImposteriser.INSTANCE);
+  }};
 
-  @Rule public ExpectedException expectedException = ExpectedException.none();
+
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
 
   @Mock
   private BlockchainPollRepository blockChainPollRepository;
@@ -37,7 +42,8 @@ public class CreateBlockchainPollUseCaseTest {
 
   @Before
   public void setUp() {
-    createPollUseCase = new CreatePollUseCase(blockChainPollRepository, postgresRepository, unsignedASCTransactionService);
+    createPollUseCase = new CreatePollUseCase(blockChainPollRepository, postgresRepository,
+        unsignedASCTransactionService);
   }
 
 //  @Test
@@ -106,17 +112,15 @@ public class CreateBlockchainPollUseCaseTest {
 //
 //  }
 
-
   @Test
   public void createTransactionHappyPath() {
     Poll poll = new Poll("A POLL NAME", DATE, DATE, DATE,
         DATE, asList("Option 1", "Option 2"), "sender", "mnemonicKey", "description");
 
-    context.checking(new Expectations(){{
+    context.checking(new Expectations() {{
       oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
     }});
 
     createPollUseCase.createUnsignedTx(poll);
-
   }
 }
