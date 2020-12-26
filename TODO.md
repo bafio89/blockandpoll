@@ -1,7 +1,7 @@
 
 TODO
 
-- [ ] Aggiungere validazioni sulla data all'optin
+- [ ] Add service to refactoring AlgoASCRepo
 - [ ] Sistemare grafica
 - [ ] Aggiungere descrizione del poll - frontend creazione poll.
 - [ ] Aggiungere field question 
@@ -11,6 +11,7 @@ TODO
 - [ ] recuperare voti da blockchain + mostrare voti dei poll.
 - [ ] Dire all sdk di restituire errori piu parlanti 
 
+- [x] Aggiungere validazioni sulla data all'optin
 - [x] Debug su heroku 
 - [x] Recupero e visualizzazione dei poll creati.
 - [x] rivedere default value delle date 

@@ -1,29 +1,18 @@
 package com.pollalgorand.rest.adapter.repository;
 
-import static com.pollalgorand.rest.adapter.AlgorandUtils.headers;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.txHeaders;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.txValues;
-import static com.pollalgorand.rest.adapter.AlgorandUtils.values;
 
-import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
-import com.algorand.algosdk.v2.client.common.Response;
-import com.algorand.algosdk.v2.client.model.PendingTransactionResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.pollalgorand.rest.adapter.PollTealParams;
-import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.PollAdapter;
-import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
 import com.pollalgorand.rest.adapter.exceptions.EncodeTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
-import com.pollalgorand.rest.adapter.exceptions.NodeStatusException;
-import com.pollalgorand.rest.adapter.exceptions.RetrievingApplicationIdException;
 import com.pollalgorand.rest.adapter.exceptions.SendingTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.SignTransactionException;
-import com.pollalgorand.rest.adapter.exceptions.WaitingTransactionConfirmationException;
-import com.pollalgorand.rest.adapter.service.BuildTransactionService;
 import com.pollalgorand.rest.adapter.service.TransactionSignerService;
+import com.pollalgorand.rest.adapter.service.UnsignedASCTransactionService;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
@@ -35,42 +24,45 @@ import org.slf4j.LoggerFactory;
 
 public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
-  private final TransactionSignerService transactionSignerService = new TransactionSignerService();
-  private final PollAdapter pollAdapter = new PollAdapter();
   private Logger logger = LoggerFactory.getLogger(AlgorandASCPollRepository.class);
 
+  private final AlgorandApplicationService algorandApplicationService;
+  private final TransactionConfirmationService transactionConfirmationService;
+  private final TransactionSignerService transactionSignerService;
+  private final PollAdapter pollAdapter;
+  private final UnsignedASCTransactionService unsignedASCTransactionService;
+
   private AlgodClient algodClient;
-  private TealProgramFactory tealProgramFactory;
-  private PollBlockchainParamsAdapter pollBlockchainParamsAdapter;
-  private BuildTransactionService buildTransactionService;
 
   public AlgorandASCPollRepository(AlgodClient algodClient,
-      TealProgramFactory tealProgramFactory,
-      PollBlockchainParamsAdapter pollBlockchainParamsAdapter,
-      BuildTransactionService buildTransactionService) {
+      TransactionSignerService transactionSignerService,
+      UnsignedASCTransactionService unsignedASCTransactionService,
+      PollAdapter pollAdapter,
+      TransactionConfirmationService transactionConfirmationService,
+      AlgorandApplicationService algorandApplicationService) {
 
     this.algodClient = algodClient;
-    this.tealProgramFactory = tealProgramFactory;
-    this.pollBlockchainParamsAdapter = pollBlockchainParamsAdapter;
-    this.buildTransactionService = buildTransactionService;
+    this.transactionSignerService = transactionSignerService;
+    this.unsignedASCTransactionService = unsignedASCTransactionService;
+    this.pollAdapter = pollAdapter;
+    this.transactionConfirmationService = transactionConfirmationService;
+    this.algorandApplicationService = algorandApplicationService;
   }
 
   @Override
   public Optional<BlockchainPoll> save(Poll poll) {
 
-    Transaction unsignedTx = createUnsignedTxFor(poll);
+    Transaction unsignedTx = unsignedASCTransactionService.createUnsignedTxFor(poll);
 
     try {
       byte[] encodedTxBytes = transactionSignerService.sign(unsignedTx, poll.getMnemonicKey());
 
       String transactionId = algodClient.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues).body().txId;
 
-      //collaboratore
-      waitForConfirmation(transactionId);
+      transactionConfirmationService.waitForConfirmation(transactionId);
 
-      Long appId = getApplicationId(transactionId);
+      Long appId = algorandApplicationService.getApplicationId(transactionId);
 
-      //introduce adapter
       return pollAdapter.fromPollToBlockchainPoll(poll, appId);
 
     } catch (NoSuchAlgorithmException e) {
@@ -89,62 +81,9 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
   }
 
-  private Long getApplicationId(String transactionId) {
-    PendingTransactionResponse pTrx;
-    try {
-      pTrx = algodClient.PendingTransactionInformation(transactionId).execute(headers, values).body();
-    } catch (Exception e) {
-      throw new RetrievingApplicationIdException(e, transactionId);
-    }
-    return pTrx.applicationIndex;
-  }
-
   @Override
   public Transaction createUnsignedTxFor(Poll poll) {
 
-    Long lastRound = getBlockChainLastRound();
-
-    PollTealParams pollTealParams = pollBlockchainParamsAdapter
-        .fromPollToPollTealParams(poll, lastRound);
-
-    TEALProgram approvalProgram = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
-    TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();
-
-    return buildTransactionService.buildTransaction(pollTealParams, approvalProgram, clearStateProgram, poll.getSender());
-  }
-
-  private Long getBlockChainLastRound() {
-
-    Long lastRound;
-    try {
-      lastRound = algodClient.GetStatus().execute(headers, values).body().lastRound;
-    } catch (Exception e) {
-      logger.error("Something goes wrong getting last blockchain round", e);
-      throw new NodeStatusException(e);
-    }
-    return lastRound;
-  }
-
-  private void waitForConfirmation(String txID) {
-
-    try {
-      Long lastRound = algodClient.GetStatus().execute(headers,values).body().lastRound;
-      while (true) {
-
-        // Check the pending transactions
-        Response<PendingTransactionResponse> pendingInfo = algodClient
-            .PendingTransactionInformation(txID).execute(headers,values);
-        if (pendingInfo.body().confirmedRound != null && pendingInfo.body().confirmedRound > 0) {
-          // Got the completed Transaction
-          System.out.println(
-              "Transaction " + txID + " confirmed in round " + pendingInfo.body().confirmedRound);
-          break;
-        }
-        lastRound++;
-        algodClient.WaitForBlock(lastRound).execute(headers,values);
-      }
-    } catch (Exception e) {
-      throw new WaitingTransactionConfirmationException(e, txID);
-    }
+    return unsignedASCTransactionService.createUnsignedTxFor(poll);
   }
 }

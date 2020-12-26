@@ -2,6 +2,7 @@ package com.pollalgorand.rest;
 
 import static java.util.Arrays.asList;
 
+import com.pollalgorand.rest.adapter.service.UnsignedASCTransactionService;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
@@ -29,11 +30,14 @@ public class CreateBlockchainPollUseCaseTest {
   @Mock
   private PollRepository postgresRepository;
 
+  @Mock
+  private UnsignedASCTransactionService unsignedASCTransactionService;
+
   private CreatePollUseCase createPollUseCase;
 
   @Before
   public void setUp() {
-    createPollUseCase = new CreatePollUseCase(blockChainPollRepository, postgresRepository);
+    createPollUseCase = new CreatePollUseCase(blockChainPollRepository, postgresRepository, unsignedASCTransactionService);
   }
 
 //  @Test
@@ -109,7 +113,7 @@ public class CreateBlockchainPollUseCaseTest {
         DATE, asList("Option 1", "Option 2"), "sender", "mnemonicKey", "description");
 
     context.checking(new Expectations(){{
-      oneOf(blockChainPollRepository).createUnsignedTxFor(poll);
+      oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
     }});
 
     createPollUseCase.createUnsignedTx(poll);

@@ -2,6 +2,7 @@ package com.pollalgorand.rest.domain.usecase;
 
 
 import com.algorand.algosdk.transaction.Transaction;
+import com.pollalgorand.rest.adapter.service.UnsignedASCTransactionService;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
@@ -16,12 +17,15 @@ public class CreatePollUseCase {
 
   private final BlockchainPollRepository blockChainBlockchainPollRepository;
   private final PollRepository postgresRepository;
+  private UnsignedASCTransactionService unsignedASCTransactionService;
 
   public CreatePollUseCase(BlockchainPollRepository blockChainBlockchainPollRepository,
-      PollRepository postgresRepository) {
+      PollRepository postgresRepository,
+      UnsignedASCTransactionService unsignedASCTransactionService) {
 
     this.blockChainBlockchainPollRepository = blockChainBlockchainPollRepository;
     this.postgresRepository = postgresRepository;
+    this.unsignedASCTransactionService = unsignedASCTransactionService;
   }
 
   public Optional<BlockchainPoll> create(Poll poll) {
@@ -37,7 +41,7 @@ public class CreatePollUseCase {
 
   public Transaction createUnsignedTx(Poll poll) {
 
-    return blockChainBlockchainPollRepository.createUnsignedTxFor(poll);
+    return unsignedASCTransactionService.createUnsignedTxFor(poll);
   }
 
 }

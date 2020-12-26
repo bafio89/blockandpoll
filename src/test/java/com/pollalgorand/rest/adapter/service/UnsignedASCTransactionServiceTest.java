@@ -1,4 +1,4 @@
-package com.pollalgorand.rest;
+package com.pollalgorand.rest.adapter.service;
 
 import static com.pollalgorand.rest.ByteConverteUtil.convertLongToByteArray;
 import static java.util.Collections.emptyList;
@@ -14,8 +14,6 @@ import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
 import com.pollalgorand.rest.adapter.exceptions.InvalidSenderAddressException;
 import com.pollalgorand.rest.adapter.exceptions.NodeStatusException;
-import com.pollalgorand.rest.adapter.repository.AlgorandASCPollRepository;
-import com.pollalgorand.rest.adapter.service.BuildTransactionService;
 import com.pollalgorand.rest.domain.model.Poll;
 import java.time.LocalDateTime;
 import org.jmock.Expectations;
@@ -27,7 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class AlgorandASCPollRepositoryTest {
+public class UnsignedASCTransactionServiceTest {
 
   public static final String SENDER_ADDRESS = "GM5YGY4ICDLE27NCVFR6OS7JIIXSGYI6SQIF5IPKQTTGO2YIJU5YOZDP2A";
   public static final String INVALID_SENDER_ADDRESS = "INVALID SENDER ADDRESS";
@@ -64,7 +62,7 @@ public class AlgorandASCPollRepositoryTest {
   private final String[] headers = {"X-API-Key"};
   private final String[] values = {"KmeYVcOTUFayYL9uVy9mI9d7dDewlWth7pprTlo9"};
 
-  private AlgorandASCPollRepository algorandASCPollRepository;
+  private UnsignedASCTransactionService algorandASCPollRepository;
   private NodeStatusResponse nodeStatusResponse = new NodeStatusResponse();
   private TEALProgram approvalProgram;
   private TEALProgram clearStateProgram;
@@ -74,8 +72,9 @@ public class AlgorandASCPollRepositoryTest {
 
     nodeStatusResponse.lastRound = LAST_ROUND;
 
-    algorandASCPollRepository = new AlgorandASCPollRepository(algodClient,
-        tealProgramFactory, pollBlockchainParamsAdapter, buildTransactionService);
+    algorandASCPollRepository = new UnsignedASCTransactionService(algodClient,
+        pollBlockchainParamsAdapter,
+        tealProgramFactory, buildTransactionService);
 
     approvalProgram = new TEALProgram();
     clearStateProgram = new TEALProgram();

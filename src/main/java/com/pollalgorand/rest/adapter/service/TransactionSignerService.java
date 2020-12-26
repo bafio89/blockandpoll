@@ -13,7 +13,9 @@ public class TransactionSignerService {
       throws GeneralSecurityException, JsonProcessingException {
 
     Account account = new Account(mnemonicKey);
+
     SignedTransaction signedTx = account.signTransaction(unsignedTx);
+
     return Encoder.encodeToMsgPack(signedTx);
   }
 }
