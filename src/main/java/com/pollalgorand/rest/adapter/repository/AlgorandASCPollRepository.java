@@ -20,7 +20,6 @@ import com.pollalgorand.rest.adapter.service.UnsignedASCTransactionService;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
-import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -76,16 +75,16 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
     } catch (NoSuchAlgorithmException e) {
       logger.error("Something goes wrong signing transaction", e);
-      throw new SignTransactionException(e, poll.getName());
-    } catch (GeneralSecurityException | IllegalArgumentException e) {
-      logger.error("Something goes wrong with mnemonic key transaction", e);
-      throw new InvalidMnemonicKeyException(e, poll.getName());
+      throw new SignTransactionException(e);
+    } catch (IllegalArgumentException e) {
+      logger.error("Something gone wrong creating account from mnemonic key creating poll {}.",poll, e);
+      throw new InvalidMnemonicKeyException(e);
     } catch (JsonProcessingException e) {
       logger.error("Something goes wrong encoding transaction", e);
-      throw new EncodeTransactionException(e, poll.getName());
+      throw new EncodeTransactionException(e);
     } catch (Exception e) {
       logger.error("Something goes wrong sending transaction", e);
-      throw new SendingTransactionException(e, poll.getName());
+      throw new SendingTransactionException(e);
     }
 
   }

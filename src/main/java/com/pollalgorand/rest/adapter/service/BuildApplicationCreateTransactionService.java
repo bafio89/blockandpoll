@@ -1,13 +1,10 @@
 package com.pollalgorand.rest.adapter.service;
 
-import static com.pollalgorand.rest.adapter.AlgorandUtils.headers;
-import static com.pollalgorand.rest.adapter.AlgorandUtils.values;
 import static java.util.Arrays.asList;
 
 import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.logic.StateSchema;
 import com.algorand.algosdk.transaction.Transaction;
-import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.adapter.exceptions.BlockChainParameterException;
 import com.pollalgorand.rest.adapter.exceptions.InvalidSenderAddressException;
@@ -19,10 +16,10 @@ public class BuildApplicationCreateTransactionService {
 
   private Logger logger = LoggerFactory.getLogger(BuildApplicationCreateTransactionService.class);
 
-  private AlgodClient algodClient;
+  private BlockchainParameterService blockchainParameterService;
 
-  public BuildApplicationCreateTransactionService(AlgodClient algodClient) {
-    this.algodClient = algodClient;
+  public BuildApplicationCreateTransactionService(BlockchainParameterService blockchainParameterService) {
+    this.blockchainParameterService = blockchainParameterService;
   }
 
   public Transaction buildTransaction(PollTealParams pollTealParams,
@@ -32,7 +29,7 @@ public class BuildApplicationCreateTransactionService {
       transaction = Transaction.ApplicationCreateTransactionBuilder()
           .sender(sender)
           .args(arguments(pollTealParams))
-          .suggestedParams(algodClient.TransactionParams().execute(headers, values).body())
+          .suggestedParams(blockchainParameterService.getParameters())
           .approvalProgram(approvalProgram)
           .clearStateProgram(clearStateProgram)
           .globalStateSchema(new StateSchema(6, 1))
@@ -49,7 +46,6 @@ public class BuildApplicationCreateTransactionService {
   }
 
   private List<byte[]> arguments(PollTealParams pollTealParams) {
-
     return asList(pollTealParams.getStartSubscriptionTime(),
         pollTealParams.getEndSubscriptionTime(),
         pollTealParams.getStartVotingTime(),

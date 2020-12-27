@@ -5,12 +5,12 @@ import com.algorand.algosdk.transaction.SignedTransaction;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.util.Encoder;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 
 public class TransactionSignerService {
 
   public byte[] sign(Transaction unsignedTx, Account account)
-      throws GeneralSecurityException, JsonProcessingException {
+      throws JsonProcessingException, NoSuchAlgorithmException {
 
     SignedTransaction signedTx = account.signTransaction(unsignedTx);
 

@@ -107,10 +107,10 @@ class CreatePoll extends React.Component {
             sender: this.state.sender,
             mnemonicKey: this.state.mnemonicKey,
             name: this.state.name,
-            startSubscriptionTime: this.state.startSubDate + "T00:00:00",
-            endSubscriptionTime: this.state.endSubDate + "T00:00:00",
-            startVotingTime: this.state.startVotingDate + "T00:00:00",
-            endVotingTime: this.state.endVotingDate + "T00:00:00",
+            startSubscriptionTime: this.state.startSubDate + "T00:00:10",
+            endSubscriptionTime: this.state.endSubDate + "T00:00:10",
+            startVotingTime: this.state.startVotingDate + "T00:00:10",
+            endVotingTime: this.state.endVotingDate + "T00:00:10",
             options: [this.state.option1, this.state.option2]
           })
         }).then(function (response) {

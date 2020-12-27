@@ -16,7 +16,7 @@ public class AlgorandDateAdapter {
 
   public Long fromDateToBlockNumber(LocalDateTime date, Long lastRound) {
 
-    long duration = ChronoUnit.SECONDS.between(clock.now(), date);
+    long duration = ChronoUnit.SECONDS.between(clock.now().withHour(0).withMinute(0).withSecond(0), date);
 
     if(duration <= 0){
       throw new PastDateException(String.format("Something gone wrong with date selection. Date %s is previous than now", date));

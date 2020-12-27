@@ -157,7 +157,7 @@ public class AlgorandASCPollRepositoryTest {
     });
 
     expectedException.expect(SignTransactionException.class);
-    expectedException.expectMessage("Impossible to sign the transaction for poll with name A_POLL_NAME. AN ERROR MESSAGE");
+    expectedException.expectMessage("Impossible to sign the transaction. AN ERROR MESSAGE");
 
     algorandASCPollRepository.save(poll);
   }
@@ -177,13 +177,13 @@ public class AlgorandASCPollRepositoryTest {
         will(returnValue(account));
 
         oneOf(transactionSignerService).sign(unsignedTx, account);
-        will(throwException(new GeneralSecurityException("AN ERROR MESSAGE")));
+        will(throwException(new IllegalArgumentException("AN ERROR MESSAGE")));
       }
     });
 
     expectedException.expect(InvalidMnemonicKeyException.class);
     expectedException.expectMessage(
-        "Impossible to create an account starting from mnemonic key for poll with name A_POLL_NAME. AN ERROR MESSAGE");
+        "Impossible to create an account starting from mnemonic key. AN ERROR MESSAGE");
 
     algorandASCPollRepository.save(poll);
   }
@@ -210,7 +210,7 @@ public class AlgorandASCPollRepositoryTest {
 
     expectedException.expect(EncodeTransactionException.class);
     expectedException.expectMessage(
-        "Impossible to encode the transaction for poll with name A_POLL_NAME. AN ERROR MESSAGE");
+        "Impossible to encode the transaction. AN ERROR MESSAGE");
 
     algorandASCPollRepository.save(poll);
   }
@@ -237,7 +237,7 @@ public class AlgorandASCPollRepositoryTest {
 
     expectedException.expect(SendingTransactionException.class);
     expectedException.expectMessage(
-        "Impossible to sign and send the transaction for poll with name A_POLL_NAME. AN ERROR MESSAGE");
+        "Impossible to sign and send the transaction. AN ERROR MESSAGE");
 
     algorandASCPollRepository.save(poll);
   }

@@ -2,9 +2,8 @@ package com.pollalgorand.rest.adapter.exceptions;
 
 public class InvalidMnemonicKeyException extends RuntimeException {
 
-  public InvalidMnemonicKeyException(Exception e, String name) {
+  public InvalidMnemonicKeyException(Exception e) {
     super(String.format(
-        "Impossible to create an account starting from mnemonic key for poll with name %s. %s",
-        name, e.getMessage()), e);
+        "Impossible to create an account starting from mnemonic key. %s", e.getMessage()), e);
   }
 }

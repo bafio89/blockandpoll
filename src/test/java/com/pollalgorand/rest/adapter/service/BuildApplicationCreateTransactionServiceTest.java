@@ -11,7 +11,6 @@ import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.logic.StateSchema;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.algod.TransactionParams;
-import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.model.TransactionParametersResponse;
 import com.pollalgorand.rest.adapter.PollTealParams;
@@ -45,7 +44,7 @@ public class BuildApplicationCreateTransactionServiceTest {
   public final ExpectedException expectedException = none();
 
   @Mock
-  private AlgodClient algodClient;
+  private BlockchainParameterService blockchainParameterService;
 
   @Mock
   private TransactionParams transactionParams;
@@ -66,7 +65,8 @@ public class BuildApplicationCreateTransactionServiceTest {
   @Before
   public void setUp() {
 
-    buildApplicationCreateTransactionService = new BuildApplicationCreateTransactionService(algodClient);
+    buildApplicationCreateTransactionService = new BuildApplicationCreateTransactionService(
+        blockchainParameterService);
 
     pollTealParams = new PollTealParams(A_POLL_NAME.getBytes(UTF_8),
         A_START_SUBS_BLOCK_NUMBER, A_END_SUBS_BLOCK_NUMBER, A_START_VOTE_BLOCK_NUMBER,
@@ -74,7 +74,7 @@ public class BuildApplicationCreateTransactionServiceTest {
   }
 
   @Test
-  public void buildTransaction() throws Exception {
+  public void buildTransaction() {
 
     TransactionParametersResponse transactionParametersResponse = aTransactionParametersResponse();
 
@@ -82,14 +82,10 @@ public class BuildApplicationCreateTransactionServiceTest {
         transactionParametersResponse);
 
     context.checking(new Expectations() {{
-      oneOf(algodClient).TransactionParams();
-      will(returnValue(transactionParams));
 
-      oneOf(transactionParams).execute(headers, values);
-      will(returnValue(response));
+      oneOf(blockchainParameterService).getParameters();
+      will(returnValue(aTransactionParametersResponse()));
 
-      oneOf(response).body();
-      will(returnValue(transactionParametersResponse));
     }});
 
     Transaction transaction = buildApplicationCreateTransactionService
@@ -104,20 +100,15 @@ public class BuildApplicationCreateTransactionServiceTest {
     TransactionParametersResponse transactionParametersResponse = aTransactionParametersResponse();
 
     context.checking(new Expectations() {{
-      oneOf(algodClient).TransactionParams();
-      will(returnValue(transactionParams));
-
-      oneOf(transactionParams).execute(headers, values);
-      will(returnValue(response));
-
-      oneOf(response).body();
-      will(returnValue(transactionParametersResponse));
+      oneOf(blockchainParameterService).getParameters();
+      will(returnValue(aTransactionParametersResponse()));
     }});
 
     expectedException.expect(InvalidSenderAddressException.class);
 
     buildApplicationCreateTransactionService
-        .buildTransaction(pollTealParams, approvalProgram, clearStateProgram, "INVALID_SENDER_ADDRESS");
+        .buildTransaction(pollTealParams, approvalProgram, clearStateProgram,
+            "INVALID_SENDER_ADDRESS");
 
   }
 
@@ -146,4 +137,5 @@ public class BuildApplicationCreateTransactionServiceTest {
         .localStateSchema(new StateSchema())
         .build();
   }
+
 }

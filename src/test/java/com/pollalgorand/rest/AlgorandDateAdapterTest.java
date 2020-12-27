@@ -26,7 +26,7 @@ public class AlgorandDateAdapterTest {
 
   private AlgorandDateAdapter algorandDateAdapter;
 
-  private LocalDateTime now = LocalDateTime.now();
+  private LocalDateTime now = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
 
   @Mock
   private Clock clock;

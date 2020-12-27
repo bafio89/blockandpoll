@@ -7,6 +7,7 @@ import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
+import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -57,9 +58,9 @@ public class OptinUseCaseTest {
 
     context.checking(new Expectations() {{
       oneOf(pollRepository).findBy(APP_ID);
-      will(returnValue(blockchainPoll));
+      will(returnValue(Optional.of(blockchainPoll)));
 
-      oneOf(dateValidator).isOptinOpen(blockchainPoll);
+      oneOf(dateValidator).isNowInInterval(blockchainPoll.getStartSubscriptionTime(), blockchainPoll.getEndSubscriptionTime());
       will(returnValue(Boolean.TRUE));
 
       oneOf(blockChainReadRepository).isOptinAllowedFor(optinAppRequest);
@@ -76,9 +77,9 @@ public class OptinUseCaseTest {
 
     context.checking(new Expectations() {{
       oneOf(pollRepository).findBy(APP_ID);
-      will(returnValue(blockchainPoll));
+      will(returnValue(Optional.of(blockchainPoll)));
 
-      oneOf(dateValidator).isOptinOpen(blockchainPoll);
+      oneOf(dateValidator).isNowInInterval(blockchainPoll.getStartSubscriptionTime(), blockchainPoll.getEndSubscriptionTime());
       will(returnValue(Boolean.FALSE));
 
       never(blockChainReadRepository);
@@ -98,9 +99,9 @@ public class OptinUseCaseTest {
 
     context.checking(new Expectations() {{
       oneOf(pollRepository).findBy(APP_ID);
-      will(returnValue(blockchainPoll));
+      will(returnValue(Optional.of(blockchainPoll)));
 
-      oneOf(dateValidator).isOptinOpen(blockchainPoll);
+      oneOf(dateValidator).isNowInInterval(blockchainPoll.getStartSubscriptionTime(), blockchainPoll.getEndSubscriptionTime());
       will(returnValue(Boolean.TRUE));
 
       oneOf(blockChainReadRepository).isOptinAllowedFor(optinAppRequest);
@@ -111,7 +112,7 @@ public class OptinUseCaseTest {
 
     expectedException.expect(OptinAlreadDoneException.class);
     expectedException
-        .expectMessage("It seems that optin has been already done for app 123 and sender SENDER");
+        .expectMessage("It seems that optin has been already done for app 123");
 
     optinUseCase.optin(optinAppRequest);
   }

@@ -7,6 +7,7 @@ import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
+import java.util.Optional;
 
 public class OptinUseCase {
 
@@ -28,9 +29,10 @@ public class OptinUseCase {
 
   public void optin(OptinAppRequest optinAppRequest) {
 
-    BlockchainPoll blockchainPoll = pollRepository.findBy(optinAppRequest.getAppId());
+    Optional<BlockchainPoll> blockchainPoll = pollRepository.findBy(optinAppRequest.getAppId());
 
-    if (!dateValidator.isOptinOpen(blockchainPoll)){
+    if (blockchainPoll.isPresent() && !dateValidator.isNowInInterval(blockchainPoll.get().getStartSubscriptionTime(),
+        blockchainPoll.get().getEndSubscriptionTime())) {
       throw new OptinIntervalTimeException(optinAppRequest.getAppId());
     }
 

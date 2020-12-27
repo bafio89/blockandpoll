@@ -7,6 +7,7 @@ import com.pollalgorand.rest.adapter.exceptions.SavingToDbException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.PollRepository;
 import java.util.List;
+import java.util.Optional;
 import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public class PostgresPollRepository implements PollRepository {
       + "VALUES (:NAME, :START_SUBSCRIPTION_TIME, :END_SUBSCRIPTION_TIME,"
       + ":START_VOTING_TIME, :END_VOTING_TIME, :DESCRIPTION, :APP_ID, :SENDER)";
 
+  private final String RETRIEVE_POLL_BY_APP_ID = "SELECT id, name, p.start_subscription_time, p.end_subscription_time,p.start_voting_time, p.end_voting_time, p.sender,p.description, p.app_id, po.option FROM pollgorand.poll p join pollgorand.poll_options po on p.id = po.id_poll WHERE app_id = ";
+
   private final String INSERT_POLL_OPTIONS = "INSERT INTO pollgorand.poll_options "
       + "(id_poll, option)"
       + "VALUES (:ID_POLL, :OPTION)";
@@ -38,7 +41,7 @@ public class PostgresPollRepository implements PollRepository {
   }
 
   @Override
-  public void save(BlockchainPoll poll){
+  public void save(BlockchainPoll poll) {
 
     GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -47,7 +50,7 @@ public class PostgresPollRepository implements PollRepository {
       Integer pollId = (Integer) keyHolder.getKeys().get("ID");
       poll.getOptions().forEach(
           option -> jdbcTemplate.update(INSERT_POLL_OPTIONS, pollOptionParam(option, pollId)));
-    }catch (Exception e){
+    } catch (Exception e) {
       logger.error("An error occours trying to save the poll in the DB", e);
       throw new SavingToDbException(poll.getName(), e);
     }
@@ -68,24 +71,29 @@ public class PostgresPollRepository implements PollRepository {
   }
 
   @Override
-  public BlockchainPoll findBy(long appId) {
-    return null;
+  public Optional<BlockchainPoll> findBy(long appId) {
+
+    return fromEntityToDomain(
+        jdbcTemplate.query(RETRIEVE_POLL_BY_APP_ID + "'" + appId + "'", blockchainPollMapper()))
+        .stream().findFirst();
   }
 
   private List<BlockchainPoll> fromEntityToDomain(List<PollEntity> pollEntities) {
 
-    return pollEntities.stream().map(pollEntity -> new BlockchainPoll(pollEntity.getAppId(), pollEntity.getName(), pollEntity.getSender(),
-        pollEntity.getStartSubscriptionTime(), pollEntity.getEndSubscriptionTime(), pollEntity.getStartVotingTime(), pollEntity.getEndVotingTime(),
-        pollEntity.getOptions(), "", pollEntity.getDescription())).collect(toList());
+    return pollEntities.stream().map(
+        pollEntity -> new BlockchainPoll(pollEntity.getAppId(), pollEntity.getName(),
+            pollEntity.getSender(),
+            pollEntity.getStartSubscriptionTime(), pollEntity.getEndSubscriptionTime(),
+            pollEntity.getStartVotingTime(), pollEntity.getEndVotingTime(),
+            pollEntity.getOptions(), "", pollEntity.getDescription())).collect(toList());
   }
 
   private MapSqlParameterSource pollOptionParam(String option, Integer pollId) {
 
     MapSqlParameterSource params = new MapSqlParameterSource();
 
-    params.addValue("OPTION",option);
-    params.addValue("ID_POLL",pollId);
-
+    params.addValue("OPTION", option);
+    params.addValue("ID_POLL", pollId);
 
     return params;
   }

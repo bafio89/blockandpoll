@@ -2,6 +2,7 @@ package com.pollalgorand.rest.web.endpoint;
 
 import static org.springframework.http.ResponseEntity.status;
 
+import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import com.pollalgorand.rest.domain.exceptions.OptinAlreadDoneException;
 import com.pollalgorand.rest.domain.usecase.OptinUseCase;
 import com.pollalgorand.rest.web.request.OptinRequest;
@@ -33,8 +34,8 @@ public class OptinPollEndPoint {
   }
 
   @PostMapping("/optin/poll/{appId}")
-  public ResponseEntity<Void> optin(@PathVariable long appId, @RequestBody OptinRequest request){
-
+  public ResponseEntity<Void> optin(@PathVariable long appId, @RequestBody OptinRequest request) {
+    logger.info("Arrived a request");
     optinUseCase.optin(optinRequestConverter.fromRequestToDomain(appId, request));
     return ResponseEntity.ok().build();
   }
@@ -44,8 +45,8 @@ public class OptinPollEndPoint {
     return status(HttpStatus.PRECONDITION_FAILED).body(e.getMessage());
   }
 
-  @ExceptionHandler(RuntimeException.class)
-  public ResponseEntity serverError(RuntimeException e){
+  @ExceptionHandler({RuntimeException.class, InvalidMnemonicKeyException.class})
+  public ResponseEntity serverError(RuntimeException e) {
     return status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
   }
 }

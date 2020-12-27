@@ -2,6 +2,7 @@ package com.pollalgorand.rest.domain.repository;
 
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import java.util.List;
+import java.util.Optional;
 
 public interface PollRepository {
 
@@ -9,5 +10,5 @@ public interface PollRepository {
 
    List<BlockchainPoll> find();
 
-   BlockchainPoll findBy(long appId);
+   Optional<BlockchainPoll> findBy(long appId);
 }

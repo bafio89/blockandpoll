@@ -43,7 +43,6 @@ class Poll extends React.Component {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            sender: this.state.sender,
             mnemonicKey: this.state.mnemonicKey,
             votedOption: this.state.selectedOption
           })
