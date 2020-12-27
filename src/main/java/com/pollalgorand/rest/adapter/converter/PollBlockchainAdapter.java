@@ -3,14 +3,16 @@ package com.pollalgorand.rest.adapter.converter;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.pollalgorand.rest.adapter.PollTealParams;
+import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import java.nio.ByteBuffer;
+import java.util.Optional;
 
-public class PollBlockchainParamsAdapter {
+public class PollBlockchainAdapter {
 
   private AlgorandDateAdapter algorandDateAdapter;
 
-  public PollBlockchainParamsAdapter(AlgorandDateAdapter algorandDateAdapter) {
+  public PollBlockchainAdapter(AlgorandDateAdapter algorandDateAdapter) {
 
     this.algorandDateAdapter = algorandDateAdapter;
   }
@@ -33,7 +35,14 @@ public class PollBlockchainParamsAdapter {
         poll.getSender().getBytes(UTF_8));
   }
 
-  public byte[] convertLongToByteArray(long value) {
+  private byte[] convertLongToByteArray(long value) {
     return ByteBuffer.allocate(8).putLong(value).array();
+  }
+
+  public Optional<BlockchainPoll> fromPollToBlockchainPoll(Poll poll, Long appId) {
+    return Optional.of(new BlockchainPoll(appId, poll.getName(), poll.getSender(),
+        poll.getStartSubscriptionTime(), poll.getEndSubscriptionTime(),
+        poll.getStartVotingTime(), poll.getEndVotingTime(), poll.getOptions(),
+        poll.getMnemonicKey(), poll.getDescription()));
   }
 }

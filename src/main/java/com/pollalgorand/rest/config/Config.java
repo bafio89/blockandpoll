@@ -4,8 +4,7 @@ import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.pollalgorand.rest.adapter.Clock;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.AlgorandDateAdapter;
-import com.pollalgorand.rest.adapter.converter.PollAdapter;
-import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
+import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
 import com.pollalgorand.rest.adapter.repository.AlgorandASCPollRepository;
 import com.pollalgorand.rest.adapter.service.AlgorandApplicationService;
 import com.pollalgorand.rest.adapter.service.BuildTransactionService;
@@ -32,10 +31,15 @@ public class Config {
   }
 
   @Bean
-  public UnsignedASCTransactionService unsignedASCTransactionService(AlgodClient algodClient){
+  public PollBlockchainAdapter pollBlockchainAdapter(){
+    return new PollBlockchainAdapter(new AlgorandDateAdapter(new Clock()));
+  }
+
+  @Bean
+  public UnsignedASCTransactionService unsignedASCTransactionService(AlgodClient algodClient, PollBlockchainAdapter pollBlockchainAdapter){
     return new UnsignedASCTransactionService(
         algodClient,
-        new PollBlockchainParamsAdapter(new AlgorandDateAdapter(new Clock())),
+        pollBlockchainAdapter,
         new TealProgramFactory(algodClient),
         new BuildTransactionService(algodClient));
   }
@@ -71,12 +75,12 @@ public class Config {
   }
 
   @Bean
-  public BlockchainPollRepository pollRepository(AlgodClient algodClient, UnsignedASCTransactionService unsignedASCTransactionService) {
+  public BlockchainPollRepository pollRepository(AlgodClient algodClient, UnsignedASCTransactionService unsignedASCTransactionService, PollBlockchainAdapter pollBlockchainAdapter) {
 
     return new AlgorandASCPollRepository(algodClient,
         new TransactionSignerService(),
         unsignedASCTransactionService,
-        new PollAdapter(),
+        pollBlockchainAdapter,
         new TransactionConfirmationService(algodClient),
         new AlgorandApplicationService(algodClient));
   }

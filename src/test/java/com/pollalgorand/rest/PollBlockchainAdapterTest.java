@@ -8,10 +8,12 @@ import static org.hamcrest.Matchers.is;
 
 import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.adapter.converter.AlgorandDateAdapter;
-import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
+import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
+import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -20,7 +22,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class PollBlockchainParamsAdapterTest {
+public class PollBlockchainAdapterTest {
 
   public static final Long A_START_SUBS_BLOCK_NUMBER = 1L;
   public static final Long A_END_SUBS_BLOCK_NUMBER = 2L;
@@ -28,6 +30,7 @@ public class PollBlockchainParamsAdapterTest {
   public static final Long A_END_VOTE_BLOCK_NUMBER = 4L;
   public static final String MNEMONIC_KEY = "mnemonicKey";
   public static final String DESCRIPTION = "description";
+  public static final long APP_ID = 123L;
 
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
@@ -39,15 +42,16 @@ public class PollBlockchainParamsAdapterTest {
   @Mock
   private AlgorandDateAdapter algorandDateAdapter;
 
-  private PollBlockchainParamsAdapter pollBlockchainParamsAdapter;
+  private PollBlockchainAdapter pollBlockchainAdapter;
 
   public static final String SENDER = "A_SENDER";
   public static final Long LAST_ROUND = 1L;
+  private LocalDateTime now = LocalDateTime.now();
 
   @Before
   public void setUp() {
 
-    pollBlockchainParamsAdapter = new PollBlockchainParamsAdapter(algorandDateAdapter);
+    pollBlockchainAdapter = new PollBlockchainAdapter(algorandDateAdapter);
   }
 
   @Test
@@ -81,7 +85,7 @@ public class PollBlockchainParamsAdapterTest {
       will(returnValue(A_END_VOTE_BLOCK_NUMBER));
     }});
 
-    PollTealParams pollTealParams = pollBlockchainParamsAdapter.fromPollToPollTealParams(poll,
+    PollTealParams pollTealParams = pollBlockchainAdapter.fromPollToPollTealParams(poll,
         LAST_ROUND);
 
     assertThat(pollTealParams.getOptions().get(0),
@@ -93,4 +97,21 @@ public class PollBlockchainParamsAdapterTest {
     assertThat(pollTealParams, is(expectedTealParams));
   }
 
+  @Test
+  public void adaptFromPollToBlockchainPoll() {
+
+    BlockchainPoll expectedBlockchainPoll = expectedBlockchainPoll();
+
+    assertThat(Optional.of(expectedBlockchainPoll), is(pollBlockchainAdapter.fromPollToBlockchainPoll(aPoll(), APP_ID)));
+  }
+
+  private Poll aPoll() {
+    return new Poll("POLL_NAME", now, now, now, now,
+        asList("OPTION_1", "OPTION_2"), "SENDER", "MEMONIC_KEY", "DESCRIPTION");
+  }
+
+  private BlockchainPoll expectedBlockchainPoll() {
+    return new BlockchainPoll(APP_ID, "POLL_NAME", "SENDER", now, now, now, now,
+        asList("OPTION_1", "OPTION_2"),  "MEMONIC_KEY", "DESCRIPTION");
+  }
 }

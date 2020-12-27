@@ -12,7 +12,7 @@ import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.model.PostTransactionsResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.pollalgorand.rest.adapter.converter.PollAdapter;
+import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
 import com.pollalgorand.rest.adapter.exceptions.EncodeTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import com.pollalgorand.rest.adapter.exceptions.SendingTransactionException;
@@ -70,7 +70,7 @@ public class AlgorandASCPollRepositoryTest {
   private TransactionConfirmationService transactionConfirmationService;
 
   @Mock
-  private PollAdapter pollAdapter;
+  private PollBlockchainAdapter pollBlockchainAdapter;
 
   @Mock
   private AlgorandApplicationService algorandApplicationService;
@@ -80,7 +80,7 @@ public class AlgorandASCPollRepositoryTest {
   @Before
   public void setUp() {
     algorandASCPollRepository = new AlgorandASCPollRepository(algodClient, transactionSignerService,
-        unsignedASCTransactionService, pollAdapter, transactionConfirmationService,
+        unsignedASCTransactionService, pollBlockchainAdapter, transactionConfirmationService,
         algorandApplicationService);
   }
 
@@ -117,7 +117,7 @@ public class AlgorandASCPollRepositoryTest {
       oneOf(algorandApplicationService).getApplicationId(TX_ID);
       will(returnValue(A_TRANSACTION_ID));
 
-      oneOf(pollAdapter).fromPollToBlockchainPoll(poll, A_TRANSACTION_ID);
+      oneOf(pollBlockchainAdapter).fromPollToBlockchainPoll(poll, A_TRANSACTION_ID);
     }});
 
     algorandASCPollRepository.save(poll);

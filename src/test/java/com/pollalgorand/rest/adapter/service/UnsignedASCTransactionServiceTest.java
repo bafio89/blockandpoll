@@ -11,7 +11,7 @@ import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.model.NodeStatusResponse;
 import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
-import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
+import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
 import com.pollalgorand.rest.adapter.exceptions.InvalidSenderAddressException;
 import com.pollalgorand.rest.adapter.exceptions.NodeStatusException;
 import com.pollalgorand.rest.domain.model.Poll;
@@ -51,7 +51,7 @@ public class UnsignedASCTransactionServiceTest {
   @Mock
   private TealProgramFactory tealProgramFactory;
   @Mock
-  private PollBlockchainParamsAdapter pollBlockchainParamsAdapter;
+  private PollBlockchainAdapter pollBlockchainAdapter;
   @Mock
   private BuildTransactionService buildTransactionService;
   @Mock
@@ -73,7 +73,7 @@ public class UnsignedASCTransactionServiceTest {
     nodeStatusResponse.lastRound = LAST_ROUND;
 
     algorandASCPollRepository = new UnsignedASCTransactionService(algodClient,
-        pollBlockchainParamsAdapter,
+        pollBlockchainAdapter,
         tealProgramFactory, buildTransactionService);
 
     approvalProgram = new TEALProgram();
@@ -104,7 +104,7 @@ public class UnsignedASCTransactionServiceTest {
       oneOf(statusResponse).body();
       will(returnValue(nodeStatusResponse));
 
-      oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
+      oneOf(pollBlockchainAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
       will(returnValue(pollTealParams));
 
       oneOf(tealProgramFactory).createApprovalProgramFrom(pollTealParams);
@@ -139,7 +139,7 @@ public class UnsignedASCTransactionServiceTest {
       oneOf(statusResponse).body();
       will(returnValue(nodeStatusResponse));
 
-      oneOf(pollBlockchainParamsAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
+      oneOf(pollBlockchainAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
       will(returnValue(pollTealParams));
 
       oneOf(tealProgramFactory).createApprovalProgramFrom(pollTealParams);
@@ -176,7 +176,7 @@ public class UnsignedASCTransactionServiceTest {
 
       never(statusResponse);
 
-      never(pollBlockchainParamsAdapter);
+      never(pollBlockchainAdapter);
 
       never(tealProgramFactory);
 

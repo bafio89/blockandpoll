@@ -8,7 +8,7 @@ import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
-import com.pollalgorand.rest.adapter.converter.PollBlockchainParamsAdapter;
+import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
 import com.pollalgorand.rest.adapter.exceptions.NodeStatusException;
 import com.pollalgorand.rest.domain.model.Poll;
 import org.slf4j.Logger;
@@ -19,14 +19,14 @@ public class UnsignedASCTransactionService {
   private Logger logger = LoggerFactory.getLogger(UnsignedASCTransactionService.class);
 
   private AlgodClient algodClient;
-  private PollBlockchainParamsAdapter pollBlockchainParamsAdapter;
+  private PollBlockchainAdapter pollBlockchainAdapter;
   private TealProgramFactory tealProgramFactory;
   private BuildTransactionService buildTransactionService;
 
-  public UnsignedASCTransactionService(AlgodClient algodClient, PollBlockchainParamsAdapter pollBlockchainParamsAdapter,
+  public UnsignedASCTransactionService(AlgodClient algodClient, PollBlockchainAdapter pollBlockchainAdapter,
       TealProgramFactory tealProgramFactory, BuildTransactionService buildTransactionService) {
     this.algodClient = algodClient;
-    this.pollBlockchainParamsAdapter = pollBlockchainParamsAdapter;
+    this.pollBlockchainAdapter = pollBlockchainAdapter;
     this.tealProgramFactory = tealProgramFactory;
     this.buildTransactionService = buildTransactionService;
   }
@@ -35,7 +35,7 @@ public class UnsignedASCTransactionService {
 
     Long lastRound = getBlockChainLastRound();
 
-    PollTealParams pollTealParams = pollBlockchainParamsAdapter
+    PollTealParams pollTealParams = pollBlockchainAdapter
         .fromPollToPollTealParams(poll, lastRound);
 
     TEALProgram approvalProgram = tealProgramFactory.createApprovalProgramFrom(pollTealParams);

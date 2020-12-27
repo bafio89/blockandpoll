@@ -31,7 +31,7 @@ public class BlockchainPoll extends Poll {
   @Override
   public String toString() {
     return "BlockchainPoll{" +
-        "appId=" + appId +
+        "appId=" + appId + " " + super.toString() +
         '}';
   }
 

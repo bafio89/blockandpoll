@@ -6,7 +6,7 @@ import static com.pollalgorand.rest.adapter.AlgorandUtils.txValues;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.pollalgorand.rest.adapter.converter.PollAdapter;
+import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
 import com.pollalgorand.rest.adapter.exceptions.EncodeTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import com.pollalgorand.rest.adapter.exceptions.SendingTransactionException;
@@ -31,7 +31,7 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
   private final AlgorandApplicationService algorandApplicationService;
   private final TransactionConfirmationService transactionConfirmationService;
   private final TransactionSignerService transactionSignerService;
-  private final PollAdapter pollAdapter;
+  private final PollBlockchainAdapter pollBlockchainAdapter;
   private final UnsignedASCTransactionService unsignedASCTransactionService;
 
   private AlgodClient algodClient;
@@ -39,14 +39,14 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
   public AlgorandASCPollRepository(AlgodClient algodClient,
       TransactionSignerService transactionSignerService,
       UnsignedASCTransactionService unsignedASCTransactionService,
-      PollAdapter pollAdapter,
+      PollBlockchainAdapter pollBlockchainAdapter,
       TransactionConfirmationService transactionConfirmationService,
       AlgorandApplicationService algorandApplicationService) {
 
     this.algodClient = algodClient;
     this.transactionSignerService = transactionSignerService;
     this.unsignedASCTransactionService = unsignedASCTransactionService;
-    this.pollAdapter = pollAdapter;
+    this.pollBlockchainAdapter = pollBlockchainAdapter;
     this.transactionConfirmationService = transactionConfirmationService;
     this.algorandApplicationService = algorandApplicationService;
   }
@@ -65,7 +65,7 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
       Long appId = algorandApplicationService.getApplicationId(transactionId);
 
-      return pollAdapter.fromPollToBlockchainPoll(poll, appId);
+      return pollBlockchainAdapter.fromPollToBlockchainPoll(poll, appId);
 
     } catch (NoSuchAlgorithmException e) {
       logger.error("Something goes wrong signing transaction", e);
