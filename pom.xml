@@ -99,6 +99,11 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.2.16</version>
 		</dependency>
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-springjdbc</artifactId>
+			<version>8.2.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>

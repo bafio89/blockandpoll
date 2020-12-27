@@ -6,12 +6,11 @@ import com.pollalgorand.rest.PollEntity;
 import com.pollalgorand.rest.adapter.exceptions.SavingToDbException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.PollRepository;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
+import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -22,9 +21,7 @@ public class PostgresPollRepository implements PollRepository {
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
 
-  public static final String RETRIEVE_POLLS = "SELECT * FROM pollgorand.poll p order by p.id ASC";
-
-  public static final String RETRIEVE_POLLS_OPTION = "SELECT * FROM pollgorand.poll_options where id_poll=";
+  public static final String RETRIEVE_POLLS_JOIN = "SELECT id, name, p.start_subscription_time, p.end_subscription_time,p.start_voting_time, p.end_voting_time, p.sender,p.description, p.app_id, po.option FROM pollgorand.poll p join pollgorand.poll_options po on p.id = po.id_poll order by p.id ASC";
 
   private final String INSERT_POLL = "INSERT INTO pollgorand.poll "
       + "(name, start_subscription_time, end_subscription_time,"
@@ -60,12 +57,14 @@ public class PostgresPollRepository implements PollRepository {
   @Override
   public List<BlockchainPoll> find() {
 
-    List<PollEntity> entityPolls = jdbcTemplate.query(RETRIEVE_POLLS, new PollMapper());
+    return fromEntityToDomain(jdbcTemplate.query(RETRIEVE_POLLS_JOIN, blockchainPollMapper()));
+  }
 
-    List<PollEntity> pollEntities = entityPolls.stream().map(this::getPoll)
-        .collect(toList());
-
-    return fromEntityToDomain(pollEntities);
+  private ResultSetExtractor<List<PollEntity>> blockchainPollMapper() {
+    return JdbcTemplateMapperFactory
+        .newInstance()
+        .addKeys("id")
+        .newResultSetExtractor(PollEntity.class);
   }
 
   @Override
@@ -78,38 +77,6 @@ public class PostgresPollRepository implements PollRepository {
     return pollEntities.stream().map(pollEntity -> new BlockchainPoll(pollEntity.getAppId(), pollEntity.getName(), pollEntity.getSender(),
         pollEntity.getStartSubscriptionTime(), pollEntity.getEndSubscriptionTime(), pollEntity.getStartVotingTime(), pollEntity.getEndVotingTime(),
         pollEntity.getOptions(), "", pollEntity.getDescription())).collect(toList());
-  }
-
-  private PollEntity getPoll(PollEntity entityPoll) {
-
-    List<String> options = jdbcTemplate
-        .query(RETRIEVE_POLLS_OPTION + entityPoll.getId(), new PollOptionMapper());
-
-    entityPoll.setOptions(options);
-    return entityPoll;
-  }
-
-  private static final class PollOptionMapper implements RowMapper<String> {
-    public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-    return rs.getString("option");
-    }
-  }
-
-  private static final class PollMapper implements RowMapper<PollEntity> {
-    public PollEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-      return new PollEntity(
-          rs.getLong("id"),
-          rs.getString("name"),
-          rs.getTimestamp("start_subscription_time").toLocalDateTime(),
-          rs.getTimestamp("end_subscription_time").toLocalDateTime(),
-          rs.getTimestamp("start_voting_time").toLocalDateTime(),
-          rs.getTimestamp("end_voting_time").toLocalDateTime(),
-          null,
-          rs.getString("sender"),
-          rs.getString("description"),
-          Long.valueOf(rs.getString("app_id"))
-          );
-    }
   }
 
   private MapSqlParameterSource pollOptionParam(String option, Integer pollId) {
