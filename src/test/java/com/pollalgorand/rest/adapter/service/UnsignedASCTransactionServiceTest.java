@@ -53,7 +53,7 @@ public class UnsignedASCTransactionServiceTest {
   @Mock
   private PollBlockchainAdapter pollBlockchainAdapter;
   @Mock
-  private BuildTransactionService buildTransactionService;
+  private BuildApplicationCreateTransactionService buildApplicationCreateTransactionService;
   @Mock
   private Response statusResponse;
   @Mock
@@ -74,7 +74,7 @@ public class UnsignedASCTransactionServiceTest {
 
     algorandASCPollRepository = new UnsignedASCTransactionService(algodClient,
         pollBlockchainAdapter,
-        tealProgramFactory, buildTransactionService);
+        tealProgramFactory, buildApplicationCreateTransactionService);
 
     approvalProgram = new TEALProgram();
     clearStateProgram = new TEALProgram();
@@ -113,7 +113,7 @@ public class UnsignedASCTransactionServiceTest {
       oneOf(tealProgramFactory).createClearStateProgram();
       will(returnValue(clearStateProgram));
 
-      oneOf(buildTransactionService)
+      oneOf(buildApplicationCreateTransactionService)
           .buildTransaction(pollTealParams, approvalProgram, clearStateProgram, SENDER_ADDRESS);
 
     }});
@@ -148,7 +148,7 @@ public class UnsignedASCTransactionServiceTest {
       oneOf(tealProgramFactory).createClearStateProgram();
       will(returnValue(clearStateProgram));
 
-      oneOf(buildTransactionService)
+      oneOf(buildApplicationCreateTransactionService)
           .buildTransaction(pollTealParams, approvalProgram, clearStateProgram,
               INVALID_SENDER_ADDRESS);
       will(throwException(

@@ -7,6 +7,6 @@ public class OptinRequestConverter {
 
   public OptinAppRequest fromRequestToDomain(long appId, OptinRequest request){
 
-    return new OptinAppRequest(appId, request.getSender(), request.getMnemonicKey());
+    return new OptinAppRequest(appId, request.getMnemonicKey());
   }
 }

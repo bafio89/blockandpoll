@@ -3,6 +3,7 @@ package com.pollalgorand.rest.adapter.repository;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.txHeaders;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.txValues;
 
+import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,6 +12,7 @@ import com.pollalgorand.rest.adapter.exceptions.EncodeTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import com.pollalgorand.rest.adapter.exceptions.SendingTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.SignTransactionException;
+import com.pollalgorand.rest.adapter.service.AccountCreatorService;
 import com.pollalgorand.rest.adapter.service.AlgorandApplicationService;
 import com.pollalgorand.rest.adapter.service.TransactionConfirmationService;
 import com.pollalgorand.rest.adapter.service.TransactionSignerService;
@@ -30,6 +32,7 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
 
   private final AlgorandApplicationService algorandApplicationService;
   private final TransactionConfirmationService transactionConfirmationService;
+  private AccountCreatorService accountCreatorService;
   private final TransactionSignerService transactionSignerService;
   private final PollBlockchainAdapter pollBlockchainAdapter;
   private final UnsignedASCTransactionService unsignedASCTransactionService;
@@ -37,6 +40,7 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
   private AlgodClient algodClient;
 
   public AlgorandASCPollRepository(AlgodClient algodClient,
+      AccountCreatorService accountCreatorService,
       TransactionSignerService transactionSignerService,
       UnsignedASCTransactionService unsignedASCTransactionService,
       PollBlockchainAdapter pollBlockchainAdapter,
@@ -44,6 +48,7 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
       AlgorandApplicationService algorandApplicationService) {
 
     this.algodClient = algodClient;
+    this.accountCreatorService = accountCreatorService;
     this.transactionSignerService = transactionSignerService;
     this.unsignedASCTransactionService = unsignedASCTransactionService;
     this.pollBlockchainAdapter = pollBlockchainAdapter;
@@ -57,7 +62,9 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
     Transaction unsignedTx = unsignedASCTransactionService.createUnsignedTxFor(poll);
 
     try {
-      byte[] encodedTxBytes = transactionSignerService.sign(unsignedTx, poll.getMnemonicKey());
+      Account account = accountCreatorService.createAccountFrom(poll.getMnemonicKey());
+
+      byte[] encodedTxBytes = transactionSignerService.sign(unsignedTx, account);
 
       String transactionId = algodClient.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues).body().txId;
 

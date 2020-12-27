@@ -35,7 +35,7 @@ public class OptinUseCase {
     }
 
     if (!blockChainReadRepository.isOptinAllowedFor(optinAppRequest)) {
-      throw new OptinAlreadDoneException(optinAppRequest.getAppId(), optinAppRequest.getSender());
+      throw new OptinAlreadDoneException(optinAppRequest.getAppId());
     }
 
     blockchainWriteRepository.optin(optinAppRequest);

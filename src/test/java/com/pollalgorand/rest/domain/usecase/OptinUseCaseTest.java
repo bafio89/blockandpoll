@@ -44,7 +44,7 @@ public class OptinUseCaseTest {
 
   private BlockchainPoll blockchainPoll = new BlockchainPoll();
 
-  public static final OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, "SENDER", "MNEMONIC_KEY");
+  public static final OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, "MNEMONIC_KEY");
 
   @Before
   public void setUp() {

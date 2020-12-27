@@ -6,8 +6,9 @@ import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.AlgorandDateAdapter;
 import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
 import com.pollalgorand.rest.adapter.repository.AlgorandASCPollRepository;
+import com.pollalgorand.rest.adapter.service.AccountCreatorService;
 import com.pollalgorand.rest.adapter.service.AlgorandApplicationService;
-import com.pollalgorand.rest.adapter.service.BuildTransactionService;
+import com.pollalgorand.rest.adapter.service.BuildApplicationCreateTransactionService;
 import com.pollalgorand.rest.adapter.service.TransactionConfirmationService;
 import com.pollalgorand.rest.adapter.service.TransactionSignerService;
 import com.pollalgorand.rest.adapter.service.UnsignedASCTransactionService;
@@ -41,7 +42,7 @@ public class Config {
         algodClient,
         pollBlockchainAdapter,
         new TealProgramFactory(algodClient),
-        new BuildTransactionService(algodClient));
+        new BuildApplicationCreateTransactionService(algodClient));
   }
 
   @Bean
@@ -78,7 +79,7 @@ public class Config {
   public BlockchainPollRepository pollRepository(AlgodClient algodClient, UnsignedASCTransactionService unsignedASCTransactionService, PollBlockchainAdapter pollBlockchainAdapter) {
 
     return new AlgorandASCPollRepository(algodClient,
-        new TransactionSignerService(),
+        new AccountCreatorService(), new TransactionSignerService(),
         unsignedASCTransactionService,
         pollBlockchainAdapter,
         new TransactionConfirmationService(algodClient),

@@ -5,22 +5,16 @@ import java.util.Objects;
 public class OptinAppRequest {
 
   private final long appId;
-  private final String sender;
   private final String mnemonicKey;
 
-  public OptinAppRequest(long appId, String sender, String mnemonicKey) {
+  public OptinAppRequest(long appId, String mnemonicKey) {
 
     this.appId = appId;
-    this.sender = sender;
     this.mnemonicKey = mnemonicKey;
   }
 
   public long getAppId() {
     return appId;
-  }
-
-  public String getSender() {
-    return sender;
   }
 
   public String getMnemonicKey() {
@@ -37,21 +31,11 @@ public class OptinAppRequest {
     }
     OptinAppRequest that = (OptinAppRequest) o;
     return appId == that.appId &&
-        Objects.equals(sender, that.sender) &&
         Objects.equals(mnemonicKey, that.mnemonicKey);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(appId, sender, mnemonicKey);
-  }
-
-  @Override
-  public String toString() {
-    return "OptinAppRequest{" +
-        "appId=" + appId +
-        ", sender='" + sender + '\'' +
-        ", mnemonicKey='" + mnemonicKey + '\'' +
-        '}';
+    return Objects.hash(appId, mnemonicKey);
   }
 }

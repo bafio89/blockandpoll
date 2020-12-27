@@ -21,14 +21,14 @@ public class UnsignedASCTransactionService {
   private AlgodClient algodClient;
   private PollBlockchainAdapter pollBlockchainAdapter;
   private TealProgramFactory tealProgramFactory;
-  private BuildTransactionService buildTransactionService;
+  private BuildApplicationCreateTransactionService buildApplicationCreateTransactionService;
 
   public UnsignedASCTransactionService(AlgodClient algodClient, PollBlockchainAdapter pollBlockchainAdapter,
-      TealProgramFactory tealProgramFactory, BuildTransactionService buildTransactionService) {
+      TealProgramFactory tealProgramFactory, BuildApplicationCreateTransactionService buildApplicationCreateTransactionService) {
     this.algodClient = algodClient;
     this.pollBlockchainAdapter = pollBlockchainAdapter;
     this.tealProgramFactory = tealProgramFactory;
-    this.buildTransactionService = buildTransactionService;
+    this.buildApplicationCreateTransactionService = buildApplicationCreateTransactionService;
   }
 
   public Transaction createUnsignedTxFor(Poll poll) {
@@ -41,7 +41,8 @@ public class UnsignedASCTransactionService {
     TEALProgram approvalProgram = tealProgramFactory.createApprovalProgramFrom(pollTealParams);
     TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();
 
-    return buildTransactionService.buildTransaction(pollTealParams, approvalProgram, clearStateProgram, poll.getSender());
+    return buildApplicationCreateTransactionService
+        .buildTransaction(pollTealParams, approvalProgram, clearStateProgram, poll.getSender());
   }
 
   private Long getBlockChainLastRound() {

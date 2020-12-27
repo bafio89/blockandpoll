@@ -15,13 +15,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BuildTransactionService {
+public class BuildApplicationCreateTransactionService {
 
-  private Logger logger = LoggerFactory.getLogger(BuildTransactionService.class);
+  private Logger logger = LoggerFactory.getLogger(BuildApplicationCreateTransactionService.class);
 
   private AlgodClient algodClient;
 
-  public BuildTransactionService(AlgodClient algodClient) {
+  public BuildApplicationCreateTransactionService(AlgodClient algodClient) {
     this.algodClient = algodClient;
   }
 

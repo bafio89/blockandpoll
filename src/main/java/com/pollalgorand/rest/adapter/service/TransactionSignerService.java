@@ -9,10 +9,8 @@ import java.security.GeneralSecurityException;
 
 public class TransactionSignerService {
 
-  public byte[] sign(Transaction unsignedTx, String mnemonicKey)
+  public byte[] sign(Transaction unsignedTx, Account account)
       throws GeneralSecurityException, JsonProcessingException {
-
-    Account account = new Account(mnemonicKey);
 
     SignedTransaction signedTx = account.signTransaction(unsignedTx);
 

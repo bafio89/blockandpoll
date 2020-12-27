@@ -5,6 +5,7 @@ import static com.pollalgorand.rest.adapter.AlgorandUtils.txValues;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.rules.ExpectedException.none;
 
+import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.algod.RawTransaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
@@ -17,6 +18,7 @@ import com.pollalgorand.rest.adapter.exceptions.EncodeTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import com.pollalgorand.rest.adapter.exceptions.SendingTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.SignTransactionException;
+import com.pollalgorand.rest.adapter.service.AccountCreatorService;
 import com.pollalgorand.rest.adapter.service.AlgorandApplicationService;
 import com.pollalgorand.rest.adapter.service.TransactionConfirmationService;
 import com.pollalgorand.rest.adapter.service.TransactionSignerService;
@@ -70,18 +72,24 @@ public class AlgorandASCPollRepositoryTest {
   private TransactionConfirmationService transactionConfirmationService;
 
   @Mock
+  private AccountCreatorService accountCreatorService;
+
+  @Mock
   private PollBlockchainAdapter pollBlockchainAdapter;
 
   @Mock
   private AlgorandApplicationService algorandApplicationService;
 
   private AlgorandASCPollRepository algorandASCPollRepository;
+  private Account account;
 
   @Before
-  public void setUp() {
-    algorandASCPollRepository = new AlgorandASCPollRepository(algodClient, transactionSignerService,
+  public void setUp() throws NoSuchAlgorithmException {
+    algorandASCPollRepository = new AlgorandASCPollRepository(algodClient, accountCreatorService, transactionSignerService,
         unsignedASCTransactionService, pollBlockchainAdapter, transactionConfirmationService,
         algorandApplicationService);
+
+    account = new Account();
   }
 
   @Test
@@ -97,7 +105,10 @@ public class AlgorandASCPollRepositoryTest {
       oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
       will(returnValue(unsignedTx));
 
-      oneOf(transactionSignerService).sign(unsignedTx, A_MNEMONIC_KEY);
+      oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);
+      will(returnValue(account));
+
+      oneOf(transactionSignerService).sign(unsignedTx, account);
       will(returnValue(A_BYTE_ARRAY));
 
       oneOf(algodClient).RawTransaction();
@@ -137,7 +148,10 @@ public class AlgorandASCPollRepositoryTest {
         oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
         will(returnValue(unsignedTx));
 
-        oneOf(transactionSignerService).sign(unsignedTx, A_MNEMONIC_KEY);
+        oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);
+        will(returnValue(account));
+
+        oneOf(transactionSignerService).sign(unsignedTx, account);
         will(throwException(new NoSuchAlgorithmException("AN ERROR MESSAGE")));
       }
     });
@@ -159,7 +173,10 @@ public class AlgorandASCPollRepositoryTest {
         oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
         will(returnValue(unsignedTx));
 
-        oneOf(transactionSignerService).sign(unsignedTx, A_MNEMONIC_KEY);
+        oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);
+        will(returnValue(account));
+
+        oneOf(transactionSignerService).sign(unsignedTx, account);
         will(throwException(new GeneralSecurityException("AN ERROR MESSAGE")));
       }
     });
@@ -183,7 +200,10 @@ public class AlgorandASCPollRepositoryTest {
         oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
         will(returnValue(unsignedTx));
 
-        oneOf(transactionSignerService).sign(unsignedTx, A_MNEMONIC_KEY);
+        oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);
+        will(returnValue(account));
+
+        oneOf(transactionSignerService).sign(unsignedTx, account);
         will(throwException(new JsonMappingException("AN ERROR MESSAGE")));
       }
     });
@@ -207,7 +227,10 @@ public class AlgorandASCPollRepositoryTest {
         oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
         will(returnValue(unsignedTx));
 
-        oneOf(transactionSignerService).sign(unsignedTx, A_MNEMONIC_KEY);
+        oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);
+        will(returnValue(account));
+
+        oneOf(transactionSignerService).sign(unsignedTx, account);
         will(throwException(new RuntimeException("AN ERROR MESSAGE")));
       }
     });

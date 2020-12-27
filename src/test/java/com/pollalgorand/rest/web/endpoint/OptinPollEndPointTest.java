@@ -50,7 +50,7 @@ public class OptinPollEndPointTest {
 
     OptinRequest optinRequest = new OptinRequest(A_SENDER, A_MNEMONIC_KEY);
 
-    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_SENDER, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_MNEMONIC_KEY);
 
     context.checking(new Expectations(){{
       oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, optinRequest);
@@ -70,14 +70,13 @@ public class OptinPollEndPointTest {
 
     OptinRequest optinRequest = new OptinRequest(A_SENDER, A_MNEMONIC_KEY);
 
-    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_SENDER, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_MNEMONIC_KEY);
 
     context.checking(new Expectations(){{
       oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, optinRequest);
       will(returnValue(optinAppRequest));
       oneOf(optinUseCase).optin(optinAppRequest);
-      will(throwException(new OptinAlreadDoneException(optinAppRequest.getAppId(),
-          optinAppRequest.getSender())));
+      will(throwException(new OptinAlreadDoneException(optinAppRequest.getAppId())));
     }});
 
     String requestAsString = objectMapper.writeValueAsString(optinRequest);
@@ -91,7 +90,7 @@ public class OptinPollEndPointTest {
   public void genericError() throws Exception{
     OptinRequest optinRequest = new OptinRequest(A_SENDER, A_MNEMONIC_KEY);
 
-    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_SENDER, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_MNEMONIC_KEY);
 
     context.checking(new Expectations(){{
       oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, optinRequest);
