@@ -4,7 +4,7 @@ import com.pollalgorand.rest.domain.model.BlockchainPoll;
 
 public class DateValidator {
 
-  public Boolean isOptinExpired(BlockchainPoll blockchainPoll) {
+  public Boolean isOptinOpen(BlockchainPoll blockchainPoll) {
     return null;
   }
 }

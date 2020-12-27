@@ -59,8 +59,8 @@ public class OptinUseCaseTest {
       oneOf(pollRepository).findBy(APP_ID);
       will(returnValue(blockchainPoll));
 
-      oneOf(dateValidator).isOptinExpired(blockchainPoll);
-      will(returnValue(Boolean.FALSE));
+      oneOf(dateValidator).isOptinOpen(blockchainPoll);
+      will(returnValue(Boolean.TRUE));
 
       oneOf(blockChainReadRepository).isOptinAllowedFor(optinAppRequest);
       will(returnValue(Boolean.TRUE));
@@ -78,16 +78,16 @@ public class OptinUseCaseTest {
       oneOf(pollRepository).findBy(APP_ID);
       will(returnValue(blockchainPoll));
 
-      oneOf(dateValidator).isOptinExpired(blockchainPoll);
-      will(returnValue(Boolean.TRUE));
+      oneOf(dateValidator).isOptinOpen(blockchainPoll);
+      will(returnValue(Boolean.FALSE));
 
       never(blockChainReadRepository);
 
       never(blockchainWriteRepository);
     }});
 
-    expectedException.expect(OptinExpiredException.class);
-    expectedException.expectMessage("Optin app 123 is expired");
+    expectedException.expect(OptinIntervalTimeException.class);
+    expectedException.expectMessage("Optin app 123 is not open or expired");
 
 
     optinUseCase.optin(optinAppRequest);
@@ -100,8 +100,8 @@ public class OptinUseCaseTest {
       oneOf(pollRepository).findBy(APP_ID);
       will(returnValue(blockchainPoll));
 
-      oneOf(dateValidator).isOptinExpired(blockchainPoll);
-      will(returnValue(Boolean.FALSE));
+      oneOf(dateValidator).isOptinOpen(blockchainPoll);
+      will(returnValue(Boolean.TRUE));
 
       oneOf(blockChainReadRepository).isOptinAllowedFor(optinAppRequest);
       will(returnValue(Boolean.FALSE));

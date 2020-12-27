@@ -30,8 +30,8 @@ public class OptinUseCase {
 
     BlockchainPoll blockchainPoll = pollRepository.findBy(optinAppRequest.getAppId());
 
-    if (dateValidator.isOptinExpired(blockchainPoll)){
-      throw new OptinExpiredException(optinAppRequest.getAppId());
+    if (!dateValidator.isOptinOpen(blockchainPoll)){
+      throw new OptinIntervalTimeException(optinAppRequest.getAppId());
     }
 
     if (!blockChainReadRepository.isOptinAllowedFor(optinAppRequest)) {
