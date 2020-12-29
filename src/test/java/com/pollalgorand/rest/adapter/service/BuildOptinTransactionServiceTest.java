@@ -48,7 +48,7 @@ public class BuildOptinTransactionServiceTest {
 
     Transaction transaction = buildOptinTransactionService
         .buildTransaction(new Account(MNEMONIC_KEY), new OptinAppRequest(APP_ID,
-            A_MNEMONIC_KEY));
+            new Account()));
 
     assertThat(transaction, is(expectedOptinTransaction));
   }

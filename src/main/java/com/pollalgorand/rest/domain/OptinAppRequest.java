@@ -1,24 +1,25 @@
 package com.pollalgorand.rest.domain;
 
+import com.algorand.algosdk.account.Account;
 import java.util.Objects;
 
 public class OptinAppRequest {
 
   private final long appId;
-  private final String mnemonicKey;
+  private final Account account;
 
-  public OptinAppRequest(long appId, String mnemonicKey) {
+  public OptinAppRequest(long appId, Account account) {
 
     this.appId = appId;
-    this.mnemonicKey = mnemonicKey;
+    this.account = account;
   }
 
   public long getAppId() {
     return appId;
   }
 
-  public String getMnemonicKey() {
-    return mnemonicKey;
+  public Account getAccount() {
+    return account;
   }
 
   @Override
@@ -31,11 +32,11 @@ public class OptinAppRequest {
     }
     OptinAppRequest that = (OptinAppRequest) o;
     return appId == that.appId &&
-        Objects.equals(mnemonicKey, that.mnemonicKey);
+        Objects.equals(account, that.account);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(appId, mnemonicKey);
+    return Objects.hash(appId, account);
   }
 }

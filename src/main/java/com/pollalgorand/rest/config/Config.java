@@ -1,11 +1,13 @@
 package com.pollalgorand.rest.config;
 
 import com.algorand.algosdk.v2.client.common.AlgodClient;
+import com.algorand.algosdk.v2.client.common.IndexerClient;
 import com.pollalgorand.rest.adapter.Clock;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.AlgorandDateAdapter;
 import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
 import com.pollalgorand.rest.adapter.repository.AlgorandASCPollRepository;
+import com.pollalgorand.rest.adapter.repository.AlgorandReadRepository;
 import com.pollalgorand.rest.adapter.repository.AlgorandWriteRepository;
 import com.pollalgorand.rest.adapter.service.AccountCreatorService;
 import com.pollalgorand.rest.adapter.service.AlgorandApplicationService;
@@ -18,6 +20,7 @@ import com.pollalgorand.rest.adapter.service.TransactionSignerService;
 import com.pollalgorand.rest.adapter.service.UnsignedASCTransactionService;
 import com.pollalgorand.rest.domain.DateValidator;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
+import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
@@ -85,7 +88,8 @@ public class Config {
 
   @Bean
   public UnsignedASCTransactionService unsignedASCTransactionService(AlgodClient algodClient,
-      PollBlockchainAdapter pollBlockchainAdapter, BlockchainParameterService blockchainParameterService) {
+      PollBlockchainAdapter pollBlockchainAdapter,
+      BlockchainParameterService blockchainParameterService) {
     return new UnsignedASCTransactionService(
         algodClient,
         pollBlockchainAdapter,
@@ -107,13 +111,16 @@ public class Config {
   }
 
   @Bean
-  public OptinRequestConverter optinRequestConverter() {
-    return new OptinRequestConverter();
+  public OptinRequestConverter optinRequestConverter(AccountCreatorService accountCreatorService) {
+    return new OptinRequestConverter(accountCreatorService);
   }
 
   @Bean
-  public OptinUseCase optinUseCase(BlockchainWriteRepository blockchainWriteRepository, PollRepository pollRepository) {
-    return new OptinUseCase(null, blockchainWriteRepository, pollRepository, new DateValidator(new Clock()));
+  public OptinUseCase optinUseCase(BlockchainReadRepository blockchainReadRepository,
+      BlockchainWriteRepository blockchainWriteRepository,
+      PollRepository pollRepository) {
+    return new OptinUseCase(blockchainReadRepository, blockchainWriteRepository, pollRepository,
+        new DateValidator(new Clock()));
   }
 
   @Bean
@@ -121,7 +128,16 @@ public class Config {
 
     return new AlgodClient("https://testnet-algorand.api.purestake.io/ps2", 443, "");
 //    AlgodClient algodClient = new AlgodClient("https://localhost", 8080, "5a645468dffe417d4ea0682b4ded3a58d2984dcef199a6bb7a70316ba42ac9f5");
+  }
 
+  @Bean
+  public IndexerClient indexerClient() {
+    return new IndexerClient("https://testnet-algorand.api.purestake.io/idx2", 443, "");
+  }
+
+  @Bean
+  public BlockchainReadRepository algorandReadRepository(IndexerClient indexerClient) {
+    return new AlgorandReadRepository(indexerClient);
   }
 
   @Bean

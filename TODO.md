@@ -3,7 +3,10 @@ TODO
 
 - [ ] parte di optin
     - [x] creare builder della tx di optin
-    - [ ] chiamare blochain per sapere se è stato già fatto optin 
+    - [x] chiamare blochain per sapere se è stato già fatto optin 
+        - [x] leggere address che hanno fatto optin
+        - [x] gestire stati diversi da 200 nella risposta
+        - [x] Refactor del optin use case in modo da creare account e propagarlo.
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
 - [ ] sistemare logica date appena viene creato poll

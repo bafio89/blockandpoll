@@ -44,7 +44,6 @@ class Poll extends React.Component {
           },
           body: JSON.stringify({
             mnemonicKey: this.state.mnemonicKey,
-            votedOption: this.state.selectedOption
           })
     });
   }

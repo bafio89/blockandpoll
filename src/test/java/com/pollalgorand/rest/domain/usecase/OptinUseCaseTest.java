@@ -1,12 +1,14 @@
 package com.pollalgorand.rest.domain.usecase;
 
+import com.algorand.algosdk.account.Account;
 import com.pollalgorand.rest.domain.DateValidator;
 import com.pollalgorand.rest.domain.OptinAppRequest;
-import com.pollalgorand.rest.domain.exceptions.OptinAlreadDoneException;
+import com.pollalgorand.rest.domain.exceptions.OptinAlreadyDoneException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -45,12 +47,13 @@ public class OptinUseCaseTest {
 
   private BlockchainPoll blockchainPoll = new BlockchainPoll();
 
-  public static final OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, "MNEMONIC_KEY");
+  public static OptinAppRequest optinAppRequest;
 
   @Before
-  public void setUp() {
+  public void setUp() throws NoSuchAlgorithmException {
     optinUseCase = new OptinUseCase(blockChainReadRepository, blockchainWriteRepository,
         pollRepository, dateValidator);
+    optinAppRequest = new OptinAppRequest(APP_ID, new Account());
   }
 
   @Test
@@ -63,8 +66,8 @@ public class OptinUseCaseTest {
       oneOf(dateValidator).isNowInInterval(blockchainPoll.getStartSubscriptionTime(), blockchainPoll.getEndSubscriptionTime());
       will(returnValue(Boolean.TRUE));
 
-      oneOf(blockChainReadRepository).isOptinAllowedFor(optinAppRequest);
-      will(returnValue(Boolean.TRUE));
+      oneOf(blockChainReadRepository).isAccountSubscribedTo(optinAppRequest);
+      will(returnValue(Boolean.FALSE));
 
       oneOf(blockchainWriteRepository).optin(optinAppRequest);
     }});
@@ -104,13 +107,13 @@ public class OptinUseCaseTest {
       oneOf(dateValidator).isNowInInterval(blockchainPoll.getStartSubscriptionTime(), blockchainPoll.getEndSubscriptionTime());
       will(returnValue(Boolean.TRUE));
 
-      oneOf(blockChainReadRepository).isOptinAllowedFor(optinAppRequest);
-      will(returnValue(Boolean.FALSE));
+      oneOf(blockChainReadRepository).isAccountSubscribedTo(optinAppRequest);
+      will(returnValue(Boolean.TRUE));
 
       never(blockchainWriteRepository);
     }});
 
-    expectedException.expect(OptinAlreadDoneException.class);
+    expectedException.expect(OptinAlreadyDoneException.class);
     expectedException
         .expectMessage("It seems that optin has been already done for app 123");
 

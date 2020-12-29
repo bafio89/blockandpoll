@@ -7,7 +7,6 @@ import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.pollalgorand.rest.adapter.exceptions.EncodeTransactionException;
-import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import com.pollalgorand.rest.adapter.exceptions.SendingTransactionException;
 import com.pollalgorand.rest.adapter.exceptions.SignTransactionException;
 import com.pollalgorand.rest.adapter.service.AccountCreatorService;
@@ -17,7 +16,6 @@ import com.pollalgorand.rest.adapter.service.TransactionSenderService;
 import com.pollalgorand.rest.adapter.service.TransactionSignerService;
 import com.pollalgorand.rest.domain.OptinAppRequest;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
-import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -74,13 +72,10 @@ public class AlgorandWriteRepositoryTest {
   public void happyPath() throws Exception {
 
     Account account = new Account();
-    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, account);
     Transaction unsignedTx = new Transaction();
 
     context.checking(new Expectations() {{
-      oneOf(accountCreator).createAccountFrom(A_MNEMONIC_KEY);
-      will(returnValue(account));
-
       oneOf(buildOptinTransactionService).buildTransaction(account, optinAppRequest);
       will(returnValue(unsignedTx));
 
@@ -97,32 +92,12 @@ public class AlgorandWriteRepositoryTest {
   }
 
   @Test
-  public void whenAccountCreationFails() throws Exception {
-    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, A_MNEMONIC_KEY);
-
-    context.checking(new Expectations() {{
-      oneOf(accountCreator).createAccountFrom(A_MNEMONIC_KEY);
-      will(throwException(new GeneralSecurityException("AN ERROR")));
-
-    }});
-
-    expectedException.expect(InvalidMnemonicKeyException.class);
-    expectedException
-        .expectMessage("Impossible to create an account starting from mnemonic key. AN ERROR");
-
-    blockchainWriteRepository.optin(optinAppRequest);
-  }
-
-  @Test
   public void whenSigningTransactionFails() throws Exception {
     Account account = new Account();
-    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, account);
     Transaction unsignedTx = new Transaction();
 
     context.checking(new Expectations() {{
-      oneOf(accountCreator).createAccountFrom(A_MNEMONIC_KEY);
-      will(returnValue(account));
-
       oneOf(buildOptinTransactionService).buildTransaction(account, optinAppRequest);
       will(returnValue(unsignedTx));
 
@@ -140,12 +115,10 @@ public class AlgorandWriteRepositoryTest {
   @Test
   public void whenEncodeSignedTransactionFails() throws Exception {
     Account account = new Account();
-    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, account);
     Transaction unsignedTx = new Transaction();
 
     context.checking(new Expectations() {{
-      oneOf(accountCreator).createAccountFrom(A_MNEMONIC_KEY);
-      will(returnValue(account));
 
       oneOf(buildOptinTransactionService).buildTransaction(account, optinAppRequest);
       will(returnValue(unsignedTx));
@@ -165,12 +138,10 @@ public class AlgorandWriteRepositoryTest {
   public void whenSendTranctionFails() throws Exception {
 
     Account account = new Account();
-    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, account);
     Transaction unsignedTx = new Transaction();
 
     context.checking(new Expectations() {{
-      oneOf(accountCreator).createAccountFrom(A_MNEMONIC_KEY);
-      will(returnValue(account));
 
       oneOf(buildOptinTransactionService).buildTransaction(account, optinAppRequest);
       will(returnValue(unsignedTx));

@@ -4,9 +4,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.algorand.algosdk.account.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pollalgorand.rest.domain.OptinAppRequest;
-import com.pollalgorand.rest.domain.exceptions.OptinAlreadDoneException;
+import com.pollalgorand.rest.domain.exceptions.OptinAlreadyDoneException;
 import com.pollalgorand.rest.domain.usecase.OptinUseCase;
 import com.pollalgorand.rest.web.request.OptinRequest;
 import org.jmock.Expectations;
@@ -22,8 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class OptinPollEndPointTest {
 
   public static final int APP_ID = 123;
-  public static final String A_MNEMONIC_KEY = "A_MNEMONIC_KEY";
-  public static final String A_SENDER = "A_SENDER";
+  public static final String A_MNEMONIC_KEY = "share gentle refuse logic shield drift earth initial must match aware they perfect chair say jar harvest echo symbol cave ring void prepare above adult";
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -48,61 +48,53 @@ public class OptinPollEndPointTest {
   @Test
   public void happyPath() throws Exception {
 
-    OptinRequest optinRequest = new OptinRequest(A_SENDER, A_MNEMONIC_KEY);
-
-    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, new Account(A_MNEMONIC_KEY));
 
     context.checking(new Expectations(){{
-      oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, optinRequest);
+      oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, new OptinRequest(A_MNEMONIC_KEY));
       will(returnValue(optinAppRequest));
       oneOf(optinUseCase).optin(optinAppRequest);
     }});
 
-    String requestAsString = objectMapper.writeValueAsString(optinRequest);
     mockMvc.perform(post("/optin/poll/" + APP_ID)
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
-        .content(requestAsString)).andExpect(status().isOk());
+        .content(A_MNEMONIC_KEY)).andExpect(status().isOk());
 
   }
 
   @Test
   public void whenOptinHasBeenAlreadyDone() throws Exception {
 
-    OptinRequest optinRequest = new OptinRequest(A_SENDER, A_MNEMONIC_KEY);
-
-    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, new Account(A_MNEMONIC_KEY));
 
     context.checking(new Expectations(){{
-      oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, optinRequest);
+      oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, new OptinRequest(A_MNEMONIC_KEY));
       will(returnValue(optinAppRequest));
       oneOf(optinUseCase).optin(optinAppRequest);
-      will(throwException(new OptinAlreadDoneException(optinAppRequest.getAppId())));
+      will(throwException(new OptinAlreadyDoneException(optinAppRequest.getAppId())));
     }});
 
-    String requestAsString = objectMapper.writeValueAsString(optinRequest);
     mockMvc.perform(post("/optin/poll/" + APP_ID)
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
-        .content(requestAsString)).andExpect(status().isPreconditionFailed());
+        .content(A_MNEMONIC_KEY)).andExpect(status().isPreconditionFailed());
 
   }
 
   @Test
   public void genericError() throws Exception{
-    OptinRequest optinRequest = new OptinRequest(A_SENDER, A_MNEMONIC_KEY);
 
-    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, A_MNEMONIC_KEY);
+    OptinAppRequest optinAppRequest = new OptinAppRequest(APP_ID, new Account(A_MNEMONIC_KEY));
 
     context.checking(new Expectations(){{
-      oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, optinRequest);
+      oneOf(optinRequestConverter).fromRequestToDomain(APP_ID, new OptinRequest(A_MNEMONIC_KEY));
       will(returnValue(optinAppRequest));
       oneOf(optinUseCase).optin(optinAppRequest);
       will(throwException(new RuntimeException()));
     }});
 
-    String requestAsString = objectMapper.writeValueAsString(optinRequest);
     mockMvc.perform(post("/optin/poll/" + APP_ID)
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
-        .content(requestAsString)).andExpect(status().is5xxServerError());
+        .content(A_MNEMONIC_KEY)).andExpect(status().is5xxServerError());
 
   }
 }

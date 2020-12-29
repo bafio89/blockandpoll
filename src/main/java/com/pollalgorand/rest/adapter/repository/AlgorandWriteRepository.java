@@ -46,7 +46,7 @@ public class AlgorandWriteRepository implements BlockchainWriteRepository {
   public void optin(OptinAppRequest optinAppRequest) {
 
     try {
-      Account account = accountCreator.createAccountFrom(optinAppRequest.getMnemonicKey());
+      Account account = optinAppRequest.getAccount();
 
       Transaction unsignedTransaction = buildOptinTransactionService
           .buildTransaction(account, optinAppRequest);

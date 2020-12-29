@@ -2,7 +2,7 @@ package com.pollalgorand.rest.domain.usecase;
 
 import com.pollalgorand.rest.domain.DateValidator;
 import com.pollalgorand.rest.domain.OptinAppRequest;
-import com.pollalgorand.rest.domain.exceptions.OptinAlreadDoneException;
+import com.pollalgorand.rest.domain.exceptions.OptinAlreadyDoneException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
@@ -36,8 +36,8 @@ public class OptinUseCase {
       throw new OptinIntervalTimeException(optinAppRequest.getAppId());
     }
 
-    if (!blockChainReadRepository.isOptinAllowedFor(optinAppRequest)) {
-      throw new OptinAlreadDoneException(optinAppRequest.getAppId());
+    if (blockChainReadRepository.isAccountSubscribedTo(optinAppRequest)) {
+      throw new OptinAlreadyDoneException(optinAppRequest.getAppId());
     }
 
     blockchainWriteRepository.optin(optinAppRequest);
