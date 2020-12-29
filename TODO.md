@@ -7,11 +7,11 @@ TODO
         - [x] leggere address che hanno fatto optin
         - [x] gestire stati diversi da 200 nella risposta
         - [x] Refactor del optin use case in modo da creare account e propagarlo.
+- [ ] Rimuovere address da frontend per creazione poll.
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
 - [ ] sistemare logica date appena viene creato poll
 - [ ] parte di voto 
-    - [ ] optin + voto 
 - [ ] refactoring in come viene gestito l'optional in OptinUseCase
 - [ ] Sistemare grafica
 - [ ] Aggiungere descrizione del poll - frontend creazione poll.

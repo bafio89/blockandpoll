@@ -30,7 +30,6 @@ public class OptinUseCaseTest {
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
 
-
   @Mock
   private BlockchainReadRepository blockChainReadRepository;
 
