@@ -10,3 +10,9 @@ spring:
     max-connections: 10
 
 server.port: ${PORT:5000}
+
+logging:
+  level:
+    org:
+      springframework:
+        web: ERROR

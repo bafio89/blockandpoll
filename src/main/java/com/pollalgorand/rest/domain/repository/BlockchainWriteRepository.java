@@ -1,6 +1,6 @@
 package com.pollalgorand.rest.domain.repository;
 
-import com.pollalgorand.rest.domain.OptinAppRequest;
+import com.pollalgorand.rest.domain.request.OptinAppRequest;
 
 public interface BlockchainWriteRepository {
 

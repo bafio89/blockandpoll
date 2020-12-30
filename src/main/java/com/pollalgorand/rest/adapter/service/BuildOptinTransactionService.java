@@ -2,7 +2,7 @@ package com.pollalgorand.rest.adapter.service;
 
 import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.transaction.Transaction;
-import com.pollalgorand.rest.domain.OptinAppRequest;
+import com.pollalgorand.rest.domain.request.OptinAppRequest;
 
 public class BuildOptinTransactionService {
 

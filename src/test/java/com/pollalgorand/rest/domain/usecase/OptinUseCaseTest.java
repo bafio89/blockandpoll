@@ -2,12 +2,12 @@ package com.pollalgorand.rest.domain.usecase;
 
 import com.algorand.algosdk.account.Account;
 import com.pollalgorand.rest.domain.DateValidator;
-import com.pollalgorand.rest.domain.OptinAppRequest;
 import com.pollalgorand.rest.domain.exceptions.OptinAlreadyDoneException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
 import com.pollalgorand.rest.domain.repository.PollRepository;
+import com.pollalgorand.rest.domain.request.OptinAppRequest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import org.jmock.Expectations;

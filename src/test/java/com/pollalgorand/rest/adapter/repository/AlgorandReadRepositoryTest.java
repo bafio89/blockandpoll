@@ -10,7 +10,7 @@ import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.indexer.LookupAccountByID;
 import com.algorand.algosdk.v2.client.model.AccountResponse;
 import com.pollalgorand.rest.adapter.exceptions.AlgorandInteractionError;
-import com.pollalgorand.rest.domain.OptinAppRequest;
+import com.pollalgorand.rest.domain.request.OptinAppRequest;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;

@@ -1,4 +1,4 @@
-package com.pollalgorand.rest.domain;
+package com.pollalgorand.rest.domain.request;
 
 import com.algorand.algosdk.account.Account;
 import java.util.Objects;

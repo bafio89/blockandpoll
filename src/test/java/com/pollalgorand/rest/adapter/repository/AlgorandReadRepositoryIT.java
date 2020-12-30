@@ -9,7 +9,7 @@ import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.crypto.Address;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.algorand.algosdk.v2.client.common.IndexerClient;
-import com.pollalgorand.rest.domain.OptinAppRequest;
+import com.pollalgorand.rest.domain.request.OptinAppRequest;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;

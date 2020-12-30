@@ -6,8 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.algorand.algosdk.account.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pollalgorand.rest.domain.OptinAppRequest;
 import com.pollalgorand.rest.domain.exceptions.OptinAlreadyDoneException;
+import com.pollalgorand.rest.domain.request.OptinAppRequest;
 import com.pollalgorand.rest.domain.usecase.OptinUseCase;
 import com.pollalgorand.rest.web.request.OptinRequest;
 import org.jmock.Expectations;
@@ -22,8 +22,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class OptinPollEndPointTest {
 
-  public static final int APP_ID = 123;
-  public static final String A_MNEMONIC_KEY = "share gentle refuse logic shield drift earth initial must match aware they perfect chair say jar harvest echo symbol cave ring void prepare above adult";
+  private static final int APP_ID = 123;
+  private static final String A_MNEMONIC_KEY = "share gentle refuse logic shield drift earth initial must match aware they perfect chair say jar harvest echo symbol cave ring void prepare above adult";
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -37,12 +37,14 @@ public class OptinPollEndPointTest {
 
   private MockMvc mockMvc;
   private ObjectMapper objectMapper;
+  private OptinRequest optinRequest;
 
   @Before
   public void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(new OptinPollEndPoint(optinUseCase, optinRequestConverter)).build();
 
     objectMapper = new ObjectMapper();
+    optinRequest = new OptinRequest(A_MNEMONIC_KEY);
   }
 
   @Test
@@ -58,7 +60,7 @@ public class OptinPollEndPointTest {
 
     mockMvc.perform(post("/optin/poll/" + APP_ID)
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
-        .content(A_MNEMONIC_KEY)).andExpect(status().isOk());
+        .content(objectMapper.writeValueAsString(optinRequest))).andExpect(status().isOk());
 
   }
 
@@ -76,7 +78,7 @@ public class OptinPollEndPointTest {
 
     mockMvc.perform(post("/optin/poll/" + APP_ID)
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
-        .content(A_MNEMONIC_KEY)).andExpect(status().isPreconditionFailed());
+        .content(objectMapper.writeValueAsString(optinRequest))).andExpect(status().isPreconditionFailed());
 
   }
 
@@ -94,7 +96,7 @@ public class OptinPollEndPointTest {
 
     mockMvc.perform(post("/optin/poll/" + APP_ID)
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
-        .content(A_MNEMONIC_KEY)).andExpect(status().is5xxServerError());
+        .content(objectMapper.writeValueAsString(optinRequest))).andExpect(status().is5xxServerError());
 
   }
 }

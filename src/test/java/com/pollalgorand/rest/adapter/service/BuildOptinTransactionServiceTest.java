@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.is;
 import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.model.TransactionParametersResponse;
-import com.pollalgorand.rest.domain.OptinAppRequest;
+import com.pollalgorand.rest.domain.request.OptinAppRequest;
 import java.security.GeneralSecurityException;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;

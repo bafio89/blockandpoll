@@ -1,17 +1,11 @@
 
 TODO
 
-- [ ] parte di optin
-    - [x] creare builder della tx di optin
-    - [x] chiamare blochain per sapere se è stato già fatto optin 
-        - [x] leggere address che hanno fatto optin
-        - [x] gestire stati diversi da 200 nella risposta
-        - [x] Refactor del optin use case in modo da creare account e propagarlo.
+- [ ] parte di voto 
 - [ ] Rimuovere address da frontend per creazione poll.
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
 - [ ] sistemare logica date appena viene creato poll
-- [ ] parte di voto 
 - [ ] refactoring in come viene gestito l'optional in OptinUseCase
 - [ ] Sistemare grafica
 - [ ] Aggiungere descrizione del poll - frontend creazione poll.
@@ -20,6 +14,12 @@ TODO
 - [ ] recuperare voti da blockchain + mostrare voti dei poll.
 - [ ] Dire all sdk di restituire errori piu parlanti 
 
+- [x] parte di optin
+    - [x] creare builder della tx di optin
+    - [x] chiamare blochain per sapere se è stato già fatto optin 
+        - [x] leggere address che hanno fatto optin
+        - [x] gestire stati diversi da 200 nella risposta
+        - [x] Refactor del optin use case in modo da creare account e propagarlo.
 - [x] Add service to refactoring AlgoASCRepo
 - [x] Aggiungere validazioni sulla data all'optin
 - [x] Debug su heroku 
