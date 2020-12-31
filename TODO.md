@@ -1,7 +1,11 @@
 
 TODO
 
-- [ ] parte di voto 
+- [ ] parte di voto
+    - [x] End point 
+    - [x] use case
+    - [ ] Repository per votare
+    - [ ] Lettura da blockchain se utente ha votato o no
 - [ ] Rimuovere address da frontend per creazione poll.
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
