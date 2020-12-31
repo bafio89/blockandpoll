@@ -61,4 +61,8 @@ public class AlgorandReadRepository implements BlockchainReadRepository {
       throw new AlgorandInteractionError(response.code(), response.message());
     }
   }
+
+  public Boolean hasAddressAlreadyVotedFor(long appId, Address address) {
+    return false;
+  }
 }

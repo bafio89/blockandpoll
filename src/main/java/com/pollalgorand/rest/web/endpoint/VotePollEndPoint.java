@@ -3,6 +3,9 @@ package com.pollalgorand.rest.web.endpoint;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.pollalgorand.rest.domain.exceptions.AlreadyVotedException;
+import com.pollalgorand.rest.domain.exceptions.PollNotFoundException;
+import com.pollalgorand.rest.domain.usecase.OptinIntervalTimeException;
+import com.pollalgorand.rest.domain.usecase.VoteIntervalTimeException;
 import com.pollalgorand.rest.domain.usecase.VoteUseCase;
 import com.pollalgorand.rest.web.adapter.VoteRequestConverter;
 import com.pollalgorand.rest.web.request.VoteRequest;
@@ -40,10 +43,17 @@ public class VotePollEndPoint {
     return ResponseEntity.ok().build();
   }
 
-  @ExceptionHandler(value = {AlreadyVotedException.class})
+  @ExceptionHandler(value = {AlreadyVotedException.class, VoteIntervalTimeException.class,
+      OptinIntervalTimeException.class})
   public ResponseEntity preconditionFailedExceptionHandler(RuntimeException e) {
     logger.error("An error occurred.", e);
     return status(HttpStatus.PRECONDITION_FAILED).body(e.getMessage());
+  }
+
+  @ExceptionHandler(value = {PollNotFoundException.class})
+  public ResponseEntity pollNotFoundExceptionHandler(RuntimeException e) {
+    logger.error("An error occurred.", e);
+    return status(HttpStatus.NOT_FOUND).body(e.getMessage());
   }
 
   @ExceptionHandler(value = {RuntimeException.class})

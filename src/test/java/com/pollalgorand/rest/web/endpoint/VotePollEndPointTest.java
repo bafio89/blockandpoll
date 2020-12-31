@@ -5,12 +5,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.algorand.algosdk.account.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pollalgorand.rest.domain.exceptions.AlreadyVotedException;
+import com.pollalgorand.rest.domain.exceptions.PollNotFoundException;
 import com.pollalgorand.rest.domain.request.VoteAppRequest;
 import com.pollalgorand.rest.domain.usecase.VoteUseCase;
 import com.pollalgorand.rest.web.adapter.VoteRequestConverter;
 import com.pollalgorand.rest.web.request.VoteRequest;
+import java.security.NoSuchAlgorithmException;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -46,7 +49,7 @@ public class VotePollEndPointTest {
   private ObjectMapper objectMapper;
 
   @Before
-  public void setUp() {
+  public void setUp() throws NoSuchAlgorithmException {
     mockMvc = MockMvcBuilders
         .standaloneSetup(new VotePollEndPoint(voteUseCase, voteRequestConverter)).build();
 
@@ -54,7 +57,7 @@ public class VotePollEndPointTest {
 
     voteRequest = new VoteRequest(A_MNEMONIC_KEY, SELECTED_OPTION);
 
-    voteAppRequest = new VoteAppRequest();
+    voteAppRequest = new VoteAppRequest(APP_ID, new Account(), "AN OPTION");
   }
 
   @Test
@@ -87,6 +90,22 @@ public class VotePollEndPointTest {
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(voteRequest))).andExpect(status().isPreconditionFailed())
     .andExpect(content().string("Address AN ADDRESS have already voted for appId 123"));
+  }
+
+  @Test
+  public void whenPollIsNotFound() throws Exception {
+    context.checking(new Expectations() {{
+      oneOf(voteRequestConverter).fromRequestToDomain(APP_ID, voteRequest);
+      will(returnValue(voteAppRequest));
+
+      oneOf(voteUseCase).vote(voteAppRequest);
+      will(throwException(new PollNotFoundException(APP_ID)));
+    }});
+
+    mockMvc.perform(post("/vote/poll/" + APP_ID)
+        .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(voteRequest))).andExpect(status().isNotFound())
+        .andExpect(content().string("Impossible to found the poll with appId: 123"));
   }
 
   @Test

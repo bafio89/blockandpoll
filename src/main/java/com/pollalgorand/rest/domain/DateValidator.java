@@ -12,9 +12,9 @@ public class DateValidator {
     this.clock = clock;
   }
 
-  public boolean isNowInInterval(LocalDateTime startSubscriptionTime,
-      LocalDateTime endSubscriptionTime) {
+  public boolean isNowInInterval(LocalDateTime start,
+      LocalDateTime end) {
     LocalDateTime now = clock.now();
-    return now.isAfter(startSubscriptionTime) && now.isBefore(endSubscriptionTime);
+    return now.isAfter(start) && now.isBefore(end);
   }
 }

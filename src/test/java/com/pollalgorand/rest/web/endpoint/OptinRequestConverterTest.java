@@ -59,15 +59,14 @@ public class OptinRequestConverterTest {
   public void whenAccountCreationFails() throws GeneralSecurityException {
 
     Account expectedAccount = new Account();
-    OptinAppRequest expectedRequest = new OptinAppRequest(123L, expectedAccount);
 
     context.checking(new Expectations() {{
       oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);
-      will(throwException(new InvalidMnemonicKeyException(new RuntimeException("AN ERROR"))));
+      will(throwException(new InvalidMnemonicKeyException("AN ERROR")));
     }});
 
     expectedException.expect(InvalidMnemonicKeyException.class);
-    expectedException.expectMessage("Impossible to create an account starting from mnemonic key. AN ERROR");
+    expectedException.expectMessage("AN ERROR");
 
     optinRequestConverter.fromRequestToDomain(123L, new OptinRequest(A_MNEMONIC_KEY));
   }

@@ -2,7 +2,7 @@ package com.pollalgorand.rest.adapter.service;
 
 import static org.junit.rules.ExpectedException.none;
 
-import java.security.GeneralSecurityException;
+import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,20 +28,20 @@ public class AccountCreatorServiceTest {
   }
 
   @Test
-  public void whenMnemonicKeyIsTooShort() throws GeneralSecurityException {
+  public void whenMnemonicKeyIsTooShort() {
 
     expectedException.expect(IllegalArgumentException.class);
+    expectedException.expectMessage("mnemonic does not have enough words");
 
     accountCreatorService.createAccountFrom(SHORT_INVALID_KEY);
-
   }
 
   @Test
-  public void whenMnemonicKeyIsInvalid() throws GeneralSecurityException {
+  public void whenMnemonicKeyIsInvalid() {
 
-    expectedException.expect(GeneralSecurityException.class);
+    expectedException.expect(InvalidMnemonicKeyException.class);
+    expectedException.expectMessage("checksum failed to validate");
 
     accountCreatorService.createAccountFrom(INVALID_MNEMONIC_KEY);
-
   }
 }

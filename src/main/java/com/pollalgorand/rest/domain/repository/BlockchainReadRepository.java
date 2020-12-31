@@ -9,4 +9,6 @@ public interface BlockchainReadRepository {
   List<Address> findAddressSubscribedToApplicationBy(String appId);
 
   Boolean isAccountSubscribedTo(OptinAppRequest optinAppRequest);
+
+  Boolean hasAddressAlreadyVotedFor(long appId, Address address);
 }

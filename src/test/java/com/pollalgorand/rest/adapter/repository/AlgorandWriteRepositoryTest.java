@@ -28,7 +28,6 @@ import org.junit.rules.ExpectedException;
 
 public class AlgorandWriteRepositoryTest {
 
-  public static final String A_MNEMONIC_KEY = "A_MNEMONIC_KEY";
   public static final byte[] A_BYTE_ARRAY = "A_BYTE_ARRAY".getBytes(UTF_8);
   public static final String TRANSACTION_ID = "666";
 
@@ -135,7 +134,7 @@ public class AlgorandWriteRepositoryTest {
   }
 
   @Test
-  public void whenSendTranctionFails() throws Exception {
+  public void whenSendTransactionFails() throws Exception {
 
     Account account = new Account();
     OptinAppRequest optinAppRequest = new OptinAppRequest(123L, account);

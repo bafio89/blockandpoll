@@ -78,7 +78,7 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
       throw new SignTransactionException(e);
     } catch (IllegalArgumentException e) {
       logger.error("Something gone wrong creating account from mnemonic key creating poll {}.",poll, e);
-      throw new InvalidMnemonicKeyException(e);
+      throw new InvalidMnemonicKeyException(e.getMessage());
     } catch (JsonProcessingException e) {
       logger.error("Something goes wrong encoding transaction", e);
       throw new EncodeTransactionException(e);

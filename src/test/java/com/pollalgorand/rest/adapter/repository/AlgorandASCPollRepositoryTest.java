@@ -163,8 +163,7 @@ public class AlgorandASCPollRepositoryTest {
   }
 
   @Test
-  public void whenThereAreErrorsCreatingAccount()
-      throws GeneralSecurityException, JsonProcessingException {
+  public void whenThereAreErrorsCreatingAccount() {
     Poll poll = poll();
     Transaction unsignedTx = new Transaction();
 
@@ -174,16 +173,15 @@ public class AlgorandASCPollRepositoryTest {
         will(returnValue(unsignedTx));
 
         oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);
-        will(returnValue(account));
-
-        oneOf(transactionSignerService).sign(unsignedTx, account);
         will(throwException(new IllegalArgumentException("AN ERROR MESSAGE")));
+
+        never(transactionSignerService);
       }
     });
 
     expectedException.expect(InvalidMnemonicKeyException.class);
     expectedException.expectMessage(
-        "Impossible to create an account starting from mnemonic key. AN ERROR MESSAGE");
+        "AN ERROR MESSAGE");
 
     algorandASCPollRepository.save(poll);
   }
