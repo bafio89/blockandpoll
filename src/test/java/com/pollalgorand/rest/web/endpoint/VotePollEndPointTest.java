@@ -2,9 +2,11 @@ package com.pollalgorand.rest.web.endpoint;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pollalgorand.rest.domain.exceptions.AlreadyVotedException;
 import com.pollalgorand.rest.domain.request.VoteAppRequest;
 import com.pollalgorand.rest.domain.usecase.VoteUseCase;
 import com.pollalgorand.rest.web.adapter.VoteRequestConverter;
@@ -38,6 +40,8 @@ public class VotePollEndPointTest {
 
   private VoteRequest voteRequest;
 
+  private VoteAppRequest voteAppRequest;
+
   private MockMvc mockMvc;
   private ObjectMapper objectMapper;
 
@@ -49,12 +53,12 @@ public class VotePollEndPointTest {
     objectMapper = new ObjectMapper();
 
     voteRequest = new VoteRequest(A_MNEMONIC_KEY, SELECTED_OPTION);
+
+    voteAppRequest = new VoteAppRequest();
   }
 
   @Test
   public void happyPath() throws Exception {
-
-    VoteAppRequest voteAppRequest = new VoteAppRequest();
 
     context.checking(new Expectations() {{
       oneOf(voteRequestConverter).fromRequestToDomain(APP_ID, voteRequest);
@@ -66,5 +70,39 @@ public class VotePollEndPointTest {
     mockMvc.perform(post("/vote/poll/" + APP_ID)
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(voteRequest))).andExpect(status().isOk());
+  }
+
+  @Test
+  public void whenUserHasAlreadyVoted() throws Exception {
+
+    context.checking(new Expectations() {{
+      oneOf(voteRequestConverter).fromRequestToDomain(APP_ID, voteRequest);
+      will(returnValue(voteAppRequest));
+
+      oneOf(voteUseCase).vote(voteAppRequest);
+      will(throwException(new AlreadyVotedException("AN ADDRESS", APP_ID)));
+    }});
+
+    mockMvc.perform(post("/vote/poll/" + APP_ID)
+        .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(voteRequest))).andExpect(status().isBadRequest())
+    .andExpect(content().string("Address AN ADDRESS have already voted for appId 123"));
+  }
+
+  @Test
+  public void genericErrorOccurs() throws Exception {
+
+    context.checking(new Expectations() {{
+      oneOf(voteRequestConverter).fromRequestToDomain(APP_ID, voteRequest);
+      will(returnValue(voteAppRequest));
+
+      oneOf(voteUseCase).vote(voteAppRequest);
+      will(throwException(new RuntimeException("AN ERROR OCCURS")));
+    }});
+
+    mockMvc.perform(post("/vote/poll/" + APP_ID)
+        .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(voteRequest))).andExpect(status().isInternalServerError())
+    .andExpect(content().string("AN ERROR OCCURS"));
   }
 }

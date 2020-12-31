@@ -1,11 +1,16 @@
 package com.pollalgorand.rest.web.endpoint;
 
+import static org.springframework.http.ResponseEntity.status;
+
+import com.pollalgorand.rest.domain.exceptions.AlreadyVotedException;
 import com.pollalgorand.rest.domain.usecase.VoteUseCase;
 import com.pollalgorand.rest.web.adapter.VoteRequestConverter;
 import com.pollalgorand.rest.web.request.VoteRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,4 +40,15 @@ public class VotePollEndPoint {
     return ResponseEntity.ok().build();
   }
 
+  @ExceptionHandler(value = {AlreadyVotedException.class})
+  public ResponseEntity preconditionFailedExceptionHandler(RuntimeException e) {
+    logger.error("An error occurred. User could have already voted." , e);
+    return status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+  }
+
+  @ExceptionHandler(value = {RuntimeException.class})
+  public ResponseEntity genericErrorHandler(RuntimeException e) {
+    logger.error("Something went wrong voting the app. " , e);
+    return status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+  }
 }
