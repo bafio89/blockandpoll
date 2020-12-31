@@ -6,6 +6,8 @@ TODO
     - [x] use case
     - [ ] Repository per votare
     - [ ] Lettura da blockchain se utente ha votato o no
+    
+- [ ] Gestire piu di due opzioni
 - [ ] Rimuovere address da frontend per creazione poll.
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
@@ -15,7 +17,7 @@ TODO
 - [ ] Aggiungere descrizione del poll - frontend creazione poll.
 - [ ] Aggiungere field question 
 - [ ] Rimouvere mnemonic key dalla response
-- [ ] recuperare voti da blockchain + mostrare voti dei poll.
+- [ ] Recuperare voti da blockchain + mostrare voti dei poll.
 - [ ] Dire all sdk di restituire errori piu parlanti 
 
 - [x] parte di optin
