@@ -4,6 +4,7 @@ import static org.springframework.http.ResponseEntity.status;
 
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import com.pollalgorand.rest.domain.exceptions.OptinAlreadyDoneException;
+import com.pollalgorand.rest.domain.exceptions.PollNotFoundException;
 import com.pollalgorand.rest.domain.usecase.OptinUseCase;
 import com.pollalgorand.rest.web.request.OptinRequest;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class OptinPollEndPoint {
     return ResponseEntity.ok().build();
   }
 
-  @ExceptionHandler(OptinAlreadyDoneException.class)
+  @ExceptionHandler({OptinAlreadyDoneException.class, PollNotFoundException.class})
   public ResponseEntity preconditionFailedExceptionHandler(RuntimeException e) {
     return status(HttpStatus.PRECONDITION_FAILED).body(e.getMessage());
   }

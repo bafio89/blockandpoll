@@ -3,6 +3,7 @@ package com.pollalgorand.rest.domain.usecase;
 import com.algorand.algosdk.account.Account;
 import com.pollalgorand.rest.domain.DateValidator;
 import com.pollalgorand.rest.domain.exceptions.OptinAlreadyDoneException;
+import com.pollalgorand.rest.domain.exceptions.PollNotFoundException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
@@ -115,6 +116,24 @@ public class OptinUseCaseTest {
     expectedException.expect(OptinAlreadyDoneException.class);
     expectedException
         .expectMessage("It seems that optin has been already done for app 123");
+
+    optinUseCase.optin(optinAppRequest);
+  }
+
+  @Test
+  public void whenPollIsNotFound() {
+    context.checking(new Expectations() {{
+      oneOf(pollRepository).findBy(APP_ID);
+      will(returnValue(Optional.empty()));
+
+      never(dateValidator);
+      never(blockChainReadRepository);
+      never(blockchainWriteRepository);
+    }});
+
+    expectedException.expect(PollNotFoundException.class);
+    expectedException
+        .expectMessage("Impossible to found the poll with appId: 123");
 
     optinUseCase.optin(optinAppRequest);
   }

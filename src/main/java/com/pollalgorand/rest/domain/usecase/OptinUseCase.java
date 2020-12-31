@@ -2,6 +2,7 @@ package com.pollalgorand.rest.domain.usecase;
 
 import com.pollalgorand.rest.domain.DateValidator;
 import com.pollalgorand.rest.domain.exceptions.OptinAlreadyDoneException;
+import com.pollalgorand.rest.domain.exceptions.PollNotFoundException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
@@ -31,15 +32,22 @@ public class OptinUseCase {
 
     Optional<BlockchainPoll> blockchainPoll = pollRepository.findBy(optinAppRequest.getAppId());
 
-    if (blockchainPoll.isPresent() && !dateValidator.isNowInInterval(blockchainPoll.get().getStartSubscriptionTime(),
-        blockchainPoll.get().getEndSubscriptionTime())) {
-      throw new OptinIntervalTimeException(optinAppRequest.getAppId());
-    }
+    blockchainPoll.map(poll -> isNowInSubscriptionDate(optinAppRequest, poll))
+        .orElseThrow(() -> new PollNotFoundException(optinAppRequest.getAppId()));
 
     if (blockChainReadRepository.isAccountSubscribedTo(optinAppRequest)) {
       throw new OptinAlreadyDoneException(optinAppRequest.getAppId());
     }
 
     blockchainWriteRepository.optin(optinAppRequest);
+  }
+
+  private boolean isNowInSubscriptionDate(OptinAppRequest optinAppRequest,
+      BlockchainPoll blockchainPoll) {
+    if (!dateValidator.isNowInInterval(blockchainPoll.getStartSubscriptionTime(),
+            blockchainPoll.getEndSubscriptionTime())) {
+      throw new OptinIntervalTimeException(optinAppRequest.getAppId());
+    }
+    return true;
   }
 }

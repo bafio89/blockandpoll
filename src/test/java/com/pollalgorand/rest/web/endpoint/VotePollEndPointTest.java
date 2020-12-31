@@ -85,7 +85,7 @@ public class VotePollEndPointTest {
 
     mockMvc.perform(post("/vote/poll/" + APP_ID)
         .accept(APPLICATION_JSON).contentType(APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(voteRequest))).andExpect(status().isBadRequest())
+        .content(objectMapper.writeValueAsString(voteRequest))).andExpect(status().isPreconditionFailed())
     .andExpect(content().string("Address AN ADDRESS have already voted for appId 123"));
   }
 

@@ -42,8 +42,8 @@ public class VotePollEndPoint {
 
   @ExceptionHandler(value = {AlreadyVotedException.class})
   public ResponseEntity preconditionFailedExceptionHandler(RuntimeException e) {
-    logger.error("An error occurred. User could have already voted." , e);
-    return status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    logger.error("An error occurred.", e);
+    return status(HttpStatus.PRECONDITION_FAILED).body(e.getMessage());
   }
 
   @ExceptionHandler(value = {RuntimeException.class})
