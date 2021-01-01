@@ -14,6 +14,7 @@ import com.pollalgorand.rest.adapter.service.AlgorandApplicationService;
 import com.pollalgorand.rest.adapter.service.BlockchainParameterService;
 import com.pollalgorand.rest.adapter.service.BuildApplicationCreateTransactionService;
 import com.pollalgorand.rest.adapter.service.BuildOptinTransactionService;
+import com.pollalgorand.rest.adapter.service.BuildVoteTransactionService;
 import com.pollalgorand.rest.adapter.service.TransactionConfirmationService;
 import com.pollalgorand.rest.adapter.service.TransactionSenderService;
 import com.pollalgorand.rest.adapter.service.TransactionSignerService;
@@ -27,7 +28,9 @@ import com.pollalgorand.rest.domain.repository.PollRepository;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
 import com.pollalgorand.rest.domain.usecase.OptinUseCase;
 import com.pollalgorand.rest.domain.usecase.RetrievePollUseCase;
+import com.pollalgorand.rest.domain.usecase.VoteUseCase;
 import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
+import com.pollalgorand.rest.web.adapter.VoteRequestConverter;
 import com.pollalgorand.rest.web.endpoint.OptinRequestConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,12 +80,19 @@ public class Config {
   }
 
   @Bean
+  public BuildVoteTransactionService buildVoteTransactionService(
+      BlockchainParameterService blockchainParameterService) {
+    return new BuildVoteTransactionService(blockchainParameterService);
+  }
+
+  @Bean
   public AlgorandWriteRepository algorandWriteRepository(
       BuildOptinTransactionService buildOptinTransactionService,
+      BuildVoteTransactionService buildVoteTransactionService,
       TransactionWriterService transactionWriterService) {
     return new AlgorandWriteRepository(buildOptinTransactionService,
-        null,
-       transactionWriterService);
+        buildVoteTransactionService,
+        transactionWriterService);
   }
 
   @Bean
@@ -105,6 +115,12 @@ public class Config {
   }
 
   @Bean
+  public VoteUseCase voteUseCase(PollRepository pollRepository, DateValidator dateValidator, BlockchainReadRepository algorandReadRepository,
+      BlockchainWriteRepository algorandWriteRepository){
+    return new VoteUseCase(pollRepository, dateValidator, algorandReadRepository, algorandWriteRepository);
+  }
+
+  @Bean
   public RetrievePollUseCase retrievePollUseCase(PollRepository postgresPollRepository) {
     return new RetrievePollUseCase(postgresPollRepository);
   }
@@ -115,11 +131,21 @@ public class Config {
   }
 
   @Bean
+  public VoteRequestConverter voteRequestConverter(AccountCreatorService accountCreatorService){
+    return new VoteRequestConverter(accountCreatorService);
+  }
+
+  @Bean
+  public DateValidator dateValidator(){
+    return new DateValidator(new Clock());
+  }
+
+  @Bean
   public OptinUseCase optinUseCase(BlockchainReadRepository blockchainReadRepository,
       BlockchainWriteRepository blockchainWriteRepository,
-      PollRepository pollRepository) {
+      PollRepository pollRepository, DateValidator dateValidator) {
     return new OptinUseCase(blockchainReadRepository, blockchainWriteRepository, pollRepository,
-        new DateValidator(new Clock()));
+        dateValidator);
   }
 
   @Bean

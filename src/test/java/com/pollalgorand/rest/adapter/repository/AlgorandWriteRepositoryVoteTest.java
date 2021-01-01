@@ -76,7 +76,7 @@ public class AlgorandWriteRepositoryVoteTest {
     VoteAppRequest voteAppRequest = new VoteAppRequest(APP_ID, account, AN_OPTION);
 
     context.checking(new Expectations(){{
-      oneOf(buildVoteTransactionService).buildTransaction(account, voteAppRequest);
+      oneOf(buildVoteTransactionService).buildTransaction(voteAppRequest);
       will(returnValue(unsignedTransaction));
 
       oneOf(transactionWriterService).write(account, unsignedTransaction);

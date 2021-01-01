@@ -18,7 +18,8 @@ public class BuildApplicationCreateTransactionService {
 
   private BlockchainParameterService blockchainParameterService;
 
-  public BuildApplicationCreateTransactionService(BlockchainParameterService blockchainParameterService) {
+  public BuildApplicationCreateTransactionService(
+      BlockchainParameterService blockchainParameterService) {
     this.blockchainParameterService = blockchainParameterService;
   }
 

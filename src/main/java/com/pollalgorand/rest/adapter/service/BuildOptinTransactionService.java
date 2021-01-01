@@ -1,6 +1,5 @@
 package com.pollalgorand.rest.adapter.service;
 
-import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.transaction.Transaction;
 import com.pollalgorand.rest.domain.request.OptinAppRequest;
 
@@ -13,10 +12,10 @@ public class BuildOptinTransactionService{
     this.blockchainParameterService = blockchainParameterService;
   }
 
-  public Transaction buildTransaction(Account account, OptinAppRequest optinAppRequest) {
+  public Transaction buildTransaction(OptinAppRequest optinAppRequest) {
     return Transaction.ApplicationOptInTransactionBuilder()
         .suggestedParams(blockchainParameterService.getParameters())
-        .sender(account.getAddress())
+        .sender(optinAppRequest.getAccount().getAddress())
         .applicationId(optinAppRequest.getAppId())
         .build();
   }

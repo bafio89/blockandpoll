@@ -29,10 +29,11 @@ class Poll extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSenderChange = this.handleSenderChange.bind(this);
     this.handleMnemonicKeyChange = this.handleMnemonicKeyChange.bind(this);
-    this.submit = this.submit.bind(this);
+    this.submitOptin = this.submitOptin.bind(this);
+    this.submitVote = this.submitVote.bind(this);
   }
 
-  submit(){
+  submitOptin(){
     console.log(this.state.poll.appId)
 
     return fetch("/optin/poll/" + this.state.poll.appId,
@@ -44,6 +45,23 @@ class Poll extends React.Component {
           },
           body: JSON.stringify({
             mnemonicKey: this.state.mnemonicKey,
+          })
+    });
+  }
+
+  submitVote(){
+    console.log(this.state.poll.appId)
+
+    return fetch("/vote/poll/" + this.state.poll.appId,
+        {
+          method: 'POST',
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            mnemonicKey: this.state.mnemonicKey,
+            selectedOption: this.state.selectedOption
           })
     });
   }
@@ -100,8 +118,8 @@ class Poll extends React.Component {
         </Paper>
         <br/>
         <div style={{textAlign:'center'}}>
-        <Button onClick={this.submit} variant="contained" color="primary" className={classes.spaces}>Opt In</Button>
-        <Button onClick={this.submit} variant="contained" color="primary" className={classes.spaces}>Vote</Button>
+        <Button onClick={this.submitOptin} variant="contained" color="primary" className={classes.spaces}>Opt In</Button>
+        <Button onClick={this.submitVote} variant="contained" color="primary" className={classes.spaces}>Vote</Button>
         </div>
       </Grid>
       <Grid item xs={3}/>

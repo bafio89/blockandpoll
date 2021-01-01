@@ -1,6 +1,5 @@
 package com.pollalgorand.rest.adapter.repository;
 
-import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.transaction.Transaction;
 import com.pollalgorand.rest.adapter.service.BuildOptinTransactionService;
 import com.pollalgorand.rest.adapter.service.BuildVoteTransactionService;
@@ -32,12 +31,10 @@ public class AlgorandWriteRepository implements BlockchainWriteRepository {
   public void optin(OptinAppRequest optinAppRequest) {
 
     try {
-      Account account = optinAppRequest.getAccount();
-
       Transaction unsignedTransaction = buildOptinTransactionService
-          .buildTransaction(account, optinAppRequest);
+          .buildTransaction(optinAppRequest);
 
-      transactionWriterService.write(account, unsignedTransaction);
+      transactionWriterService.write(optinAppRequest.getAccount(), unsignedTransaction);
 
     } catch (Exception e) {
       logger.error("Something goes wrong sending transaction subscribing for app id {}",
@@ -50,12 +47,10 @@ public class AlgorandWriteRepository implements BlockchainWriteRepository {
   public void vote(VoteAppRequest voteAppRequest) {
 
     try{
-      Account account = voteAppRequest.getAccount();
-
       Transaction unsignedTransaction = buildVoteTransactionService
-          .buildTransaction(account, voteAppRequest);
+          .buildTransaction(voteAppRequest);
 
-      transactionWriterService.write(account, unsignedTransaction);
+      transactionWriterService.write(voteAppRequest.getAccount(), unsignedTransaction);
     } catch (Exception e) {
       logger.error("Something goes wrong sending transaction subscribing for app id {}",
           voteAppRequest.getAppId(), e);

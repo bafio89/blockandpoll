@@ -1,8 +1,11 @@
 package com.pollalgorand.rest.adapter.service;
 
-import com.algorand.algosdk.account.Account;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.asList;
+
 import com.algorand.algosdk.transaction.Transaction;
 import com.pollalgorand.rest.domain.request.VoteAppRequest;
+import java.util.List;
 
 public class BuildVoteTransactionService {
 
@@ -13,7 +16,16 @@ public class BuildVoteTransactionService {
     this.blockchainParameterService = blockchainParameterService;
   }
 
-  public Transaction buildTransaction(Account account, VoteAppRequest optinAppRequest) {
-    return null;
+  public Transaction buildTransaction(VoteAppRequest voteAppRequest) {
+    return Transaction.ApplicationCallTransactionBuilder()
+        .suggestedParams(blockchainParameterService.getParameters())
+        .sender(voteAppRequest.getAccount().getAddress())
+        .args(arguments(voteAppRequest.getSelectedOption()))
+        .applicationId(voteAppRequest.getAppId()).build();
+  }
+
+  private List<byte[]> arguments(String selectedOption){
+    return asList("vote".getBytes(UTF_8),
+        String.format("%s" ,selectedOption).getBytes(UTF_8));
   }
 }

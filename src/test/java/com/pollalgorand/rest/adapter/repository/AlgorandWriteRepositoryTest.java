@@ -61,7 +61,7 @@ public class AlgorandWriteRepositoryTest {
     Transaction unsignedTx = new Transaction();
 
     context.checking(new Expectations() {{
-      oneOf(buildOptinTransactionService).buildTransaction(account, optinAppRequest);
+      oneOf(buildOptinTransactionService).buildTransaction(optinAppRequest);
       will(returnValue(unsignedTx));
 
       oneOf(transactionWriterService).write(account, unsignedTx);
