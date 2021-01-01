@@ -17,6 +17,7 @@ import com.pollalgorand.rest.adapter.service.BuildOptinTransactionService;
 import com.pollalgorand.rest.adapter.service.TransactionConfirmationService;
 import com.pollalgorand.rest.adapter.service.TransactionSenderService;
 import com.pollalgorand.rest.adapter.service.TransactionSignerService;
+import com.pollalgorand.rest.adapter.service.TransactionWriterService;
 import com.pollalgorand.rest.adapter.service.UnsignedASCTransactionService;
 import com.pollalgorand.rest.domain.DateValidator;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
@@ -77,13 +78,11 @@ public class Config {
 
   @Bean
   public AlgorandWriteRepository algorandWriteRepository(
-      AccountCreatorService accountCreatorService,
       BuildOptinTransactionService buildOptinTransactionService,
-      TransactionSignerService transactionSignerService,
-      TransactionSenderService transactionSenderService,
-      TransactionConfirmationService transactionConfirmationService) {
-    return new AlgorandWriteRepository(accountCreatorService, buildOptinTransactionService,
-        transactionSignerService, transactionSenderService, transactionConfirmationService);
+      TransactionWriterService transactionWriterService) {
+    return new AlgorandWriteRepository(buildOptinTransactionService,
+        null,
+       transactionWriterService);
   }
 
   @Bean
@@ -145,16 +144,22 @@ public class Config {
       AccountCreatorService accountCreatorService,
       UnsignedASCTransactionService unsignedASCTransactionService,
       PollBlockchainAdapter pollBlockchainAdapter,
-      TransactionSignerService transactionSignerService,
-      TransactionConfirmationService transactionConfirmationService) {
+      TransactionWriterService transactionWriterService) {
 
     return new AlgorandASCPollRepository(algodClient,
         accountCreatorService,
-        transactionSignerService,
         unsignedASCTransactionService,
         pollBlockchainAdapter,
-        transactionConfirmationService,
-        new AlgorandApplicationService(algodClient));
+        new AlgorandApplicationService(algodClient), transactionWriterService);
+  }
+
+  @Bean
+  public TransactionWriterService transactionWriterService(
+      TransactionSignerService transactionSignerService,
+      TransactionSenderService transactionSenderService,
+      TransactionConfirmationService transactionConfirmationService) {
+    return new TransactionWriterService(transactionSignerService, transactionSenderService,
+        transactionConfirmationService);
   }
 
 }

@@ -4,7 +4,7 @@ import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.transaction.Transaction;
 import com.pollalgorand.rest.domain.request.OptinAppRequest;
 
-public class BuildOptinTransactionService {
+public class BuildOptinTransactionService{
 
   private BlockchainParameterService blockchainParameterService;
 

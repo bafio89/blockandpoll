@@ -7,9 +7,13 @@ import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.pollalgorand.rest.adapter.service.BuildOptinTransactionService;
 import com.pollalgorand.rest.adapter.service.BuildVoteTransactionService;
+import com.pollalgorand.rest.adapter.service.TransactionConfirmationService;
+import com.pollalgorand.rest.adapter.service.TransactionSenderService;
+import com.pollalgorand.rest.adapter.service.TransactionSignerService;
 import com.pollalgorand.rest.adapter.service.TransactionWriterService;
 import com.pollalgorand.rest.domain.repository.BlockchainWriteRepository;
-import com.pollalgorand.rest.domain.request.OptinAppRequest;
+import com.pollalgorand.rest.domain.request.VoteAppRequest;
+import java.security.NoSuchAlgorithmException;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -19,10 +23,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class AlgorandWriteRepositoryTest {
+public class AlgorandWriteRepositoryVoteTest {
 
   public static final byte[] A_BYTE_ARRAY = "A_BYTE_ARRAY".getBytes(UTF_8);
   public static final String TRANSACTION_ID = "666";
+  public static final String AN_OPTION = "AN OPTION";
+  public static final long APP_ID = 123L;
 
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
@@ -39,10 +45,19 @@ public class AlgorandWriteRepositoryTest {
   private BuildOptinTransactionService buildOptinTransactionService;
 
   @Mock
-  private TransactionWriterService transactionWriterService;
+  private BuildVoteTransactionService buildVoteTransactionService;
 
   @Mock
-  private BuildVoteTransactionService buildVoteTransactionService;
+  private TransactionSignerService transactionSignerService;
+
+  @Mock
+  private TransactionSenderService transactionSenderService;
+
+  @Mock
+  private TransactionConfirmationService transactionConfirmationService;
+
+  @Mock
+  private TransactionWriterService transactionWriterService;
 
   private BlockchainWriteRepository blockchainWriteRepository;
 
@@ -54,20 +69,19 @@ public class AlgorandWriteRepositoryTest {
   }
 
   @Test
-  public void happyPath() throws Exception {
+  public void happyPath() throws NoSuchAlgorithmException {
 
     Account account = new Account();
-    OptinAppRequest optinAppRequest = new OptinAppRequest(123L, account);
-    Transaction unsignedTx = new Transaction();
+    Transaction unsignedTransaction = new Transaction();
+    VoteAppRequest voteAppRequest = new VoteAppRequest(APP_ID, account, AN_OPTION);
 
-    context.checking(new Expectations() {{
-      oneOf(buildOptinTransactionService).buildTransaction(account, optinAppRequest);
-      will(returnValue(unsignedTx));
+    context.checking(new Expectations(){{
+      oneOf(buildVoteTransactionService).buildTransaction(account, voteAppRequest);
+      will(returnValue(unsignedTransaction));
 
-      oneOf(transactionWriterService).write(account, unsignedTx);
-
+      oneOf(transactionWriterService).write(account, unsignedTransaction);
     }});
 
-    blockchainWriteRepository.optin(optinAppRequest);
+    blockchainWriteRepository.vote(voteAppRequest);
   }
 }
