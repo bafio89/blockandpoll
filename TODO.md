@@ -1,12 +1,12 @@
 
 TODO
 
-- [ ] parte di voto
-    - [x] End point 
-    - [x] use case
-    - [ ] Repository per votare
-    - [ ] Lettura da blockchain se utente ha votato o no
-    
+- [ ] Recuperare voti da blockchain + mostrare voti dei poll.
+     - [x] Repository
+           - [ ] Aggiungere test per corner case?
+     - [ ] UseCAse
+     - [ ] Endpoint 
+     - [ ] Frontend in order to retrieve the single poll.
 - [ ] Gestire piu di due opzioni
 - [ ] Rimuovere address da frontend per creazione poll.
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
@@ -17,9 +17,13 @@ TODO
 - [ ] Aggiungere descrizione del poll - frontend creazione poll.
 - [ ] Aggiungere field question 
 - [ ] Rimouvere mnemonic key dalla response
-- [ ] Recuperare voti da blockchain + mostrare voti dei poll.
 - [ ] Dire all sdk di restituire errori piu parlanti 
 
+- [x] parte di voto
+    - [x] End point 
+    - [x] use case
+    - [x] Repository per votare
+    - [x] Lettura da blockchain se utente ha votato o no
 - [x] parte di optin
     - [x] creare builder della tx di optin
     - [x] chiamare blochain per sapere se è stato già fatto optin 

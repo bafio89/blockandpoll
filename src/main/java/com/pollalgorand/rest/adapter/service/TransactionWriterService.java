@@ -42,14 +42,14 @@ public class TransactionWriterService {
     } catch (JsonProcessingException e) {
       logger.error("Something goes wrong encoding transaction for account with address {}",
           account.getAddress().toString(), e);
-      throw new EncodeTransactionException(e);
+      throw new EncodeTransactionException(e.getMessage());
     } catch (NoSuchAlgorithmException e) {
       logger.error("Something goes wrong signing transaction for account with address {}",
           account.getAddress().toString(), e);
-      throw new SignTransactionException(e);
+      throw new SignTransactionException(e.getMessage());
     }  catch (Exception e) {
       logger.error("Something goes wrong sending transaction for account with address {}", account.getAddress().toString(), e);
-      throw new SendingTransactionException(e);
+      throw new SendingTransactionException(e.getMessage());
     }
   }
 }
