@@ -87,6 +87,11 @@ public class AlgorandReadRepository implements BlockchainReadRepository {
   @Override
   public ApplicationInfoFromBlockchain findApplicationInfoBy(BlockchainPoll poll) {
     Map<String, BigInteger> optionsVotes = findOptionsVotes(poll);
+    try {
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     List<Address> subscribedAddress = findAddressSubscribedToApplicationBy(poll.getAppId());
     return new ApplicationInfoFromBlockchain(optionsVotes, subscribedAddress.size());
   }

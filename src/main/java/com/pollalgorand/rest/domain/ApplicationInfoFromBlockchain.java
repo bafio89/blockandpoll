@@ -6,13 +6,24 @@ import java.util.Objects;
 
 public class ApplicationInfoFromBlockchain {
 
-  private final Map<String, BigInteger> optionsVotes;
-  private final int size;
+  private Map<String, BigInteger> optionsVotes;
+  private int subscribedAccountNumber;
 
-  public ApplicationInfoFromBlockchain(Map<String, BigInteger> optionsVotes, int size) {
+  public ApplicationInfoFromBlockchain() {
+  }
+
+  public ApplicationInfoFromBlockchain(Map<String, BigInteger> optionsVotes, int subscribedAccountNumber) {
 
     this.optionsVotes = optionsVotes;
-    this.size = size;
+    this.subscribedAccountNumber = subscribedAccountNumber;
+  }
+
+  public Map<String, BigInteger> getOptionsVotes() {
+    return optionsVotes;
+  }
+
+  public int getSubscribedAccountNumber() {
+    return subscribedAccountNumber;
   }
 
   @Override
@@ -24,20 +35,20 @@ public class ApplicationInfoFromBlockchain {
       return false;
     }
     ApplicationInfoFromBlockchain that = (ApplicationInfoFromBlockchain) o;
-    return size == that.size &&
+    return subscribedAccountNumber == that.subscribedAccountNumber &&
         Objects.equals(optionsVotes, that.optionsVotes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(optionsVotes, size);
+    return Objects.hash(optionsVotes, subscribedAccountNumber);
   }
 
   @Override
   public String toString() {
     return "ApplicationInfo{" +
         "optionsVotes=" + optionsVotes +
-        ", size=" + size +
+        ", size=" + subscribedAccountNumber +
         '}';
   }
 }

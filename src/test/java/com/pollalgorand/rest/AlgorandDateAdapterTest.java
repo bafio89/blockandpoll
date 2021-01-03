@@ -24,14 +24,14 @@ public class AlgorandDateAdapterTest {
     setImposteriser(ClassImposteriser.INSTANCE);
   }};
 
+  @Rule public final ExpectedException expectedException = none();
+
   private AlgorandDateAdapter algorandDateAdapter;
 
   private LocalDateTime now = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
 
   @Mock
   private Clock clock;
-
-  @Rule public final ExpectedException expectedException = none();
 
   @Before
   public void setUp() {

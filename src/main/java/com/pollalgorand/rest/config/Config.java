@@ -121,8 +121,8 @@ public class Config {
   }
 
   @Bean
-  public RetrievePollUseCase retrievePollUseCase(PollRepository postgresPollRepository) {
-    return new RetrievePollUseCase(postgresPollRepository);
+  public RetrievePollUseCase retrievePollUseCase(PollRepository postgresPollRepository, BlockchainReadRepository blockchainReadRepository) {
+    return new RetrievePollUseCase(postgresPollRepository, blockchainReadRepository);
   }
 
   @Bean

@@ -1,5 +1,6 @@
 package com.pollalgorand.rest.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,9 +11,14 @@ public class Poll {
   public static final int NAME_MAXIMUM_LENGHT = 30;
   public static final int OPTION_MAXIMUM_LENGHT = 30;
   private String name;
+
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
   private LocalDateTime startSubscriptionTime;
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
   private LocalDateTime endSubscriptionTime;
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
   private LocalDateTime startVotingTime;
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
   private LocalDateTime endVotingTime;
   private List<String> options;
   private String sender;
