@@ -23,17 +23,41 @@ class Poll extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {selectedOption: '',
-      poll: this.props.location.poll
+    this.state = {
+      selectedOption: '',
+      poll: '',
+      optionsVotes: ''
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSenderChange = this.handleSenderChange.bind(this);
     this.handleMnemonicKeyChange = this.handleMnemonicKeyChange.bind(this);
     this.submitOptin = this.submitOptin.bind(this);
     this.submitVote = this.submitVote.bind(this);
+    this.getPoll = this.getPoll.bind(this);
   }
 
-  submitOptin(){
+  componentDidMount() {
+    this.getPoll()
+    console.log(this.state.poll)
+  }
+
+  getPoll() {
+    fetch("/poll/" + this.props.location.poll.appId)
+    .then(function (response) {
+      if (response.ok) {
+        response.json().then(function (data) {console.log(data)
+          this.setState({
+            poll: data.blockchainPoll,
+            optionsVotes: data.optionsVotes
+          });
+        }.bind(this));
+      } else {
+        throw new Error(response.status);
+      }
+    }.bind(this));
+  }
+
+  submitOptin() {
     console.log(this.state.poll.appId)
 
     return fetch("/optin/poll/" + this.state.poll.appId,
@@ -46,10 +70,10 @@ class Poll extends React.Component {
           body: JSON.stringify({
             mnemonicKey: this.state.mnemonicKey,
           })
-    });
+        });
   }
 
-  submitVote(){
+  submitVote() {
     console.log(this.state.poll.appId)
 
     return fetch("/vote/poll/" + this.state.poll.appId,
@@ -63,10 +87,10 @@ class Poll extends React.Component {
             mnemonicKey: this.state.mnemonicKey,
             selectedOption: this.state.selectedOption
           })
-    });
+        });
   }
 
-  handleChange(event){
+  handleChange(event) {
     this.setState({selectedOption: event.target.value});
   };
 
@@ -86,24 +110,33 @@ class Poll extends React.Component {
       <Grid item xs={6}>
         <Paper>
           <Grid container>
-          <Grid item xs={7}>
-          <Typography variant="h4" component="h2">
-            {this.state.poll.name}
-          </Typography>
-          </Grid>
-          <Grid item xs={5}>
-            <Brightness1Icon style={{ color: green[500] }}/>
-          </Grid>
+            <Grid item xs={7}>
+              <Typography variant="h4" component="h2">
+                {this.state.poll.name}
+              </Typography>
+            </Grid>
+            <Grid item xs={5}>
+              <Brightness1Icon style={{color: green[500]}}/>
+            </Grid>
           </Grid>
           <br/>
           <Typography variant="h6" component="h3">
             {this.state.poll.description}
           </Typography>
           <FormControl component="fieldset">
+            <label> Number of people subscribed to this poll: {this.state.optionsVotes ? this.state.optionsVotes.optionsVotes[this.state.poll.options[1]] : ''}</label>
             <FormLabel component="legend">Express your vote</FormLabel>
-            <RadioGroup aria-label="gender" name="gender1" value={this.state.selectedOption} onChange={this.handleChange}>
-              <FormControlLabel value={this.state.poll.options[0]} control={<Radio />} label={this.state.poll.options[0]} />
-              <FormControlLabel value={this.state.poll.options[1]} control={<Radio />} label={this.state.poll.options[1]} />
+            <RadioGroup aria-label="gender" name="gender1"
+                        value={this.state.selectedOption}
+                        onChange={this.handleChange}>
+              <FormControlLabel value={this.state.poll ? this.state.poll.options[0] : ''}
+                                control={<Radio/>}
+                                label={this.state.poll ? this.state.poll.options[0] : ''}/>
+              <label>{this.state.optionsVotes ? this.state.optionsVotes.optionsVotes[this.state.poll.options[0]] : ''}</label>
+              <FormControlLabel value={this.state.poll ? this.state.poll.options[1] : ''}
+                                control={<Radio/>}
+                                label={this.state.poll ? this.state.poll.options[1] : ''}/>
+              <label>{this.state.optionsVotes ? this.state.optionsVotes.optionsVotes[this.state.poll.options[1]] : ''}</label>
             </RadioGroup>
             <TextField id="sender" label="Creator address"
                        variant="outlined" value={this.state.sender}
@@ -117,9 +150,11 @@ class Poll extends React.Component {
           </FormControl>
         </Paper>
         <br/>
-        <div style={{textAlign:'center'}}>
-        <Button onClick={this.submitOptin} variant="contained" color="primary" className={classes.spaces}>Opt In</Button>
-        <Button onClick={this.submitVote} variant="contained" color="primary" className={classes.spaces}>Vote</Button>
+        <div style={{textAlign: 'center'}}>
+          <Button onClick={this.submitOptin} variant="contained" color="primary"
+                  className={classes.spaces}>Opt In</Button>
+          <Button onClick={this.submitVote} variant="contained" color="primary"
+                  className={classes.spaces}>Vote</Button>
         </div>
       </Grid>
       <Grid item xs={3}/>
