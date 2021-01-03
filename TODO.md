@@ -7,17 +7,18 @@ TODO
      - [x] UseCAse
      - [x] Endpoint 
      - [x] Frontend in order to retrieve the single poll.
-- [ ] Gestire piu di due opzioni
 - [ ] Rimuovere address da frontend per creazione poll.
+- [ ] Aggiungere descrizione del poll - frontend creazione poll.
+- [ ] Aggiungere field question 
+- [ ] Sistemare grafica
+- [ ] Gestire piu di due opzioni
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
 - [ ] sistemare logica date appena viene creato poll
 - [ ] refactoring in come viene gestito l'optional in OptinUseCase
-- [ ] Sistemare grafica
-- [ ] Aggiungere descrizione del poll - frontend creazione poll.
-- [ ] Aggiungere field question 
 - [ ] Rimouvere mnemonic key dalla response
 - [ ] Dire all sdk di restituire errori piu parlanti 
+- [ ] Rivedere tutto e rifattorizzare cio che si puo
 
 - [x] parte di voto
     - [x] End point 
