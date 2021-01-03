@@ -124,7 +124,7 @@ class Poll extends React.Component {
             {this.state.poll.description}
           </Typography>
           <FormControl component="fieldset">
-            <label> Number of people subscribed to this poll: {this.state.optionsVotes ? this.state.optionsVotes.optionsVotes[this.state.poll.options[1]] : ''}</label>
+            <label> Number of people subscribed to this poll: {this.state.optionsVotes ? this.state.optionsVotes.subscribedAccountNumber : ''}</label>
             <FormLabel component="legend">Express your vote</FormLabel>
             <RadioGroup aria-label="gender" name="gender1"
                         value={this.state.selectedOption}
