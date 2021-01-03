@@ -4,9 +4,9 @@ TODO
 - [ ] Recuperare voti da blockchain + mostrare voti dei poll.
      - [x] Repository
            - [ ] Aggiungere test per corner case?
-     - [ ] UseCAse
-     - [ ] Endpoint 
-     - [ ] Frontend in order to retrieve the single poll.
+     - [x] UseCAse
+     - [x] Endpoint 
+     - [x] Frontend in order to retrieve the single poll.
 - [ ] Gestire piu di due opzioni
 - [ ] Rimuovere address da frontend per creazione poll.
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
