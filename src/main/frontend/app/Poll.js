@@ -12,10 +12,18 @@ import Brightness1Icon from '@material-ui/icons/Brightness1';
 import {green} from '@material-ui/core/colors';
 import TextField from "@material-ui/core/TextField";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = () => ({
   spaces: {
     margin: '15px'
+  },
+  size: {
+    margin: '15px',
+    display: 'flex'
+  },
+  verticalBar: {
+    display: 'inline-block'
   }
 });
 
@@ -24,12 +32,12 @@ class Poll extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      appId: this.props.location.pathname.replace("/poll/", ""),
       selectedOption: '',
       poll: '',
       optionsVotes: ''
     }
     this.handleChange = this.handleChange.bind(this);
-    this.handleSenderChange = this.handleSenderChange.bind(this);
     this.handleMnemonicKeyChange = this.handleMnemonicKeyChange.bind(this);
     this.submitOptin = this.submitOptin.bind(this);
     this.submitVote = this.submitVote.bind(this);
@@ -42,10 +50,11 @@ class Poll extends React.Component {
   }
 
   getPoll() {
-    fetch("/poll/" + this.props.location.poll.appId)
+    fetch("/poll/" + this.state.appId)
     .then(function (response) {
       if (response.ok) {
-        response.json().then(function (data) {console.log(data)
+        response.json().then(function (data) {
+          console.log(data)
           this.setState({
             poll: data.blockchainPoll,
             optionsVotes: data.optionsVotes
@@ -58,8 +67,6 @@ class Poll extends React.Component {
   }
 
   submitOptin() {
-    console.log(this.state.poll.appId)
-
     return fetch("/optin/poll/" + this.state.poll.appId,
         {
           method: 'POST',
@@ -94,11 +101,6 @@ class Poll extends React.Component {
     this.setState({selectedOption: event.target.value});
   };
 
-  handleSenderChange(event) {
-    console.log(event.target.value)
-    this.setState({sender: event.target.value})
-  }
-
   handleMnemonicKeyChange(event) {
     this.setState({mnemonicKey: event.target.value})
   }
@@ -111,51 +113,92 @@ class Poll extends React.Component {
         <Paper>
           <Grid container>
             <Grid item xs={7}>
-              <Typography variant="h4" component="h2">
+              <Typography variant="h4" component="h2"
+                          className={classes.spaces}>
                 {this.state.poll.name}
               </Typography>
-            </Grid>
-            <Grid item xs={5}>
-              <Brightness1Icon style={{color: green[500]}}/>
-            </Grid>
-          </Grid>
-          <br/>
-          <Typography variant="h6" component="h3">
+
+          <Typography variant="body1" className={classes.spaces}>
             {this.state.poll.description}
           </Typography>
-          <FormControl component="fieldset">
-            <label> Number of people subscribed to this poll: {this.state.optionsVotes ? this.state.optionsVotes.subscribedAccountNumber : ''}</label>
+          <Typography variant="overline" className={classes.spaces}>
+            Number of people subscribed to this poll: {this.state.optionsVotes
+              ? this.state.optionsVotes.subscribedAccountNumber : ''}
+          </Typography>
+          <br/>
+          <Typography variant="overline" className={classes.spaces}>
+            Results
+          </Typography>
+          <br/>
+          <Typography variant="overline" className={classes.spaces}>
+            {this.state.poll
+                ? this.state.poll.options[0] : ''}
+          </Typography>
+          <Typography variant="overline" className={classes.spaces}>
+            {this.state.optionsVotes
+                ? this.state.optionsVotes.optionsVotes[this.state.poll.options[0]]
+                : ''}
+          </Typography>
+          <br/>
+          <Typography variant="overline" className={classes.spaces}>
+            {this.state.poll
+                ? this.state.poll.options[1] : ''}
+          </Typography>
+          <Typography variant="overline" className={classes.spaces}>
+            {this.state.optionsVotes
+                ? this.state.optionsVotes.optionsVotes[this.state.poll.options[1]]
+                : ''}
+          </Typography>
+          <br/>
+          <br/>
+            </Grid>
+            <Grid item xs={1}>
+              <Divider orientation={'vertical'} className={classes.verticalBar}/>
+              <Brightness1Icon style={{color: green[500]}}
+                               className={classes.spaces}/>
+            </Grid>
+            <Grid item xs={4}>
+              <div style={{textAlign: 'left'}}>
+                <Typography className={classes.spaces}>
+                  Subscription open
+                </Typography>
+              </div>
+            </Grid>
+          </Grid>
+          <Divider/>
+          <FormControl component="fieldset" className={classes.size}>
             <FormLabel component="legend">Express your vote</FormLabel>
             <RadioGroup aria-label="gender" name="gender1"
                         value={this.state.selectedOption}
                         onChange={this.handleChange}>
-              <FormControlLabel value={this.state.poll ? this.state.poll.options[0] : ''}
-                                control={<Radio/>}
-                                label={this.state.poll ? this.state.poll.options[0] : ''}/>
-              <label>{this.state.optionsVotes ? this.state.optionsVotes.optionsVotes[this.state.poll.options[0]] : ''}</label>
-              <FormControlLabel value={this.state.poll ? this.state.poll.options[1] : ''}
-                                control={<Radio/>}
-                                label={this.state.poll ? this.state.poll.options[1] : ''}/>
-              <label>{this.state.optionsVotes ? this.state.optionsVotes.optionsVotes[this.state.poll.options[1]] : ''}</label>
+              <FormControlLabel
+                  value={this.state.poll ? this.state.poll.options[0] : ''}
+                  control={<Radio/>}
+                  label={this.state.poll ? this.state.poll.options[0] : ''}/>
+              <FormControlLabel
+                  value={this.state.poll ? this.state.poll.options[1] : ''}
+                  control={<Radio/>}
+                  label={this.state.poll ? this.state.poll.options[1] : ''}/>
             </RadioGroup>
-            <TextField id="sender" label="Creator address"
-                       variant="outlined" value={this.state.sender}
-                       onChange={this.handleSenderChange}
-                       className={classes.spaces}/>
             <TextField id="mnemonicKey" label="Passphrase"
+                       multiline
+                       rows={4}
+                       defaultValue="Default Value"
                        variant="outlined"
                        value={this.state.mnemonicKey || ''}
                        onChange={this.handleMnemonicKeyChange}
-                       className={classes.spaces}/>
+                       className={classes.size}
+            />
           </FormControl>
+          <div style={{textAlign: 'center'}}>
+            <Button onClick={this.submitOptin} variant="contained"
+                    color="primary"
+                    className={classes.spaces}>Opt In</Button>
+            <Button onClick={this.submitVote} variant="contained"
+                    color="primary"
+                    className={classes.spaces}>Vote</Button>
+          </div>
         </Paper>
-        <br/>
-        <div style={{textAlign: 'center'}}>
-          <Button onClick={this.submitOptin} variant="contained" color="primary"
-                  className={classes.spaces}>Opt In</Button>
-          <Button onClick={this.submitVote} variant="contained" color="primary"
-                  className={classes.spaces}>Vote</Button>
-        </div>
       </Grid>
       <Grid item xs={3}/>
     </Grid>
