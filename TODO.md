@@ -7,11 +7,14 @@ TODO
      - [x] UseCAse
      - [x] Endpoint 
      - [x] Frontend in order to retrieve the single poll.
-- [ ] Rimuovere address da frontend per creazione poll.
-- [ ] Aggiungere descrizione del poll - frontend creazione poll.
-- [ ] Aggiungere field question 
 - [ ] Sistemare grafica
-- [ ] Gestire piu di due opzioni
+    - [ ] Navbar
+    - [ ] Gestire piu opzioni in creazione
+    - [ ] Rimuovere address da frontend per creazione poll.
+    - [ ] Aggiungere descrizione del poll - frontend creazione poll.
+    - [ ] Aggiungere field question
+    - [ ] Gestire errori dopo submission
+    - [ ] Validare campi in submission
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
 - [ ] sistemare logica date appena viene creato poll
@@ -20,6 +23,7 @@ TODO
 - [ ] Dire all sdk di restituire errori piu parlanti 
 - [ ] Rivedere tutto e rifattorizzare cio che si puo
 
+- [x] Gestire piu di due opzioni in lettura
 - [x] parte di voto
     - [x] End point 
     - [x] use case
