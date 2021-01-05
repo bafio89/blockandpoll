@@ -13,6 +13,12 @@ import {green} from '@material-ui/core/colors';
 import TextField from "@material-ui/core/TextField";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Divider from "@material-ui/core/Divider";
+import TableContainer from "@material-ui/core/TableContainer";
+import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
 
 const useStyles = () => ({
   spaces: {
@@ -24,6 +30,11 @@ const useStyles = () => ({
   },
   verticalBar: {
     display: 'inline-block'
+  },
+  icon: {
+    margin: '15px',
+    verticalAlign: 'top',
+    position: 'absolute'
   }
 });
 
@@ -46,7 +57,10 @@ class Poll extends React.Component {
 
   componentDidMount() {
     this.getPoll()
-    console.log(this.state.poll)
+    this.buildOptionGrid()
+  }
+
+  buildOptionGrid() {
   }
 
   getPoll() {
@@ -117,50 +131,75 @@ class Poll extends React.Component {
                           className={classes.spaces}>
                 {this.state.poll.name}
               </Typography>
-
-          <Typography variant="body1" className={classes.spaces}>
-            {this.state.poll.description}
-          </Typography>
-          <Typography variant="overline" className={classes.spaces}>
-            Number of people subscribed to this poll: {this.state.optionsVotes
-              ? this.state.optionsVotes.subscribedAccountNumber : ''}
-          </Typography>
-          <br/>
-          <Typography variant="overline" className={classes.spaces}>
-            Results
-          </Typography>
-          <br/>
-          <Typography variant="overline" className={classes.spaces}>
-            {this.state.poll
-                ? this.state.poll.options[0] : ''}
-          </Typography>
-          <Typography variant="overline" className={classes.spaces}>
-            {this.state.optionsVotes
-                ? this.state.optionsVotes.optionsVotes[this.state.poll.options[0]]
-                : ''}
-          </Typography>
-          <br/>
-          <Typography variant="overline" className={classes.spaces}>
-            {this.state.poll
-                ? this.state.poll.options[1] : ''}
-          </Typography>
-          <Typography variant="overline" className={classes.spaces}>
-            {this.state.optionsVotes
-                ? this.state.optionsVotes.optionsVotes[this.state.poll.options[1]]
-                : ''}
-          </Typography>
-          <br/>
-          <br/>
+            </Grid>
+            <Grid item xs={7}>
+              <Divider/>
+              <Typography variant="body1" className={classes.spaces}>
+                {this.state.poll.description}
+              </Typography>
+              <Typography variant="overline" className={classes.spaces}>
+                Number of people subscribed to this
+                poll: {this.state.optionsVotes
+                  ? this.state.optionsVotes.subscribedAccountNumber : ''}
+              </Typography>
+              <br/>
+              <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Options</TableCell>
+                      <TableCell align="right">Votes</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {this.state.optionsVotes ? Object.keys(
+                        this.state.optionsVotes.optionsVotes).map((row) => (
+                        <TableRow key={row}>
+                          <TableCell component="th" scope="row">
+                            {row}
+                          </TableCell>
+                          <TableCell
+                              align="right">{this.state.optionsVotes.optionsVotes[row]}</TableCell>
+                        </TableRow>
+                    )) : ''}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Grid>
             <Grid item xs={1}>
-              <Divider orientation={'vertical'} className={classes.verticalBar}/>
+              <Divider/>
+              <Divider orientation={'vertical'}
+                       className={classes.verticalBar}/>
               <Brightness1Icon style={{color: green[500]}}
-                               className={classes.spaces}/>
+                               className={classes.icon}/>
             </Grid>
             <Grid item xs={4}>
+              <Divider/>
               <div style={{textAlign: 'left'}}>
-                <Typography className={classes.spaces}>
-                  Subscription open
+                <Typography variant='overline' className={classes.spaces}>
+                  Subscription interval
+                </Typography>
+              </div>
+              <div style={{textAlign: 'left'}}>
+                <Typography variant='overline' className={classes.spaces}>
+                  {this.state.poll ? new Date(
+                      this.state.poll.startSubscriptionTime).toLocaleDateString()
+                      : ''} - {this.state.poll ? new Date(
+                    this.state.poll.endSubscriptionTime).toLocaleDateString()
+                    : ''}
+                </Typography>
+              </div>
+              <div style={{textAlign: 'left'}}>
+                <Typography variant='overline' className={classes.spaces}>
+                  Vote interval
+                </Typography>
+              </div>
+              <div style={{textAlign: 'left'}}>
+                <Typography variant='overline' className={classes.spaces}>
+                  {this.state.poll ? new Date(
+                      this.state.poll.startVotingTime).toLocaleDateString()
+                      : ''} - {this.state.poll ? new Date(
+                    this.state.poll.endVotingTime).toLocaleDateString() : ''}
                 </Typography>
               </div>
             </Grid>
