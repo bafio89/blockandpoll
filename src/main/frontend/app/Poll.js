@@ -57,10 +57,6 @@ class Poll extends React.Component {
 
   componentDidMount() {
     this.getPoll()
-    this.buildOptionGrid()
-  }
-
-  buildOptionGrid() {
   }
 
   getPoll() {

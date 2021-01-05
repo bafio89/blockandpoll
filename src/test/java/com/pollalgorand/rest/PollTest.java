@@ -2,6 +2,8 @@ package com.pollalgorand.rest;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
 import com.pollalgorand.rest.domain.model.Poll;
@@ -24,10 +26,17 @@ public class PollTest {
     expectedException.expect(IllegalPollParameterException.class);
     expectedException.expectMessage("Invalid poll parameters: start subscription date is after end subscription date");
 
-    new Poll(A_NAME, LocalDateTime.of(2020,11, 29, 0,0),
-        LocalDateTime.of(2020,11, 11, 0,0),
-        null, null, emptyList(), "", "mnemonicKey", "description");
+    aPollWith(LocalDateTime.of(2020, 11, 29, 0, 0),
+        LocalDateTime.of(2020, 11, 11, 0, 0),
+        null, null);
 
+  }
+
+  private Poll aPollWith(LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
+      LocalDateTime startVotingTime, LocalDateTime endVotingTime) {
+    return new Poll(A_NAME, startSubscriptionTime,
+        endSubscriptionTime,
+        startVotingTime, endVotingTime, emptyList(), "", "mnemonicKey", "description");
   }
 
   @Test
@@ -36,12 +45,10 @@ public class PollTest {
     expectedException.expect(IllegalPollParameterException.class);
     expectedException.expectMessage("Invalid poll parameters: start voting date is after end voting date");
 
-    new Poll(A_NAME, LocalDateTime.of(2020,11, 29, 0,0),
+    aPollWith(LocalDateTime.of(2020,11, 29, 0,0),
         LocalDateTime.of(2020,11, 30, 0,0),
         LocalDateTime.of(2020,11, 29, 0,0),
-        LocalDateTime.of(2020,11, 11, 0,0),
-        emptyList(),
-        "", "mnemonicKey", "description");
+        LocalDateTime.of(2020,11, 11, 0,0));
 
   }
 
@@ -62,5 +69,58 @@ public class PollTest {
     new Poll(A_NAME, null,null,null,null, asList(INVALID_OPTION_NAME),null, "mnemonicKey",
         "description");
 
+  }
+
+  @Test
+  public void whenPollIsOpen() {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime startVotingTime = now.minusDays(1);
+    LocalDateTime endVotingTime = now.plusDays(1);
+    LocalDateTime startSubscriptionTime = now.minusDays(3);
+    LocalDateTime endSubscriptionTime = now.minusDays(2);
+
+    Poll poll = aPollWith(startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime);
+
+    assertThat(poll.pollStatus(), is("Open"));
+  }
+
+  @Test
+  public void whenSubscriptionIsOpen() {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime startVotingTime = now.plusDays(1);
+    LocalDateTime endVotingTime = now.plusDays(2);
+    LocalDateTime startSubscriptionTime = now.minusDays(3);
+    LocalDateTime endSubscriptionTime = now.plusDays(2);
+
+    Poll poll = aPollWith(startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime);
+
+    assertThat(poll.pollStatus(), is("Subscription open"));
+  }
+
+
+  @Test
+  public void whenPollIsExpired() {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime startVotingTime = now.minusDays(3);
+    LocalDateTime endVotingTime = now.minusDays(1);
+    LocalDateTime startSubscriptionTime = now.minusDays(4);
+    LocalDateTime endSubscriptionTime = now.minusDays(3);
+
+    Poll poll = aPollWith(startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime);
+
+    assertThat(poll.pollStatus(), is("Expired"));
+  }
+
+  @Test
+  public void whenPollIsNotYetOpen() {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime startVotingTime = now.plusDays(3);
+    LocalDateTime endVotingTime = now.plusDays(5);
+    LocalDateTime startSubscriptionTime = now.plusDays(2);
+    LocalDateTime endSubscriptionTime = now.plusDays(3);
+
+    Poll poll = aPollWith(startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime);
+
+    assertThat(poll.pollStatus(), is("Not yet open"));
   }
 }

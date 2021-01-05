@@ -2,12 +2,11 @@ import React from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import CardActions from "@material-ui/core/CardActions";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import {Link} from "react-router-dom";
+import {green, red} from "@material-ui/core/colors";
+import Brightness1Icon from "@material-ui/icons/Brightness1";
+import withStyles from "@material-ui/core/styles/withStyles";
 
-const useStyles = makeStyles({
+const useStyles = () => ({
   root: {
     minWidth: 275,
   },
@@ -19,50 +18,56 @@ const useStyles = makeStyles({
   title: {
     fontSize: 14,
   },
-  pos: {
+  status: {
     marginBottom: 12,
+    display: 'inline-block',
+    verticalAlign: 'super',
+    marginLeft: 6
+
   },
+  icon: {
+    display: 'inline-block',
+    color: green[500]
+  },
+  redIcon: {
+    display: 'inline-block',
+    color: red[500]
+  }
 });
 
-class PollCard extends React.Component{
+class PollCard extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { classes: ''}
+    this.state = {classes: ''}
   }
 
-  render(){
-    return <div style={{'alignContent':'center'}}>
-      <Card className={useStyles.root} variant="outlined" style={{'margin': '15px',  'height': '180px'}}>
-        <CardContent>
-          <Typography className={useStyles.title} color="textSecondary" gutterBottom>
-            Permissionless
-          </Typography>
-          <Link to={
-            {
-              pathname: "/poll/" + this.props.poll.appId,
-              poll: this.props.poll
-            }
-          }>
-            {this.props.poll.name}</Link>
-          <Typography variant="h5" component="h2">
-            {this.props.poll.name}
-          </Typography>
-          <Typography className={useStyles.pos} color="textSecondary">
-            ongoing
-          </Typography>
-          <Typography variant="body2" component="p">
-            {this.props.poll.description}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button size="small">Vote</Button>
-        </CardActions>
-      </Card>
+  render() {
+    const {classes} = this.props;
+    return <div style={{'alignText': 'left'}}>
+      <a href={'#/poll/' + this.props.poll.appId}
+         style={{'textDecoration': 'none'}}>
+        <Card className={classes.root} variant="outlined"
+              style={{'margin': '15px', 'height': '180px'}}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              {this.props.poll.name}
+            </Typography>
+            <div className={useStyles.display}>
+              <Brightness1Icon className={this.props.poll.pollStatus === 'Open'? classes.icon : classes.redIcon}/>
+              <Typography className={classes.status} color="textSecondary">
+                {this.props.poll.pollStatus}
+              </Typography>
+            </div>
+            <Typography variant="body2" component="p">
+              {this.props.poll.description}
+            </Typography>
+          </CardContent>
+        </Card>
+      </a>
     </div>
-
 
   }
 }
 
-export default PollCard;
+export default withStyles(useStyles)(PollCard);

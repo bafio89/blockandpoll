@@ -1,6 +1,7 @@
 package com.pollalgorand.rest.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,6 +48,22 @@ public class Poll {
     validateName();
     validateOptions();
     validateDate();
+  }
+
+  @JsonProperty
+  public String pollStatus(){
+    LocalDateTime now = LocalDateTime.now();
+    if(now.isAfter(startVotingTime) && now.isBefore(endVotingTime)){
+       return "Open";
+    }
+    if(now.isAfter(startSubscriptionTime) && now.isBefore(endSubscriptionTime)){
+      return "Subscription open";
+    }
+    if(now.isAfter(endVotingTime)){
+      return "Expired";
+    }
+
+    return "Not yet open";
   }
 
   private void validateOptions() {
