@@ -2,7 +2,7 @@ import React from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import {green, red} from "@material-ui/core/colors";
+import {green, red, yellow} from "@material-ui/core/colors";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -25,15 +25,25 @@ const useStyles = () => ({
     marginLeft: 6
 
   },
-  icon: {
+  greenIcon: {
     display: 'inline-block',
     color: green[500]
   },
   redIcon: {
     display: 'inline-block',
     color: red[500]
+  },
+  yellowIcon: {
+    display: 'inline-block',
+    color: yellow[500]
   }
 });
+
+export function getIconColor(classes, pollStatus) {
+  return pollStatus === 'Expired' ? classes.redIcon
+      : pollStatus === 'Subscription open' ? classes.yellowIcon
+          : classes.greenIcon;
+}
 
 class PollCard extends React.Component {
 
@@ -54,7 +64,7 @@ class PollCard extends React.Component {
               {this.props.poll.name}
             </Typography>
             <div className={useStyles.display}>
-              <Brightness1Icon className={this.props.poll.pollStatus === 'Open'? classes.icon : classes.redIcon}/>
+              <Brightness1Icon className={getIconColor.call(this, classes, this.props.poll.pollStatus)}/>
               <Typography className={classes.status} color="textSecondary">
                 {this.props.poll.pollStatus}
               </Typography>

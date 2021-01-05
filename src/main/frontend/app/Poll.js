@@ -9,7 +9,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
 import Brightness1Icon from '@material-ui/icons/Brightness1';
-import {green} from '@material-ui/core/colors';
+import {green, red, yellow} from '@material-ui/core/colors';
 import TextField from "@material-ui/core/TextField";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Divider from "@material-ui/core/Divider";
@@ -19,6 +19,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import {getIconColor} from "./PollCard";
 
 const useStyles = () => ({
   spaces: {
@@ -31,10 +32,23 @@ const useStyles = () => ({
   verticalBar: {
     display: 'inline-block'
   },
-  icon: {
+  greenIcon: {
     margin: '15px',
     verticalAlign: 'top',
-    position: 'absolute'
+    position: 'absolute',
+    color: green[500]
+  },
+  redIcon: {
+    margin: '15px',
+    verticalAlign: 'top',
+    position: 'absolute',
+    color: red[500]
+  },
+  yellowIcon: {
+    margin: '15px',
+    verticalAlign: 'top',
+    position: 'absolute',
+    color: yellow[500]
   }
 });
 
@@ -166,12 +180,16 @@ class Poll extends React.Component {
               <Divider/>
               <Divider orientation={'vertical'}
                        className={classes.verticalBar}/>
-              <Brightness1Icon style={{color: green[500]}}
-                               className={classes.icon}/>
+              <Brightness1Icon className={this.state.poll ? getIconColor.call(this, classes, this.state.poll.pollStatus) : ''}/>
             </Grid>
             <Grid item xs={4}>
               <Divider/>
               <div style={{textAlign: 'left'}}>
+                <Typography variant='overline' className={classes.spaces}>
+                  The poll is {this.state.poll.pollStatus}
+                </Typography>
+              </div><
+              div style={{textAlign: 'left'}}>
                 <Typography variant='overline' className={classes.spaces}>
                   Subscription interval
                 </Typography>
@@ -206,14 +224,20 @@ class Poll extends React.Component {
             <RadioGroup aria-label="gender" name="gender1"
                         value={this.state.selectedOption}
                         onChange={this.handleChange}>
-              <FormControlLabel
-                  value={this.state.poll ? this.state.poll.options[0] : ''}
-                  control={<Radio/>}
-                  label={this.state.poll ? this.state.poll.options[0] : ''}/>
-              <FormControlLabel
-                  value={this.state.poll ? this.state.poll.options[1] : ''}
-                  control={<Radio/>}
-                  label={this.state.poll ? this.state.poll.options[1] : ''}/>
+              {this.state.poll ? this.state.poll.options.map( (option) =>
+                  <FormControlLabel
+                      value={option}
+                      control={<Radio/>}
+                      label={option}/>
+              ) : ''}
+              {/*<FormControlLabel*/}
+              {/*    value={this.state.poll ? this.state.poll.options[0] : ''}*/}
+              {/*    control={<Radio/>}*/}
+              {/*    label={this.state.poll ? this.state.poll.options[0] : ''}/>*/}
+              {/*<FormControlLabel*/}
+              {/*    value={this.state.poll ? this.state.poll.options[1] : ''}*/}
+              {/*    control={<Radio/>}*/}
+              {/*    label={this.state.poll ? this.state.poll.options[1] : ''}/>*/}
             </RadioGroup>
             <TextField id="mnemonicKey" label="Passphrase"
                        multiline
