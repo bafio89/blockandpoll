@@ -16,7 +16,7 @@ const useStyles = () => ({
     transform: 'scale(0.8)',
   },
   title: {
-    fontSize: 14,
+    marginBottom: 0,
   },
   status: {
     marginBottom: 12,
@@ -60,10 +60,13 @@ class PollCard extends React.Component {
         <Card className={classes.root} variant="outlined"
               style={{'margin': '15px', 'height': '180px'}}>
           <CardContent>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom className={classes.title}>
               {this.props.poll.name}
             </Typography>
-            <div className={useStyles.display}>
+            <Typography color="textSecondary">
+              {this.props.poll.question}
+            </Typography>
+            <div>
               <Brightness1Icon className={getIconColor.call(this, classes, this.props.poll.pollStatus)}/>
               <Typography className={classes.status} color="textSecondary">
                 {this.props.poll.pollStatus}
