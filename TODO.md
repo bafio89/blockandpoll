@@ -9,7 +9,7 @@ TODO
      - [x] Frontend in order to retrieve the single poll.
 - [ ] Sistemare grafica
     - [x] gestire icona status poll
-    - [ ] Navbar
+    - [x] Navbar
     - [ ] Gestire piu opzioni in creazione
     - [x] Rimuovere address da frontend per creazione poll.
     - [x] Aggiungere descrizione del poll - frontend creazione poll.

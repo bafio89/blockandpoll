@@ -21,6 +21,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import {getIconColor} from "./PollCard";
 import MenuBar from "./MenuBar";
+import OptionVoteChart from "./OptionVoteChart";
 
 const useStyles = () => ({
   spaces: {
@@ -165,6 +166,7 @@ class Poll extends React.Component {
                       <TableCell align="right">Votes</TableCell>
                     </TableRow>
                   </TableHead>
+                  <OptionVoteChart optionsVotes={this.state.optionsVotes ? this.state.optionsVotes.optionsVotes : ''}/>
                   <TableBody>
                     {this.state.optionsVotes ? Object.keys(
                         this.state.optionsVotes.optionsVotes).map((row) => (
