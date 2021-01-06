@@ -6,21 +6,8 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
+
 import MenuBar from "./MenuBar";
-
-const nowValues = {
-  now: moment().format("yyyy-MM-DD")
-};
-
-const useStyles = () => ({
-  spaces: {
-    margin: '15px'
-  },
-  size: {
-    margin: '15px',
-    display: 'flex'
-  },
-});
 
 class CreatePoll extends React.Component {
 
@@ -30,8 +17,7 @@ class CreatePoll extends React.Component {
       question: '',
       mnemonicKey: '',
       name: '',
-      option1: '',
-      option2: '',
+      options: [{id:0, idElement:'Option 0', val: ''}, {id:1, idElement:'Option 1', val: ''}],
       description: '',
       startSubDate: '',
       endSubDate: '',
@@ -42,14 +28,14 @@ class CreatePoll extends React.Component {
     this.handleQuestionChange = this.handleQuestionChange.bind(this);
     this.handleMnemonicKeyChange = this.handleMnemonicKeyChange.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleOption1Change = this.handleOption1Change.bind(this);
-    this.handleOption2Change = this.handleOption2Change.bind(this);
+    this.handleOptionChange = this.handleOptionChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this)
     this.handleStartSubDateChange = this.handleStartSubDateChange.bind(this);
     this.handleEndSubDateChange = this.handleEndSubDateChange.bind(this);
     this.handleStartVotingDateChange = this.handleStartVotingDateChange.bind(
         this);
     this.handleEndVotingDateChange = this.handleEndVotingDateChange.bind(this);
+    this.appendInput = this.appendInput.bind(this);
     this.createPoll = this.createPoll.bind(this);
 
   }
@@ -78,16 +64,15 @@ class CreatePoll extends React.Component {
     this.setState({description: event.target.value})
   }
 
-  handleNameChange(event) {
+  handleNameChange(event) {console.log(event.target);
     this.setState({name: event.target.value})
   }
 
-  handleOption1Change(event) {
-    this.setState({option1: event.target.value})
-  }
-
-  handleOption2Change(event) {
-    this.setState({option2: event.target.value})
+  handleOptionChange(event) {
+    let optionsArray = []
+    this.state.options.map(option => option.idElement === event.target.id ?
+        optionsArray.push({id: option.id, idElement:option.idElement, val: event.target.value }) : optionsArray.push(option))
+    this.setState({options: optionsArray})
   }
 
   handleStartSubDateChange(event) {
@@ -106,7 +91,17 @@ class CreatePoll extends React.Component {
     this.setState({endVotingDate: event.target.value})
   }
 
+  appendInput() {
+    let options = this.state.options
+    options.push({id:this.state.options.length, idElement:"Option " + this.state.options.length, value: ''})
+    this.setState({options: options});
+
+  }
+
   createPoll() {
+    let optionsArray =[]
+    this.state.options.map(option => optionsArray.push(option.val))
+
     return fetch("/createpoll/signedtx",
         {
           method: 'POST',
@@ -122,7 +117,7 @@ class CreatePoll extends React.Component {
             endSubscriptionTime: this.state.endSubDate + "T00:00:10",
             startVotingTime: this.state.startVotingDate + "T00:00:10",
             endVotingTime: this.state.endVotingDate + "T00:00:10",
-            options: [this.state.option1, this.state.option2],
+            options: optionsArray,
             description: this.state.description
           })
         }).then(function (response) {
@@ -177,14 +172,18 @@ class CreatePoll extends React.Component {
                              onChange={this.handleDescriptionChange}
                              className={classes.size}
                   />
-                  <TextField id="option1" label="Option 1" variant="outlined"
-                             value={this.state.option1 || ''}
-                             onChange={this.handleOption1Change}
-                             className={classes.spaces}/>
-                  <TextField id="option2" label="Option 2" variant="outlined"
-                             value={this.state.option2 || ''}
-                             onChange={this.handleOption2Change}
-                             className={classes.spaces}/>
+                  {this.state.options ? this.state.options.map(option =>
+                      option.id === this.state.options.length-1 ?
+                          <TextField id={option.idElement} label={option.idElement} variant="outlined"
+                                     value={option.value}
+                                     onClick={this.appendInput}
+                                     onChange={this.handleOptionChange}
+                                     className={classes.spaces}/> :
+                          <TextField id={option.idElement} label={option.idElement} variant="outlined"
+                                     value={option.value}
+                                     onChange={this.handleOptionChange}
+                                     className={classes.spaces}/>
+                  ) : ''}
                   <br/>
                   <TextField
                       id="date"
@@ -257,5 +256,19 @@ class CreatePoll extends React.Component {
   }
 
 }
+
+const nowValues = {
+  now: moment().format("yyyy-MM-DD")
+};
+
+const useStyles = () => ({
+  spaces: {
+    margin: '15px'
+  },
+  size: {
+    margin: '15px',
+    display: 'flex'
+  },
+});
 
 export default withStyles(useStyles)(CreatePoll);

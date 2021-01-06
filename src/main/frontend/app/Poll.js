@@ -27,6 +27,10 @@ const useStyles = () => ({
   spaces: {
     margin: '15px'
   },
+  question: {
+    marginTop: '-17px',
+    marginLeft: '20px'
+  },
   size: {
     margin: '15px',
     display: 'flex'
@@ -145,6 +149,10 @@ class Poll extends React.Component {
               <Typography variant="h4" component="h2"
                           className={classes.spaces}>
                 {this.state.poll.name}
+              </Typography>
+              <Typography variant="h5" component="h2" color="textSecondary"
+                          className={classes.question}>
+                {this.state.poll.question}
               </Typography>
             </Grid>
             <Grid item xs={7}>
