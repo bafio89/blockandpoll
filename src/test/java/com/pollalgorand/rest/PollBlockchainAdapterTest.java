@@ -13,7 +13,6 @@ import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -31,6 +30,7 @@ public class PollBlockchainAdapterTest {
   public static final String MNEMONIC_KEY = "mnemonicKey";
   public static final String DESCRIPTION = "description";
   public static final long APP_ID = 123L;
+  public static final String QUESTION = "QUESTION";
 
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
@@ -102,16 +102,16 @@ public class PollBlockchainAdapterTest {
 
     BlockchainPoll expectedBlockchainPoll = expectedBlockchainPoll();
 
-    assertThat(Optional.of(expectedBlockchainPoll), is(pollBlockchainAdapter.fromPollToBlockchainPoll(aPoll(), APP_ID)));
+    assertThat(expectedBlockchainPoll, is(pollBlockchainAdapter.fromPollToBlockchainPoll(aPoll(), APP_ID)));
   }
 
   private Poll aPoll() {
     return new Poll("POLL_NAME", now, now, now, now,
-        asList("OPTION_1", "OPTION_2"), "SENDER", "MEMONIC_KEY", "DESCRIPTION");
+        asList("OPTION_1", "OPTION_2"), QUESTION, "MEMONIC_KEY", "DESCRIPTION");
   }
 
   private BlockchainPoll expectedBlockchainPoll() {
-    return new BlockchainPoll(APP_ID, "POLL_NAME", "SENDER", now, now, now, now,
+    return new BlockchainPoll(APP_ID, "POLL_NAME", QUESTION, now, now, now, now,
         asList("OPTION_1", "OPTION_2"),  "MEMONIC_KEY", "DESCRIPTION");
   }
 }

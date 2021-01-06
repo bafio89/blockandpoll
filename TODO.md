@@ -8,11 +8,12 @@ TODO
      - [x] Endpoint 
      - [x] Frontend in order to retrieve the single poll.
 - [ ] Sistemare grafica
+    - [x] gestire icona status poll
     - [ ] Navbar
     - [ ] Gestire piu opzioni in creazione
-    - [ ] Rimuovere address da frontend per creazione poll.
-    - [ ] Aggiungere descrizione del poll - frontend creazione poll.
-    - [ ] Aggiungere field question
+    - [x] Rimuovere address da frontend per creazione poll.
+    - [x] Aggiungere descrizione del poll - frontend creazione poll.
+    - [x] Aggiungere field question
     - [ ] Gestire errori dopo submission
     - [ ] Validare campi in submission
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository

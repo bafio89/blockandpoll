@@ -6,6 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
+import MenuBar from "./MenuBar";
 
 const nowValues = {
   now: moment().format("yyyy-MM-DD")
@@ -14,28 +15,36 @@ const nowValues = {
 const useStyles = () => ({
   spaces: {
     margin: '15px'
-  }
+  },
+  size: {
+    margin: '15px',
+    display: 'flex'
+  },
 });
 
 class CreatePoll extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {sender: ''}
-    this.state = {mnemonicKey: ''}
-    this.state = {name: ''}
-    this.state = {option1: ''}
-    this.state = {option2: ''}
-    this.state = {startSubDate: ''}
-    this.state = {endSubDate: ''}
-    this.state = {startVotingDate: ''}
-    this.state = {endVotingDate: ''}
+    this.state = {
+      question: '',
+      mnemonicKey: '',
+      name: '',
+      option1: '',
+      option2: '',
+      description: '',
+      startSubDate: '',
+      endSubDate: '',
+      startVotingDate: '',
+      endVotingDate: ''
+    }
 
-    this.handleSenderChange = this.handleSenderChange.bind(this);
+    this.handleQuestionChange = this.handleQuestionChange.bind(this);
     this.handleMnemonicKeyChange = this.handleMnemonicKeyChange.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleOption1Change = this.handleOption1Change.bind(this);
     this.handleOption2Change = this.handleOption2Change.bind(this);
+    this.handleDescriptionChange = this.handleDescriptionChange.bind(this)
     this.handleStartSubDateChange = this.handleStartSubDateChange.bind(this);
     this.handleEndSubDateChange = this.handleEndSubDateChange.bind(this);
     this.handleStartVotingDateChange = this.handleStartVotingDateChange.bind(
@@ -56,13 +65,17 @@ class CreatePoll extends React.Component {
     this.setState({endVotingDate: nowValues.now})
   }
 
-  handleSenderChange(event) {
+  handleQuestionChange(event) {
     console.log(event.target.value)
-    this.setState({sender: event.target.value})
+    this.setState({question: event.target.value})
   }
 
   handleMnemonicKeyChange(event) {
     this.setState({mnemonicKey: event.target.value})
+  }
+
+  handleDescriptionChange(event) {
+    this.setState({description: event.target.value})
   }
 
   handleNameChange(event) {
@@ -78,7 +91,6 @@ class CreatePoll extends React.Component {
   }
 
   handleStartSubDateChange(event) {
-    console.log("onload")
     this.setState({startSubDate: event.target.value})
   }
 
@@ -91,7 +103,6 @@ class CreatePoll extends React.Component {
   }
 
   handleEndVotingDateChange(event) {
-    console.log(event.target.value)
     this.setState({endVotingDate: event.target.value})
   }
 
@@ -104,14 +115,15 @@ class CreatePoll extends React.Component {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            sender: this.state.sender,
+            question: this.state.question,
             mnemonicKey: this.state.mnemonicKey,
             name: this.state.name,
             startSubscriptionTime: this.state.startSubDate + "T00:00:10",
             endSubscriptionTime: this.state.endSubDate + "T00:00:10",
             startVotingTime: this.state.startVotingDate + "T00:00:10",
             endVotingTime: this.state.endVotingDate + "T00:00:10",
-            options: [this.state.option1, this.state.option2]
+            options: [this.state.option1, this.state.option2],
+            description: this.state.description
           })
         }).then(function (response) {
       console.log(response.body)
@@ -130,6 +142,7 @@ class CreatePoll extends React.Component {
     const {classes} = this.props;
     return (
         <div>
+          <MenuBar/>
           <Grid container>
             <Grid item xs={2}/>
             <Grid item xs={8}>
@@ -145,21 +158,25 @@ class CreatePoll extends React.Component {
               <Paper>
                 <form className="createPoll" noValidate autoComplete="off"
                       onSubmit={this.createPoll}
-                      style={{'textAlign': 'center'}}>
-                  <TextField id="sender" label="Creator address"
-                             variant="outlined" value={this.state.sender}
-                             onChange={this.handleSenderChange}
-                             className={classes.spaces}/>
-                  <TextField id="mnemonicKey" label="Passphrase"
-                             variant="outlined"
-                             value={this.state.mnemonicKey || ''}
-                             onChange={this.handleMnemonicKeyChange}
-                             className={classes.spaces}/>
+                      style={{'textAlign': 'left'}}>
+                  <TextField id="question" label="Poll question"
+                             variant="outlined" value={this.state.question}
+                             onChange={this.handleQuestionChange}
+                             className={classes.size}/>
                   <TextField id="pollName" label="Name" variant="outlined"
                              value={this.state.name || ''}
                              onChange={this.handleNameChange}
-                             className={classes.spaces}/>
+                             className={classes.size}/>
                   <br/>
+                  <TextField id="description" label="Description"
+                             multiline
+                             rows={4}
+                             defaultValue="Default Value"
+                             variant="outlined"
+                             value={this.state.description || ''}
+                             onChange={this.handleDescriptionChange}
+                             className={classes.size}
+                  />
                   <TextField id="option1" label="Option 1" variant="outlined"
                              value={this.state.option1 || ''}
                              onChange={this.handleOption1Change}
@@ -213,12 +230,22 @@ class CreatePoll extends React.Component {
                       value={this.state.endVotingDate || ''}
                       onChange={this.handleEndVotingDateChange}
                   />
-
+                  <TextField id="mnemonicKey" label="Passphrase"
+                             multiline
+                             rows={3}
+                             defaultValue="Default Value"
+                             variant="outlined"
+                             value={this.state.mnemonicKey || ''}
+                             onChange={this.handleMnemonicKeyChange}
+                             className={classes.size}
+                  />
                   <br/>
-                  <Button variant="contained" color="primary" type="submit"
-                          className={classes.spaces}>
-                    Create poll
-                  </Button>
+                  <div style={{textAlign: 'center'}}>
+                    <Button variant="contained" color="primary" type="submit"
+                            className={classes.spaces}>
+                      Create poll
+                    </Button>
+                  </div>
                   <br/>
                 </form>
               </Paper>

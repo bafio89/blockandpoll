@@ -9,7 +9,6 @@ import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
 import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
 import com.pollalgorand.rest.web.request.PollRequest;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,8 +40,8 @@ public class CreatePollEndPoint {
     logger.info("Arrived request");
     Poll poll = pollRequestAdapter.fromRequestToDomain(pollRequest);
     logger.info("Request adapted to poll");
-    Optional<BlockchainPoll> createdPoll = createPollUseCase.create(poll);
-    return ResponseEntity.ok(createdPoll.get());
+    BlockchainPoll createdPoll = createPollUseCase.create(poll);
+    return ResponseEntity.ok(createdPoll);
   }
 
   @PostMapping("/createpoll/unsignedtx")

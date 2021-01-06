@@ -11,11 +11,11 @@ public class BlockchainPoll extends Poll {
   public BlockchainPoll() {
   }
 
-  public BlockchainPoll(Long appId, String name, String sender,
+  public BlockchainPoll(Long appId, String name, String question,
       LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
       LocalDateTime startVotingTime, LocalDateTime endVotingTime,
       List<String> options, String mnemonicKey, String description) {
-    super(name,startSubscriptionTime,endSubscriptionTime,startVotingTime,endVotingTime,options,sender, mnemonicKey,
+    super(name,startSubscriptionTime,endSubscriptionTime,startVotingTime,endVotingTime,options,question, mnemonicKey,
         description);
     this.appId = appId;
   }

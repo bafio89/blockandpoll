@@ -22,7 +22,7 @@ public class Poll {
   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
   private LocalDateTime endVotingTime;
   private List<String> options;
-  private String sender;
+  private String question;
   private String mnemonicKey;
   private String description;
 
@@ -33,7 +33,7 @@ public class Poll {
       LocalDateTime startVotingTime,
       LocalDateTime endVotingTime,
       List<String> options,
-      String sender,
+      String question,
       String mnemonicKey, String description) {
     this.name = name;
     this.startSubscriptionTime = startSubscriptionTime;
@@ -41,7 +41,7 @@ public class Poll {
     this.startVotingTime = startVotingTime;
     this.endVotingTime = endVotingTime;
     this.options = options;
-    this.sender = sender;
+    this.question = question;
     this.mnemonicKey = mnemonicKey;
     this.description = description;
 
@@ -109,8 +109,8 @@ public class Poll {
     return endSubscriptionTime;
   }
 
-  public String getSender() {
-    return sender;
+  public String getQuestion() {
+    return question;
   }
 
   public List<String> getOptions() {
@@ -144,14 +144,14 @@ public class Poll {
         Objects.equals(startVotingTime, poll.startVotingTime) &&
         Objects.equals(endVotingTime, poll.endVotingTime) &&
         Objects.equals(options, poll.options) &&
-        Objects.equals(sender, poll.sender);
+        Objects.equals(question, poll.question);
   }
 
   @Override
   public int hashCode() {
     return Objects
         .hash(name, startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime,
-            options, sender);
+            options, question);
   }
 
   @Override
@@ -163,7 +163,7 @@ public class Poll {
         ", startVotingTime=" + startVotingTime +
         ", endVotingTime=" + endVotingTime +
         ", options=" + options +
-        ", sender='" + sender + '\'' +
+        ", question='" + question + '\'' +
         '}';
   }
 }

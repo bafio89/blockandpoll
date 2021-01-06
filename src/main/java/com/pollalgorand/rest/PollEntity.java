@@ -12,13 +12,13 @@ public class PollEntity {
   private LocalDateTime startVotingTime;
   private LocalDateTime endVotingTime;
   private List<String> options;
-  private String sender;
+  private String question;
   private String description;
   private Long appId;
 
   public PollEntity(Long id, String name, LocalDateTime startSubscriptionTime,
       LocalDateTime endSubscriptionTime, LocalDateTime startVotingTime,
-      LocalDateTime endVotingTime, List<String> options, String sender,
+      LocalDateTime endVotingTime, List<String> options, String question,
       String description, Long appId) {
     this.id = id;
     this.name = name;
@@ -27,7 +27,7 @@ public class PollEntity {
     this.startVotingTime = startVotingTime;
     this.endVotingTime = endVotingTime;
     this.options = options;
-    this.sender = sender;
+    this.question = question;
     this.description = description;
     this.appId = appId;
   }
@@ -88,12 +88,12 @@ public class PollEntity {
     this.options = options;
   }
 
-  public String getSender() {
-    return sender;
+  public String getQuestion() {
+    return question;
   }
 
-  public void setSender(String sender) {
-    this.sender = sender;
+  public void setQuestion(String question) {
+    this.question = question;
   }
 
   public String getDescription() {

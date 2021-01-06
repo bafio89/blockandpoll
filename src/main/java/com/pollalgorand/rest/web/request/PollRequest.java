@@ -11,7 +11,7 @@ public class PollRequest {
   private LocalDateTime startVotingTime;
   private LocalDateTime endVotingTime;
   private List<String> options;
-  private String sender;
+  private String question;
   private String mnemonicKey;
   private String description;
 
@@ -20,7 +20,7 @@ public class PollRequest {
 
   public PollRequest(String name, LocalDateTime startSubscriptionTime,
       LocalDateTime endSubscriptionTime, LocalDateTime startVotingTime,
-      LocalDateTime endVotingTime, List<String> options, String sender,
+      LocalDateTime endVotingTime, List<String> options, String question,
       String mnemonicKey, String description) {
     this.name = name;
     this.startSubscriptionTime = startSubscriptionTime;
@@ -28,7 +28,7 @@ public class PollRequest {
     this.startVotingTime = startVotingTime;
     this.endVotingTime = endVotingTime;
     this.options = options;
-    this.sender = sender;
+    this.question = question;
     this.mnemonicKey = mnemonicKey;
     this.description = description;
   }
@@ -81,12 +81,12 @@ public class PollRequest {
     this.options = options;
   }
 
-  public String getSender() {
-    return sender;
+  public String getQuestion() {
+    return question;
   }
 
-  public void setSender(String sender) {
-    this.sender = sender;
+  public void setQuestion(String question) {
+    this.question = question;
   }
 
   public String getMnemonicKey() {
@@ -110,7 +110,7 @@ public class PollRequest {
         ", startVotingTime=" + startVotingTime +
         ", endVotingTime=" + endVotingTime +
         ", options=" + options +
-        ", sender='" + sender + '\'' +
+        ", sender='" + question + '\'' +
         ", mnemonicKey='" + mnemonicKey + '\'' +
         ", description='" + description + '\'' +
         '}';

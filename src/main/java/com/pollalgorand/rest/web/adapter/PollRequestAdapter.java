@@ -16,7 +16,7 @@ public class PollRequestAdapter {
         poll.getStartVotingTime(),
         poll.getEndVotingTime(),
         poll.getOptions(),
-        poll.getSender(),
+        poll.getQuestion(),
         poll.getMnemonicKey(), poll.getDescription());
   }
 

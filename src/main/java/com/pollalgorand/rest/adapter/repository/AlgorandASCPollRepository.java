@@ -12,7 +12,6 @@ import com.pollalgorand.rest.adapter.service.UnsignedASCTransactionService;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import com.pollalgorand.rest.domain.repository.BlockchainPollRepository;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +43,12 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
   }
 
   @Override
-  public Optional<BlockchainPoll> save(Poll poll) {
-
-    Transaction unsignedTx = unsignedASCTransactionService.createUnsignedTxFor(poll);
+  public BlockchainPoll save(Poll poll) {
 
     try {
       Account account = accountCreatorService.createAccountFrom(poll.getMnemonicKey());
+
+      Transaction unsignedTx = unsignedASCTransactionService.createUnsignedTxFor(poll, account);
 
       String transactionId = transactionWriterService.write(account, unsignedTx);
 
@@ -58,17 +57,15 @@ public class AlgorandASCPollRepository implements BlockchainPollRepository {
       return pollBlockchainAdapter.fromPollToBlockchainPoll(poll, appId);
 
     } catch (IllegalArgumentException e) {
-      logger.error("Something gone wrong creating account from mnemonic key creating poll {}.",poll, e);
+      logger
+          .error("Something gone wrong creating account from mnemonic key creating poll {}.", poll,
+              e);
       throw new InvalidMnemonicKeyException(e.getMessage());
     } catch (Exception e) {
       logger.error("Something went wrong creating poll {}", poll);
       throw e;
     }
+
   }
 
-  @Override
-  public Transaction createUnsignedTxFor(Poll poll) {
-
-    return unsignedASCTransactionService.createUnsignedTxFor(poll);
-  }
 }

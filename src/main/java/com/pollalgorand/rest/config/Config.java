@@ -109,19 +109,23 @@ public class Config {
   @Bean
   public CreatePollUseCase createPollUseCase(BlockchainPollRepository blockchainPollRepository,
       PollRepository postgresPollRepository,
-      UnsignedASCTransactionService unsignedASCTransactionService) {
+      UnsignedASCTransactionService unsignedASCTransactionService,
+      AccountCreatorService accountCreatorService) {
     return new CreatePollUseCase(blockchainPollRepository, postgresPollRepository,
-        unsignedASCTransactionService);
+        unsignedASCTransactionService, accountCreatorService);
   }
 
   @Bean
-  public VoteUseCase voteUseCase(PollRepository pollRepository, DateValidator dateValidator, BlockchainReadRepository algorandReadRepository,
-      BlockchainWriteRepository algorandWriteRepository){
-    return new VoteUseCase(pollRepository, dateValidator, algorandReadRepository, algorandWriteRepository);
+  public VoteUseCase voteUseCase(PollRepository pollRepository, DateValidator dateValidator,
+      BlockchainReadRepository algorandReadRepository,
+      BlockchainWriteRepository algorandWriteRepository) {
+    return new VoteUseCase(pollRepository, dateValidator, algorandReadRepository,
+        algorandWriteRepository);
   }
 
   @Bean
-  public RetrievePollUseCase retrievePollUseCase(PollRepository postgresPollRepository, BlockchainReadRepository blockchainReadRepository) {
+  public RetrievePollUseCase retrievePollUseCase(PollRepository postgresPollRepository,
+      BlockchainReadRepository blockchainReadRepository) {
     return new RetrievePollUseCase(postgresPollRepository, blockchainReadRepository);
   }
 
@@ -131,12 +135,12 @@ public class Config {
   }
 
   @Bean
-  public VoteRequestConverter voteRequestConverter(AccountCreatorService accountCreatorService){
+  public VoteRequestConverter voteRequestConverter(AccountCreatorService accountCreatorService) {
     return new VoteRequestConverter(accountCreatorService);
   }
 
   @Bean
-  public DateValidator dateValidator(){
+  public DateValidator dateValidator() {
     return new DateValidator(new Clock());
   }
 

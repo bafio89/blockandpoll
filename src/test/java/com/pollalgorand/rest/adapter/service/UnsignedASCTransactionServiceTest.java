@@ -4,6 +4,7 @@ import static com.pollalgorand.rest.ByteConverteUtil.convertLongToByteArray;
 import static java.util.Collections.emptyList;
 import static org.junit.rules.ExpectedException.none;
 
+import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.v2.client.algod.GetStatus;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
@@ -12,9 +13,9 @@ import com.algorand.algosdk.v2.client.model.NodeStatusResponse;
 import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.converter.PollBlockchainAdapter;
-import com.pollalgorand.rest.adapter.exceptions.InvalidSenderAddressException;
 import com.pollalgorand.rest.adapter.exceptions.NodeStatusException;
 import com.pollalgorand.rest.domain.model.Poll;
+import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -27,7 +28,8 @@ import org.junit.rules.ExpectedException;
 
 public class UnsignedASCTransactionServiceTest {
 
-  public static final String SENDER_ADDRESS = "GM5YGY4ICDLE27NCVFR6OS7JIIXSGYI6SQIF5IPKQTTGO2YIJU5YOZDP2A";
+  public static final String SENDER_ADDRESS = "Q4LQ3VZT2H5YE6RPGXJVHAY32KXBWT527VVTUF75UVSYLMDARDEUNPIN5Y";
+  public static final String MNEMONIC_KEY = "share gentle refuse logic shield drift earth initial must match aware they perfect chair say jar harvest echo symbol cave ring void prepare above adult";
   public static final String INVALID_SENDER_ADDRESS = "INVALID SENDER ADDRESS";
   public static final String WRONG_SENDER_ADDRESS_ERROR_MESSAGE = "Something went wrong with sender address during transaction creation: A message error";
   public static final long LAST_ROUND = 1L;
@@ -66,9 +68,10 @@ public class UnsignedASCTransactionServiceTest {
   private NodeStatusResponse nodeStatusResponse = new NodeStatusResponse();
   private TEALProgram approvalProgram;
   private TEALProgram clearStateProgram;
+  private Account account;
 
   @Before
-  public void setUp() {
+  public void setUp() throws GeneralSecurityException {
 
     nodeStatusResponse.lastRound = LAST_ROUND;
 
@@ -84,6 +87,7 @@ public class UnsignedASCTransactionServiceTest {
     A_END_SUBS_BLOCK_NUMBER = convertLongToByteArray(2L);
     A_START_VOTE_BLOCK_NUMBER = convertLongToByteArray(3L);
     A_END_VOTE_BLOCK_NUMBER = convertLongToByteArray(4L);
+    account = new Account(MNEMONIC_KEY);
   }
 
   @Test
@@ -118,48 +122,7 @@ public class UnsignedASCTransactionServiceTest {
 
     }});
 
-    algorandASCPollRepository.createUnsignedTxFor(poll);
-  }
-
-  @Test
-  public void whenSenderAddressIsNotValid() throws Exception {
-
-    Poll poll = aPollWith(INVALID_SENDER_ADDRESS);
-
-    PollTealParams pollTealParams = new PollTealParams();
-
-    context.checking(new Expectations() {{
-
-      oneOf(algodClient).GetStatus();
-      will(returnValue(getStatus));
-
-      oneOf(getStatus).execute(headers, values);
-      will(returnValue(statusResponse));
-
-      oneOf(statusResponse).body();
-      will(returnValue(nodeStatusResponse));
-
-      oneOf(pollBlockchainAdapter).fromPollToPollTealParams(poll, LAST_ROUND);
-      will(returnValue(pollTealParams));
-
-      oneOf(tealProgramFactory).createApprovalProgramFrom(pollTealParams);
-      will(returnValue(approvalProgram));
-
-      oneOf(tealProgramFactory).createClearStateProgram();
-      will(returnValue(clearStateProgram));
-
-      oneOf(buildApplicationCreateTransactionService)
-          .buildTransaction(pollTealParams, approvalProgram, clearStateProgram,
-              INVALID_SENDER_ADDRESS);
-      will(throwException(
-          new InvalidSenderAddressException(new RuntimeException("A message error"))));
-    }});
-
-    expectedException.expect(InvalidSenderAddressException.class);
-    expectedException.expectMessage(WRONG_SENDER_ADDRESS_ERROR_MESSAGE);
-
-    algorandASCPollRepository.createUnsignedTxFor(poll);
-
+    algorandASCPollRepository.createUnsignedTxFor(poll, account);
   }
 
   @Test
@@ -188,7 +151,7 @@ public class UnsignedASCTransactionServiceTest {
     expectedException.expectMessage(
         NODE_STATUS_ERROR_MESSAGE);
 
-    algorandASCPollRepository.createUnsignedTxFor(poll);
+    algorandASCPollRepository.createUnsignedTxFor(poll, account);
 
   }
 

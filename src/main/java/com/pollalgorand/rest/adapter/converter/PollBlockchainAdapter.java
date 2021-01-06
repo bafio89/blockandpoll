@@ -6,7 +6,6 @@ import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.Poll;
 import java.nio.ByteBuffer;
-import java.util.Optional;
 
 public class PollBlockchainAdapter {
 
@@ -32,17 +31,17 @@ public class PollBlockchainAdapter {
         convertLongToByteArray(startVotingBlockNumber),
         convertLongToByteArray(endVotingBlockNumber),
         poll.getOptions(),
-        poll.getSender().getBytes(UTF_8));
+        poll.getQuestion().getBytes(UTF_8));
   }
 
   private byte[] convertLongToByteArray(long value) {
     return ByteBuffer.allocate(8).putLong(value).array();
   }
 
-  public Optional<BlockchainPoll> fromPollToBlockchainPoll(Poll poll, Long appId) {
-    return Optional.of(new BlockchainPoll(appId, poll.getName(), poll.getSender(),
+  public BlockchainPoll fromPollToBlockchainPoll(Poll poll, Long appId) {
+    return new BlockchainPoll(appId, poll.getName(), poll.getQuestion(),
         poll.getStartSubscriptionTime(), poll.getEndSubscriptionTime(),
         poll.getStartVotingTime(), poll.getEndVotingTime(), poll.getOptions(),
-        poll.getMnemonicKey(), poll.getDescription()));
+        poll.getMnemonicKey(), poll.getDescription());
   }
 }

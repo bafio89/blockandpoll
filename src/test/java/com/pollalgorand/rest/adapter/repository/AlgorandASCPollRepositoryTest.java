@@ -84,7 +84,7 @@ public class AlgorandASCPollRepositoryTest {
     postTransactionResponse.txId = TX_ID;
 
     context.checking(new Expectations() {{
-      oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
+      oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll, account);
       will(returnValue(unsignedTx));
 
       oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);
@@ -109,7 +109,7 @@ public class AlgorandASCPollRepositoryTest {
 
     context.checking(new Expectations() {
       {
-        oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll);
+        oneOf(unsignedASCTransactionService).createUnsignedTxFor(poll, account);
         will(returnValue(unsignedTx));
 
         oneOf(accountCreatorService).createAccountFrom(A_MNEMONIC_KEY);

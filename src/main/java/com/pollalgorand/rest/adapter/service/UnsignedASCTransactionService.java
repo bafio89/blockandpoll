@@ -3,6 +3,7 @@ package com.pollalgorand.rest.adapter.service;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.headers;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.values;
 
+import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
@@ -31,7 +32,7 @@ public class UnsignedASCTransactionService {
     this.buildApplicationCreateTransactionService = buildApplicationCreateTransactionService;
   }
 
-  public Transaction createUnsignedTxFor(Poll poll) {
+  public Transaction createUnsignedTxFor(Poll poll, Account account) {
 
     Long lastRound = getBlockChainLastRound();
 
@@ -42,7 +43,7 @@ public class UnsignedASCTransactionService {
     TEALProgram clearStateProgram = tealProgramFactory.createClearStateProgram();
 
     return buildApplicationCreateTransactionService
-        .buildTransaction(pollTealParams, approvalProgram, clearStateProgram, poll.getSender());
+        .buildTransaction(pollTealParams, approvalProgram, clearStateProgram, account.getAddress().toString());
   }
 
   private Long getBlockChainLastRound() {

@@ -20,6 +20,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import {getIconColor} from "./PollCard";
+import MenuBar from "./MenuBar";
 
 const useStyles = () => ({
   spaces: {
@@ -131,7 +132,10 @@ class Poll extends React.Component {
 
   render() {
     const {classes} = this.props;
-    return <Grid container>
+    return <div>
+    <MenuBar/>
+    <br/>
+    <Grid container>
       <Grid item xs={3}/>
       <Grid item xs={6}>
         <Paper>
@@ -230,14 +234,6 @@ class Poll extends React.Component {
                       control={<Radio/>}
                       label={option}/>
               ) : ''}
-              {/*<FormControlLabel*/}
-              {/*    value={this.state.poll ? this.state.poll.options[0] : ''}*/}
-              {/*    control={<Radio/>}*/}
-              {/*    label={this.state.poll ? this.state.poll.options[0] : ''}/>*/}
-              {/*<FormControlLabel*/}
-              {/*    value={this.state.poll ? this.state.poll.options[1] : ''}*/}
-              {/*    control={<Radio/>}*/}
-              {/*    label={this.state.poll ? this.state.poll.options[1] : ''}/>*/}
             </RadioGroup>
             <TextField id="mnemonicKey" label="Passphrase"
                        multiline
@@ -261,6 +257,7 @@ class Poll extends React.Component {
       </Grid>
       <Grid item xs={3}/>
     </Grid>
+    </div>
   }
 }
 

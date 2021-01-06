@@ -22,15 +22,15 @@ public class PostgresPollRepository implements PollRepository {
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
 
-  public static final String RETRIEVE_POLLS_JOIN = "SELECT id, name, p.start_subscription_time, p.end_subscription_time,p.start_voting_time, p.end_voting_time, p.sender,p.description, p.app_id, po.option FROM pollgorand.poll p join pollgorand.poll_options po on p.id = po.id_poll order by p.id ASC";
+  public static final String RETRIEVE_POLLS_JOIN = "SELECT id, name, p.start_subscription_time, p.end_subscription_time,p.start_voting_time, p.end_voting_time, p.question,p.description, p.app_id, po.option FROM pollgorand.poll p join pollgorand.poll_options po on p.id = po.id_poll order by p.id ASC";
 
   private final String INSERT_POLL = "INSERT INTO pollgorand.poll "
       + "(name, start_subscription_time, end_subscription_time,"
-      + "start_voting_time, end_voting_time, description, app_id, sender) "
+      + "start_voting_time, end_voting_time, description, app_id, question) "
       + "VALUES (:NAME, :START_SUBSCRIPTION_TIME, :END_SUBSCRIPTION_TIME,"
-      + ":START_VOTING_TIME, :END_VOTING_TIME, :DESCRIPTION, :APP_ID, :SENDER)";
+      + ":START_VOTING_TIME, :END_VOTING_TIME, :DESCRIPTION, :APP_ID, :QUESTION)";
 
-  private final String RETRIEVE_POLL_BY_APP_ID = "SELECT id, name, p.start_subscription_time, p.end_subscription_time,p.start_voting_time, p.end_voting_time, p.sender,p.description, p.app_id, po.option FROM pollgorand.poll p join pollgorand.poll_options po on p.id = po.id_poll WHERE app_id = ";
+  private final String RETRIEVE_POLL_BY_APP_ID = "SELECT id, name, p.start_subscription_time, p.end_subscription_time,p.start_voting_time, p.end_voting_time, p.question,p.description, p.app_id, po.option FROM pollgorand.poll p join pollgorand.poll_options po on p.id = po.id_poll WHERE app_id = ";
 
   private final String INSERT_POLL_OPTIONS = "INSERT INTO pollgorand.poll_options "
       + "(id_poll, option)"
@@ -52,7 +52,7 @@ public class PostgresPollRepository implements PollRepository {
           option -> jdbcTemplate.update(INSERT_POLL_OPTIONS, pollOptionParam(option, pollId)));
     } catch (Exception e) {
       logger.error("An error occours trying to save the poll in the DB", e);
-      throw new SavingToDbException(poll.getName(), e);
+      throw new SavingToDbException(poll.getName(), e.getMessage());
     }
 
   }
@@ -82,7 +82,7 @@ public class PostgresPollRepository implements PollRepository {
 
     return pollEntities.stream().map(
         pollEntity -> new BlockchainPoll(pollEntity.getAppId(), pollEntity.getName(),
-            pollEntity.getSender(),
+            pollEntity.getQuestion(),
             pollEntity.getStartSubscriptionTime(), pollEntity.getEndSubscriptionTime(),
             pollEntity.getStartVotingTime(), pollEntity.getEndVotingTime(),
             pollEntity.getOptions(), "", pollEntity.getDescription())).collect(toList());
@@ -109,7 +109,7 @@ public class PostgresPollRepository implements PollRepository {
     params.addValue("END_VOTING_TIME", poll.getEndVotingTime());
     params.addValue("DESCRIPTION", poll.getDescription());
     params.addValue("APP_ID", poll.getAppId());
-    params.addValue("SENDER", poll.getSender());
+    params.addValue("QUESTION", poll.getQuestion());
 
     return params;
   }

@@ -75,7 +75,7 @@ public class ShowPollEndPointTest {
 
 
   private BlockchainPoll expectedBlockchainPoll() {
-    return new BlockchainPoll(APP_ID, "POLL_NAME", "SENDER", now, now, now, now,
+    return new BlockchainPoll(APP_ID, "POLL_NAME", "QUESTION", now, now, now, now,
         asList("OPTION_1", "OPTION_2"), "MEMONIC_KEY", "DESCRIPTION");
   }
 }
