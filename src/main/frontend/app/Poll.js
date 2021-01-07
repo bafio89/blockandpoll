@@ -22,6 +22,7 @@ import TableCell from '@material-ui/core/TableCell';
 import {getIconColor} from "./PollCard";
 import MenuBar from "./MenuBar";
 import OptionVoteChart from "./OptionVoteChart";
+import {Alert} from "@material-ui/lab";
 
 const useStyles = () => ({
   spaces: {
@@ -67,7 +68,8 @@ class Poll extends React.Component {
       selectedOption: '',
       poll: '',
       optionsVotes: '',
-      errorMnemonickey: false
+      errorMnemonickey: false,
+      alert: {display: 'none', text:'', severity: ''}
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleMnemonicKeyChange = this.handleMnemonicKeyChange.bind(this);
@@ -110,7 +112,7 @@ class Poll extends React.Component {
             body: JSON.stringify({
               mnemonicKey: this.state.mnemonicKey,
             })
-          });
+          }).then(this.handleResponse());
     }
   }
 
@@ -128,8 +130,34 @@ class Poll extends React.Component {
               mnemonicKey: this.state.mnemonicKey,
               selectedOption: this.state.selectedOption
             })
-          });
+          }).then( this.handleResponse());
     }
+  }
+
+  handleResponse() {
+    return (response) => {
+      if (response.ok) {
+        this.setState({
+          alert: {
+            display: 'flex',
+            text: 'Success! Wait some seconds for page reloading',
+            severity: 'success'
+          }
+        })
+        setTimeout(function () {
+          window.location.reload();
+        }.bind(this), 5000)
+      } else {
+        console.log(this.state)
+        this.setState({
+          alert: {
+            display: 'flex',
+            text: 'Something goes wrong! Please retry',
+            severity: 'error'
+          }
+        })
+      }
+    };
   }
 
   validateParams() {
@@ -278,6 +306,7 @@ class Poll extends React.Component {
                          className={classes.size}
               />
             </FormControl>
+            <Alert style={{display: this.state.alert.display}} severity={this.state.alert.severity}>{this.state.alert.text}</Alert>
             <div style={{textAlign: 'center'}}>
               <Button onClick={this.submitOptin} variant="contained"
                       color="primary"

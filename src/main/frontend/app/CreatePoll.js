@@ -8,6 +8,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
 
 import MenuBar from "./MenuBar";
+import {Alert} from "@material-ui/lab";
 
 class CreatePoll extends React.Component {
 
@@ -28,7 +29,8 @@ class CreatePoll extends React.Component {
       errorQuestion: false,
       errorDescription: false,
       errorOptions: false,
-      errorMnemonicKey: false
+      errorMnemonicKey: false,
+      alert: {display: 'none', text:'', severity: ''}
     }
 
     this.handleQuestionChange = this.handleQuestionChange.bind(this);
@@ -141,17 +143,30 @@ class CreatePoll extends React.Component {
               options: optionsArray,
               description: this.state.description
             })
-          }).then(function (response) {
-        console.log(response.body)
-        if (response.ok) {
-          response.text().then(function (data) {
-            this.setState({
-              txt: data
-            });
-          }.bind(this));
-        }
-      });
+          }).then(this.handleResponse());
     }
+  }
+
+  handleResponse() {
+    return (response) => {
+      if (response.ok) {
+        this.setState({
+          alert: {
+            display: 'flex',
+            text: 'Success! Poll created correctly',
+            severity: 'success'
+          }
+        })
+      } else {
+        this.setState({
+          alert: {
+            display: 'flex',
+            text: 'Something goes wrong! Please retry',
+            severity: 'error'
+          }
+        })
+      }
+    };
   }
 
   validateParams() {
@@ -338,6 +353,7 @@ class CreatePoll extends React.Component {
                   />
                   <br/>
                   <div style={{textAlign: 'center'}}>
+                    <Alert style={{display: this.state.alert.display}} severity={this.state.alert.severity}>{this.state.alert.text}</Alert>
                     <Button variant="contained" color="primary" type="submit"
                             className={classes.spaces}>
                       Create poll
