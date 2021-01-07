@@ -17,12 +17,18 @@ class CreatePoll extends React.Component {
       question: '',
       mnemonicKey: '',
       name: '',
-      options: [{id:0, idElement:'Option 0', val: ''}, {id:1, idElement:'Option 1', val: ''}],
+      options: [{id: 0, idElement: 'Option 0', val: '', error: false},
+        {id: 1, idElement: 'Option 1', val: '', error: false}],
       description: '',
       startSubDate: '',
       endSubDate: '',
       startVotingDate: '',
-      endVotingDate: ''
+      endVotingDate: '',
+      errorName: false,
+      errorQuestion: false,
+      errorDescription: false,
+      errorOptions: false,
+      errorMnemonicKey: false
     }
 
     this.handleQuestionChange = this.handleQuestionChange.bind(this);
@@ -64,14 +70,20 @@ class CreatePoll extends React.Component {
     this.setState({description: event.target.value})
   }
 
-  handleNameChange(event) {console.log(event.target);
+  handleNameChange(event) {
+    console.log(event.target);
     this.setState({name: event.target.value})
   }
 
   handleOptionChange(event) {
     let optionsArray = []
     this.state.options.map(option => option.idElement === event.target.id ?
-        optionsArray.push({id: option.id, idElement:option.idElement, val: event.target.value }) : optionsArray.push(option))
+        optionsArray.push({
+          id: option.id,
+          idElement: option.idElement,
+          val: event.target.value,
+          error: option.error
+        }) : optionsArray.push(option))
     this.setState({options: optionsArray})
   }
 
@@ -93,43 +105,115 @@ class CreatePoll extends React.Component {
 
   appendInput() {
     let options = this.state.options
-    options.push({id:this.state.options.length, idElement:"Option " + this.state.options.length, value: ''})
+    options.push({
+      id: this.state.options.length,
+      idElement: "Option " + this.state.options.length,
+      value: '',
+      error: false
+    })
     this.setState({options: options});
 
   }
 
   createPoll() {
-    let optionsArray =[]
-    this.state.options.map(option => optionsArray.push(option.val))
+    let optionsArray = []
 
-    return fetch("/createpoll/signedtx",
-        {
-          method: 'POST',
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            question: this.state.question,
-            mnemonicKey: this.state.mnemonicKey,
-            name: this.state.name,
-            startSubscriptionTime: this.state.startSubDate + "T00:00:10",
-            endSubscriptionTime: this.state.endSubDate + "T00:00:10",
-            startVotingTime: this.state.startVotingDate + "T00:00:10",
-            endVotingTime: this.state.endVotingDate + "T00:00:10",
-            options: optionsArray,
-            description: this.state.description
-          })
-        }).then(function (response) {
-      console.log(response.body)
-      if (response.ok) {
-        response.text().then(function (data) {
-          this.setState({
-            txt: data
-          });
-        }.bind(this));
-      }
-    });
+    this.state.options.map(
+        option => option.id < this.state.options.length - 1 && option.val !== ''
+            ? optionsArray.push(option.val) : '')
+
+    if(this.validateParams()){
+      fetch("/createpoll/signedtx",
+          {
+            method: 'POST',
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              question: this.state.question,
+              mnemonicKey: this.state.mnemonicKey,
+              name: this.state.name,
+              startSubscriptionTime: this.state.startSubDate + "T00:00:10",
+              endSubscriptionTime: this.state.endSubDate + "T00:00:10",
+              startVotingTime: this.state.startVotingDate + "T00:00:10",
+              endVotingTime: this.state.endVotingDate + "T00:00:10",
+              options: optionsArray,
+              description: this.state.description
+            })
+          }).then(function (response) {
+        console.log(response.body)
+        if (response.ok) {
+          response.text().then(function (data) {
+            this.setState({
+              txt: data
+            });
+          }.bind(this));
+        }
+      });
+    }
+  }
+
+  validateParams() {
+    let canSubmit = true
+    if (this.state.question === '') {
+      this.setState({errorQuestion: true})
+      canSubmit = false
+    }
+    if (this.state.name === '') {
+      this.setState({errorName: true})
+      canSubmit = false
+    }
+    if (this.state.description === '') {
+      this.setState({errorDescription: true})
+      canSubmit = false
+    }
+    if (this.state.mnemonicKey === '') {
+      this.setState({errorMnemonicKey: true})
+      canSubmit = false
+    }
+    let optionsArray = []
+
+    if (this.state.options.length === 2) {
+      this.state.options.map(option => {
+        if (option.val === '') {
+          optionsArray.push(this.buildErrorOption(option))
+          canSubmit = false
+        } else {
+          optionsArray.push(this.buildValidOption(option))
+        }
+      })
+    } else {
+      this.state.options.map(option => {
+        if (option.id < this.state.options.length - 1 && (option.val
+            === '' || option.val === undefined)) {
+          optionsArray.push(this.buildErrorOption(option))
+          canSubmit = false
+        } else {
+          optionsArray.push(this.buildValidOption(option))
+        }
+      })
+    }
+    this.setState({options: optionsArray})
+    return canSubmit
+  }
+
+  buildErrorOption(option) {
+    return {
+      id: option.id,
+      idElement: option.idElement,
+      val: option.val,
+      error: true
+    };
+  }
+
+  buildValidOption(option) {
+    return {
+      id: option.id,
+      idElement: option.idElement,
+      val: option.val,
+      error: false
+    };
   }
 
   render() {
@@ -154,16 +238,19 @@ class CreatePoll extends React.Component {
                 <form className="createPoll" noValidate autoComplete="off"
                       onSubmit={this.createPoll}
                       style={{'textAlign': 'left'}}>
-                  <TextField id="question" label="Poll question"
+                  <TextField error={this.state.errorQuestion} required
+                             id="question" label="Poll question"
                              variant="outlined" value={this.state.question}
                              onChange={this.handleQuestionChange}
                              className={classes.size}/>
-                  <TextField id="pollName" label="Name" variant="outlined"
+                  <TextField error={this.state.errorName} required id="pollName"
+                             label="Name" variant="outlined"
                              value={this.state.name || ''}
                              onChange={this.handleNameChange}
                              className={classes.size}/>
                   <br/>
-                  <TextField id="description" label="Description"
+                  <TextField error={this.state.errorDescription} required
+                             id="description" label="Description"
                              multiline
                              rows={4}
                              defaultValue="Default Value"
@@ -173,19 +260,24 @@ class CreatePoll extends React.Component {
                              className={classes.size}
                   />
                   {this.state.options ? this.state.options.map(option =>
-                      option.id === this.state.options.length-1 ?
-                          <TextField id={option.idElement} label={option.idElement} variant="outlined"
-                                     value={option.value}
+                      option.id === this.state.options.length - 1 ?
+                          <TextField required error={option.error}
+                                     id={option.idElement}
+                                     label={option.idElement} variant="outlined"
+                                     value={option.val}
                                      onClick={this.appendInput}
                                      onChange={this.handleOptionChange}
                                      className={classes.spaces}/> :
-                          <TextField id={option.idElement} label={option.idElement} variant="outlined"
-                                     value={option.value}
+                          <TextField required error={option.error}
+                                     id={option.idElement}
+                                     label={option.idElement} variant="outlined"
+                                     value={option.val}
                                      onChange={this.handleOptionChange}
                                      className={classes.spaces}/>
                   ) : ''}
                   <br/>
                   <TextField
+                      required
                       id="date"
                       label="start subscription date"
                       type="date"
@@ -197,6 +289,7 @@ class CreatePoll extends React.Component {
                       className={classes.spaces}
                   />
                   <TextField
+                      required
                       id="date"
                       label="end subscription date"
                       type="date"
@@ -208,6 +301,7 @@ class CreatePoll extends React.Component {
                       onChange={this.handleEndSubDateChange}
                   />
                   <TextField
+                      required
                       id="date"
                       label="start voting date"
                       type="date"
@@ -219,6 +313,7 @@ class CreatePoll extends React.Component {
                       onChange={this.handleStartVotingDateChange}
                   />
                   <TextField
+                      required
                       id="date"
                       label="end voting date"
                       type="date"
@@ -229,14 +324,17 @@ class CreatePoll extends React.Component {
                       value={this.state.endVotingDate || ''}
                       onChange={this.handleEndVotingDateChange}
                   />
-                  <TextField id="mnemonicKey" label="Passphrase"
-                             multiline
-                             rows={3}
-                             defaultValue="Default Value"
-                             variant="outlined"
-                             value={this.state.mnemonicKey || ''}
-                             onChange={this.handleMnemonicKeyChange}
-                             className={classes.size}
+                  <TextField
+                      error={this.state.errorMnemonicKey}
+                      required
+                      id="mnemonicKey" label="Passphrase"
+                      multiline
+                      rows={3}
+                      defaultValue="Default Value"
+                      variant="outlined"
+                      value={this.state.mnemonicKey || ''}
+                      onChange={this.handleMnemonicKeyChange}
+                      className={classes.size}
                   />
                   <br/>
                   <div style={{textAlign: 'center'}}>
@@ -254,7 +352,6 @@ class CreatePoll extends React.Component {
         </div>
     );
   }
-
 }
 
 const nowValues = {
