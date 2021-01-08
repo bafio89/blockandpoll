@@ -3,6 +3,7 @@ package com.pollalgorand.rest;
 import static com.pollalgorand.rest.ByteConverteUtil.convertLongToByteArray;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.headers;
 import static com.pollalgorand.rest.adapter.AlgorandUtils.values;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.junit.rules.ExpectedException.none;
 
@@ -13,10 +14,7 @@ import com.algorand.algosdk.v2.client.model.CompileResponse;
 import com.pollalgorand.rest.adapter.PollTealParams;
 import com.pollalgorand.rest.adapter.TealProgramFactory;
 import com.pollalgorand.rest.adapter.exceptions.CompileTealProgramException;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import com.pollalgorand.rest.adapter.service.TealTextGenerator;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -28,6 +26,7 @@ import org.junit.rules.ExpectedException;
 
 public class TealProgramFactoryTest {
 
+  public static final String A_TEAL_PROGRAM = "A TEAL PROGRAM";
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -45,30 +44,35 @@ public class TealProgramFactoryTest {
   @Mock
   private Response compileResponse;
 
+  @Mock
+  private TealTextGenerator tealTextGenerator;
+
   public static final String compiledResult = "AiAEAegHgL2DFMDa2yQmASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADEQIhIxBygSEDEBIw4QMQgkEjEIJRIREA==";
   public static final String OPTION_1_REPLACED_BY_TEST = "option1_replaced_by_test";
   public static final String OPTION_2_REPLACED_BY_TEST = "option2_replaced_by_test";
-  private final String PATH = "teal/vote.teal";
   private TealProgramFactory tealProgramFactory;
   private CompileResponse response;
 
   @Before
   public void setUp() {
-    tealProgramFactory = new TealProgramFactory(algodClient);
+    tealProgramFactory = new TealProgramFactory(algodClient, tealTextGenerator);
     response = new CompileResponse();
   }
 
   @Test
   public void happyPath() throws Exception {
-    byte[] tealProgram = readFile();
 
     response.result = compiledResult;
 
     context.checking(new Expectations() {{
+      oneOf(tealTextGenerator)
+          .generateTealTextWithParams(asList(OPTION_1_REPLACED_BY_TEST, OPTION_2_REPLACED_BY_TEST));
+      will(returnValue(A_TEAL_PROGRAM));
+
       oneOf(algodClient).TealCompile();
       will(returnValue(tealCompile));
 
-      oneOf(tealCompile).source(tealProgram);
+      oneOf(tealCompile).source(A_TEAL_PROGRAM.getBytes(UTF_8));
       will(returnValue(tealCompile));
 
       oneOf(tealCompile).execute(headers, values);
@@ -84,17 +88,20 @@ public class TealProgramFactoryTest {
 
   @Test
   public void whenClientGoesInError() throws Exception {
-    byte[] tealProgram = readFile();
 
     response.result = compiledResult;
 
     Exception exception = new Exception("An error message");
 
     context.checking(new Expectations() {{
+      oneOf(tealTextGenerator)
+          .generateTealTextWithParams(asList(OPTION_1_REPLACED_BY_TEST, OPTION_2_REPLACED_BY_TEST));
+      will(returnValue(A_TEAL_PROGRAM));
+
       oneOf(algodClient).TealCompile();
       will(returnValue(tealCompile));
 
-      oneOf(tealCompile).source(tealProgram);
+      oneOf(tealCompile).source(A_TEAL_PROGRAM.getBytes(UTF_8));
       will(returnValue(tealCompile));
 
       oneOf(tealCompile).execute(headers, values);
@@ -117,10 +124,6 @@ public class TealProgramFactoryTest {
         convertLongToByteArray(dateLongRepresentation),
         convertLongToByteArray(dateLongRepresentation), asList(
         OPTION_1_REPLACED_BY_TEST, OPTION_2_REPLACED_BY_TEST), "A_SENDER".getBytes());
-  }
-
-  private byte[] readFile() throws IOException, URISyntaxException {
-    return Files.readAllBytes(Paths.get(ClassLoader.getSystemResource(PATH).toURI()));
   }
 
 }

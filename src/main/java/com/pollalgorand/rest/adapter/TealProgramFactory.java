@@ -1,43 +1,38 @@
 package com.pollalgorand.rest.adapter;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.joining;
 
 import com.algorand.algosdk.crypto.TEALProgram;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.algorand.algosdk.v2.client.common.Response;
 import com.algorand.algosdk.v2.client.model.CompileResponse;
 import com.pollalgorand.rest.adapter.exceptions.CompileTealProgramException;
+import com.pollalgorand.rest.adapter.service.TealTextGenerator;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
 
 public class TealProgramFactory {
 
-  public static final String PLACEHOLDER_1 = "OPTION_1";
-  public static final String PLACEHOLDER_2 = "OPTION_2";
-  private final String APPROVAL_PROGRAM_PATH = "teal/vote.teal";
-  private final String CLEAR_STATE_PROGRAM_PATH = "teal/vote_opt_out.teal";
+  private final String CLEAR_STATE_PROGRAM_PATH = "/teal/vote_opt_out.teal";
 
   private final String[] headers = {"X-API-Key"};
   private final String[] values = {"KmeYVcOTUFayYL9uVy9mI9d7dDewlWth7pprTlo9"};
 
 
   private AlgodClient algodClient;
+  private TealTextGenerator tealTextGenerator;
 
-  public TealProgramFactory(AlgodClient algodClient) {
+  public TealProgramFactory(AlgodClient algodClient,
+      TealTextGenerator tealTextGenerator) {
 
     this.algodClient = algodClient;
+    this.tealTextGenerator = tealTextGenerator;
   }
 
   public TEALProgram createApprovalProgramFrom(PollTealParams pollTealParams) {
 
-    String tealProgramAsString = readFile(APPROVAL_PROGRAM_PATH)
-        .replace(PLACEHOLDER_1, pollTealParams.getOptions().get(0))
-        .replace(PLACEHOLDER_2, pollTealParams.getOptions().get(1));
-
-    return compileProgram(tealProgramAsString);
+    return compileProgram(tealTextGenerator.generateTealTextWithParams(pollTealParams.getOptions()));
   }
 
   public TEALProgram createClearStateProgram() {
@@ -61,9 +56,10 @@ public class TealProgramFactory {
 
   private String readFile(String path) {
     try {
-      return Files.lines(Paths.get(ClassLoader.getSystemResource(path).toURI())).collect(
-          joining("\n"));
-    } catch (IOException | URISyntaxException e) {
+      InputStream resourceAsStream = this.getClass().getResourceAsStream(path);
+      return IOUtils.toString(resourceAsStream, UTF_8);
+
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }

@@ -110,13 +110,7 @@ bnz voted
 //read existing vote candidate
 //i think i need a pop here
 pop
-txna ApplicationArgs 1
-byte "OPTION_1"
-==
-txna ApplicationArgs 1
-byte "OPTION_2"
-==
-||
+OPTIONS_PLACEHOLDER
 bz failed
 int 0
 txna ApplicationArgs 1

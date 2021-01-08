@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public class VoteUseCase {
 
+  public static final int API_TIME_DELAY = 500;
   private final PollRepository pollRepository;
   private final DateValidator dateValidator;
   private final BlockchainReadRepository algorandReadRepository;
@@ -44,6 +45,11 @@ public class VoteUseCase {
 
     if(!algorandReadRepository.isAccountSubscribedTo(optinAppRequest)){
       blockchainPoll.map(poll -> validateSubscriptionDate(voteAppRequest, poll));
+      try {
+        Thread.sleep(API_TIME_DELAY);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
       blockchainWriteRepository.optin(optinAppRequest);
     }
 

@@ -15,6 +15,7 @@ import com.pollalgorand.rest.adapter.service.BlockchainParameterService;
 import com.pollalgorand.rest.adapter.service.BuildApplicationCreateTransactionService;
 import com.pollalgorand.rest.adapter.service.BuildOptinTransactionService;
 import com.pollalgorand.rest.adapter.service.BuildVoteTransactionService;
+import com.pollalgorand.rest.adapter.service.TealTextGenerator;
 import com.pollalgorand.rest.adapter.service.TransactionConfirmationService;
 import com.pollalgorand.rest.adapter.service.TransactionSenderService;
 import com.pollalgorand.rest.adapter.service.TransactionSignerService;
@@ -102,7 +103,7 @@ public class Config {
     return new UnsignedASCTransactionService(
         algodClient,
         pollBlockchainAdapter,
-        new TealProgramFactory(algodClient),
+        new TealProgramFactory(algodClient, new TealTextGenerator()),
         new BuildApplicationCreateTransactionService(blockchainParameterService));
   }
 

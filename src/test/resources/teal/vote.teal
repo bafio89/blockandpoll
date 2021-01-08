@@ -111,10 +111,14 @@ bnz voted
 //i think i need a pop here
 pop
 txna ApplicationArgs 1
-byte "option1_replaced_by_test"
+byte "OPTION 1"
 ==
 txna ApplicationArgs 1
-byte "option2_replaced_by_test"
+byte "OPTION 2"
+==
+||
+txna ApplicationArgs 1
+byte "OPTION 3"
 ==
 ||
 bz failed

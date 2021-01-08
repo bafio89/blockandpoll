@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class BuildApplicationCreateTransactionService {
 
+  public static final int STATIC_GLOBAL_VARIABLES_NUMBER = 4;
   private Logger logger = LoggerFactory.getLogger(BuildApplicationCreateTransactionService.class);
 
   private BlockchainParameterService blockchainParameterService;
@@ -33,7 +34,8 @@ public class BuildApplicationCreateTransactionService {
           .suggestedParams(blockchainParameterService.getParameters())
           .approvalProgram(approvalProgram)
           .clearStateProgram(clearStateProgram)
-          .globalStateSchema(new StateSchema(6, 1))
+          .globalStateSchema(new StateSchema(
+              STATIC_GLOBAL_VARIABLES_NUMBER + pollTealParams.getOptions().size(), 1))
           .localStateSchema(new StateSchema(0, 1))
           .build();
     } catch (IllegalArgumentException e) {

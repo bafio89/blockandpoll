@@ -23,6 +23,7 @@ import org.junit.rules.ExpectedException;
 
 public class AlgorandReadRepositoryIT {
 
+  public static final int API_TIME_DELAY = 2000;
   IndexerClient indexerClient;
   private AlgorandReadRepository algorandReadRepository;
 
@@ -39,7 +40,7 @@ public class AlgorandReadRepositoryIT {
         "IQ4BYINIYGI7GWGBWGQARY7TYARPF25B262W7LVP6SLTIF3PGYWIS2ECCM");
     address1 = new Address(
         "Q4LQ3VZT2H5YE6RPGXJVHAY32KXBWT527VVTUF75UVSYLMDARDEUNPIN5Y");
-    Thread.sleep(2000);
+    Thread.sleep(API_TIME_DELAY);
   }
 
   @Test

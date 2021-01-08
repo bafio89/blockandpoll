@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class AlgorandReadRepository implements BlockchainReadRepository {
 
+  public static final int API_TIME_DELAY = 500;
   private Logger logger = LoggerFactory.getLogger(AlgorandReadRepository.class);
 
   public static final String VOTED_REPRESENTATION = Base64.getEncoder()
@@ -88,7 +89,7 @@ public class AlgorandReadRepository implements BlockchainReadRepository {
   public ApplicationInfoFromBlockchain findApplicationInfoBy(BlockchainPoll poll) {
     Map<String, BigInteger> optionsVotes = findOptionsVotes(poll);
     try {
-      Thread.sleep(2000);
+      Thread.sleep(API_TIME_DELAY);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
