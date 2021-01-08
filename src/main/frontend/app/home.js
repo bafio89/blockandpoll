@@ -13,7 +13,15 @@ class Home extends React.Component {
       <Grid container>
         <Grid item xs={2}/>
         <Grid item xs={8}>
-          <Typography align={'center'} variant="h1"> Welcome in pollalgorand </Typography>
+          <Typography align={'center'} style={{marginTop: '15px'}} variant="h2">Let's
+            Block'n'Poll</Typography>
+          <Typography align={'center'} style={{marginTop: '5px'}} variant="h5">Block'n'Poll
+            is a web application that
+            allow users to create and vote for polls, saving this
+            informations on Algorand Blockchain</Typography>
+          <Typography align={'center'} variant="h5">Try
+            now one of the most efficient Blockchain
+            in the world!</Typography>
         </Grid>
         <Grid item xs={2}/>
       </Grid>
@@ -21,8 +29,9 @@ class Home extends React.Component {
 
       <Grid container>
         <Grid item xs={2}/>
-        <Grid item xs={8} style={{'textAlign':'center'}}>
-          <Button variant="contained" color="primary" href={"#/createpoll"}>Create a poll</Button>
+        <Grid item xs={8} style={{'textAlign': 'center'}}>
+          <Button variant="contained" color="primary" href={"#/createpoll"}>Create
+            a poll</Button>
         </Grid>
         <Grid item xs={2}/>
       </Grid>
@@ -33,7 +42,7 @@ class Home extends React.Component {
         <Grid xs={3}/>
         <Grid xs={6}>
           <Grid container>
-          <ShowPoll/>
+            <ShowPoll/>
           </Grid>
         </Grid>
         <Grid xs={3}/>

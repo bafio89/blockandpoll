@@ -9,6 +9,7 @@ import Paper from "@material-ui/core/Paper";
 
 import MenuBar from "./MenuBar";
 import {Alert} from "@material-ui/lab";
+import {LinearProgress} from "@material-ui/core";
 
 class CreatePoll extends React.Component {
 
@@ -30,7 +31,8 @@ class CreatePoll extends React.Component {
       errorDescription: false,
       errorOptions: false,
       errorMnemonicKey: false,
-      alert: {display: 'none', text:'', severity: ''}
+      alert: {display: 'none', text:'', severity: ''},
+      linearBarDisplay: 'none'
     }
 
     this.handleQuestionChange = this.handleQuestionChange.bind(this);
@@ -119,6 +121,7 @@ class CreatePoll extends React.Component {
 
   createPoll() {
     let optionsArray = []
+    this.setState({linearBarDisplay: 'flex'})
 
     this.state.options.map(
         option => option.id < this.state.options.length - 1 && option.val !== ''
@@ -144,11 +147,15 @@ class CreatePoll extends React.Component {
               description: this.state.description
             })
           }).then(this.handleResponse());
+    }else{
+      this.setState({linearBarDisplay: 'none'})
+
     }
   }
 
   handleResponse() {
     return (response) => {
+      this.setState({linearBarDisplay: 'none'})
       if (response.ok) {
         this.setState({
           alert: {
@@ -240,7 +247,7 @@ class CreatePoll extends React.Component {
           <Grid container>
             <Grid item xs={2}/>
             <Grid item xs={8}>
-              <Typography align={'center'} variant="h1"> Create your
+              <Typography align={'center'} style={{marginTop: '15px'}} variant="h2"> Create your
                 poll </Typography>
             </Grid>
             <Grid item xs={2}/>
@@ -280,7 +287,7 @@ class CreatePoll extends React.Component {
                                      id={option.idElement}
                                      label={option.idElement} variant="outlined"
                                      value={option.val}
-                                     onClick={this.appendInput}
+                                     onFocus={this.appendInput}
                                      onChange={this.handleOptionChange}
                                      className={classes.spaces}/> :
                           <TextField required error={option.error}
@@ -354,6 +361,7 @@ class CreatePoll extends React.Component {
                   <br/>
                   <div style={{textAlign: 'center'}}>
                     <Alert style={{display: this.state.alert.display}} severity={this.state.alert.severity}>{this.state.alert.text}</Alert>
+                    <LinearProgress style={{display: this.state.linearBarDisplay}}/>
                     <Button variant="contained" color="primary" type="submit"
                             className={classes.spaces}>
                       Create poll

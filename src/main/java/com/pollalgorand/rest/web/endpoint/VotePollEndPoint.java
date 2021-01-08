@@ -38,7 +38,7 @@ public class VotePollEndPoint {
 
   @PostMapping("/vote/poll/{appId}")
   public ResponseEntity<Void> vote(@PathVariable long appId, @RequestBody VoteRequest voteRequest){
-    logger.info("Arrived a request");
+    logger.info("Arrived a request for appId {}", appId);
     voteUseCase.vote(voteRequestConverter.fromRequestToDomain(appId, voteRequest));
     return ResponseEntity.ok().build();
   }

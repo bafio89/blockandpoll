@@ -23,6 +23,7 @@ import {getIconColor} from "./PollCard";
 import MenuBar from "./MenuBar";
 import OptionVoteChart from "./OptionVoteChart";
 import {Alert} from "@material-ui/lab";
+import {CircularProgress, LinearProgress} from "@material-ui/core";
 
 const useStyles = () => ({
   spaces: {
@@ -56,6 +57,17 @@ const useStyles = () => ({
     verticalAlign: 'top',
     position: 'absolute',
     color: yellow[500]
+  },
+  circularProgress: {
+    display: 'flex',
+    // '& > * + *': {
+    //   marginLeft: '2px',
+    // },
+    position: 'absolute',
+    top: '34%',
+    left: '50%',
+    marginTop: '-50px',
+    marginLeft: '-50px',
   }
 });
 
@@ -69,8 +81,10 @@ class Poll extends React.Component {
       poll: '',
       optionsVotes: '',
       errorMnemonickey: false,
-      alert: {display: 'none', text:'', severity: ''}
+      alert: {display: 'none', text: '', severity: ''},
+      linearBarDisplay: 'none'
     }
+
     this.handleChange = this.handleChange.bind(this);
     this.handleMnemonicKeyChange = this.handleMnemonicKeyChange.bind(this);
     this.submitOptin = this.submitOptin.bind(this);
@@ -100,7 +114,7 @@ class Poll extends React.Component {
   }
 
   submitOptin() {
-
+    this.setState({linearBarDisplay: 'flex'})
     if (this.validateParams()) {
       fetch("/optin/poll/" + this.state.poll.appId,
           {
@@ -113,11 +127,14 @@ class Poll extends React.Component {
               mnemonicKey: this.state.mnemonicKey,
             })
           }).then(this.handleResponse());
+    }else{
+      this.setState({linearBarDisplay: 'none'})
     }
   }
 
   submitVote() {
     console.log(this.state.poll.appId)
+    this.setState({linearBarDisplay: 'flex'})
     if (this.validateParams()) {
       fetch("/vote/poll/" + this.state.poll.appId,
           {
@@ -130,12 +147,15 @@ class Poll extends React.Component {
               mnemonicKey: this.state.mnemonicKey,
               selectedOption: this.state.selectedOption
             })
-          }).then( this.handleResponse());
+          }).then(this.handleResponse());
+    }else{
+      this.setState({linearBarDisplay: 'none'})
     }
   }
 
   handleResponse() {
     return (response) => {
+      this.setState({linearBarDisplay: 'none'})
       if (response.ok) {
         this.setState({
           alert: {
@@ -161,7 +181,7 @@ class Poll extends React.Component {
   }
 
   validateParams() {
-    if(this.state.selectedOption === '' ){
+    if (this.state.selectedOption === '') {
       return false
     }
     if (this.state.mnemonicKey === '' || this.state.mnemonicKey === undefined) {
@@ -185,140 +205,151 @@ class Poll extends React.Component {
     return <div>
       <MenuBar/>
       <br/>
-      <Grid container>
-        <Grid item xs={3}/>
-        <Grid item xs={6}>
-          <Paper>
-            <Grid container>
-              <Grid item xs={7}>
-                <Typography variant="h4" component="h2"
-                            className={classes.spaces}>
-                  {this.state.poll.name}
-                </Typography>
-                <Typography variant="h5" component="h2" color="textSecondary"
-                            className={classes.question}>
-                  {this.state.poll.question}
-                </Typography>
-              </Grid>
-              <Grid item xs={7}>
-                <Divider/>
-                <Typography variant="body1" className={classes.spaces}>
-                  {this.state.poll.description}
-                </Typography>
-                <Typography variant="overline" className={classes.spaces}>
-                  Number of people subscribed to this
-                  poll: {this.state.optionsVotes
-                    ? this.state.optionsVotes.subscribedAccountNumber : ''}
-                </Typography>
-                <br/>
-                <TableContainer component={Paper}>
-                  <Table className={classes.table}
-                         aria-label="customized table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Options</TableCell>
-                        <TableCell align="right">Votes</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <OptionVoteChart optionsVotes={this.state.optionsVotes
-                        ? this.state.optionsVotes.optionsVotes : ''}/>
-                    <TableBody>
-                      {this.state.optionsVotes ? Object.keys(
-                          this.state.optionsVotes.optionsVotes).map((row) => (
-                          <TableRow key={row}>
-                            <TableCell component="th" scope="row">
-                              {row}
-                            </TableCell>
-                            <TableCell
-                                align="right">{this.state.optionsVotes.optionsVotes[row]}</TableCell>
+      {this.state.poll === '' ?
+          <div className={classes.circularProgress} >
+            <CircularProgress size={100}/>
+          </div> :
+
+          <Grid container>
+            <Grid item xs={3}/>
+            <Grid item xs={6}>
+              <Paper>
+                <Grid container>
+                  <Grid item xs={7}>
+                    <Typography variant="h4" component="h2"
+                                className={classes.spaces}>
+                      {this.state.poll.name}
+                    </Typography>
+                    <Typography variant="h5" component="h2"
+                                color="textSecondary"
+                                className={classes.question}>
+                      {this.state.poll.question}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Divider/>
+                    <Typography variant="body1" className={classes.spaces}>
+                      {this.state.poll.description}
+                    </Typography>
+                    <Typography variant="overline" className={classes.spaces}>
+                      Number of people subscribed to this
+                      poll: {this.state.optionsVotes
+                        ? this.state.optionsVotes.subscribedAccountNumber : ''}
+                    </Typography>
+                    <br/>
+                    <TableContainer component={Paper}>
+                      <Table className={classes.table}
+                             aria-label="customized table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Options</TableCell>
+                            <TableCell align="right">Votes</TableCell>
                           </TableRow>
-                      )) : ''}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Grid>
-              <Grid item xs={1}>
+                        </TableHead>
+                        <OptionVoteChart optionsVotes={this.state.optionsVotes
+                            ? this.state.optionsVotes.optionsVotes : ''}/>
+                        <TableBody>
+                          {this.state.optionsVotes ? Object.keys(
+                              this.state.optionsVotes.optionsVotes).map(
+                              (row) => (
+                                  <TableRow key={row}>
+                                    <TableCell component="th" scope="row">
+                                      {row}
+                                    </TableCell>
+                                    <TableCell
+                                        align="right">{this.state.optionsVotes.optionsVotes[row]}</TableCell>
+                                  </TableRow>
+                              )) : ''}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Divider/>
+                    <Divider orientation={'vertical'}
+                             className={classes.verticalBar}/>
+                    <Brightness1Icon
+                        className={this.state.poll ? getIconColor.call(this,
+                            classes, this.state.poll.pollStatus) : ''}/>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Divider/>
+                    <div style={{textAlign: 'left'}}>
+                      <Typography variant='overline' className={classes.spaces}>
+                        The poll is {this.state.poll.pollStatus}
+                      </Typography>
+                    </div>
+                    <
+                        div style={{textAlign: 'left'}}>
+                      <Typography variant='overline' className={classes.spaces}>
+                        Subscription interval
+                      </Typography>
+                    </div>
+                    <div style={{textAlign: 'left'}}>
+                      <Typography variant='overline' className={classes.spaces}>
+                        {this.state.poll ? new Date(
+                            this.state.poll.startSubscriptionTime).toLocaleDateString()
+                            : ''} - {this.state.poll ? new Date(
+                          this.state.poll.endSubscriptionTime).toLocaleDateString()
+                          : ''}
+                      </Typography>
+                    </div>
+                    <div style={{textAlign: 'left'}}>
+                      <Typography variant='overline' className={classes.spaces}>
+                        Vote interval
+                      </Typography>
+                    </div>
+                    <div style={{textAlign: 'left'}}>
+                      <Typography variant='overline' className={classes.spaces}>
+                        {this.state.poll ? new Date(
+                            this.state.poll.startVotingTime).toLocaleDateString()
+                            : ''} - {this.state.poll ? new Date(
+                          this.state.poll.endVotingTime).toLocaleDateString()
+                          : ''}
+                      </Typography>
+                    </div>
+                  </Grid>
+                </Grid>
                 <Divider/>
-                <Divider orientation={'vertical'}
-                         className={classes.verticalBar}/>
-                <Brightness1Icon
-                    className={this.state.poll ? getIconColor.call(this,
-                        classes, this.state.poll.pollStatus) : ''}/>
-              </Grid>
-              <Grid item xs={4}>
-                <Divider/>
-                <div style={{textAlign: 'left'}}>
-                  <Typography variant='overline' className={classes.spaces}>
-                    The poll is {this.state.poll.pollStatus}
-                  </Typography>
+                <FormControl component="fieldset" className={classes.size}>
+                  <FormLabel component="legend">Express your vote</FormLabel>
+                  <RadioGroup aria-label="gender" name="gender1"
+                              value={this.state.selectedOption}
+                              onChange={this.handleChange}>
+                    {this.state.poll ? this.state.poll.options.map((option) =>
+                        <FormControlLabel
+                            value={option}
+                            control={<Radio/>}
+                            label={option}/>
+                    ) : ''}
+                  </RadioGroup>
+                  <TextField id="mnemonicKey" label="Passphrase"
+                             error={this.state.errorMnemonickey}
+                             multiline
+                             rows={4}
+                             defaultValue="Default Value"
+                             variant="outlined"
+                             value={this.state.mnemonicKey || ''}
+                             onChange={this.handleMnemonicKeyChange}
+                             className={classes.size}
+                  />
+                </FormControl>
+                <Alert style={{display: this.state.alert.display}}
+                       severity={this.state.alert.severity}>{this.state.alert.text}</Alert>
+                <LinearProgress style={{display: this.state.linearBarDisplay}}/>
+                <div style={{textAlign: 'center'}}>
+                  <Button onClick={this.submitOptin} variant="contained"
+                          color="primary"
+                          className={classes.spaces}>Opt In</Button>
+                  <Button onClick={this.submitVote} variant="contained"
+                          color="primary"
+                          className={classes.spaces}>Vote</Button>
                 </div>
-                <
-                    div style={{textAlign: 'left'}}>
-                  <Typography variant='overline' className={classes.spaces}>
-                    Subscription interval
-                  </Typography>
-                </div>
-                <div style={{textAlign: 'left'}}>
-                  <Typography variant='overline' className={classes.spaces}>
-                    {this.state.poll ? new Date(
-                        this.state.poll.startSubscriptionTime).toLocaleDateString()
-                        : ''} - {this.state.poll ? new Date(
-                      this.state.poll.endSubscriptionTime).toLocaleDateString()
-                      : ''}
-                  </Typography>
-                </div>
-                <div style={{textAlign: 'left'}}>
-                  <Typography variant='overline' className={classes.spaces}>
-                    Vote interval
-                  </Typography>
-                </div>
-                <div style={{textAlign: 'left'}}>
-                  <Typography variant='overline' className={classes.spaces}>
-                    {this.state.poll ? new Date(
-                        this.state.poll.startVotingTime).toLocaleDateString()
-                        : ''} - {this.state.poll ? new Date(
-                      this.state.poll.endVotingTime).toLocaleDateString() : ''}
-                  </Typography>
-                </div>
-              </Grid>
+              </Paper>
             </Grid>
-            <Divider/>
-            <FormControl component="fieldset" className={classes.size}>
-              <FormLabel component="legend">Express your vote</FormLabel>
-              <RadioGroup aria-label="gender" name="gender1"
-                          value={this.state.selectedOption}
-                          onChange={this.handleChange}>
-                {this.state.poll ? this.state.poll.options.map((option) =>
-                    <FormControlLabel
-                        value={option}
-                        control={<Radio/>}
-                        label={option}/>
-                ) : ''}
-              </RadioGroup>
-              <TextField id="mnemonicKey" label="Passphrase"
-                         error={this.state.errorMnemonickey}
-                         multiline
-                         rows={4}
-                         defaultValue="Default Value"
-                         variant="outlined"
-                         value={this.state.mnemonicKey || ''}
-                         onChange={this.handleMnemonicKeyChange}
-                         className={classes.size}
-              />
-            </FormControl>
-            <Alert style={{display: this.state.alert.display}} severity={this.state.alert.severity}>{this.state.alert.text}</Alert>
-            <div style={{textAlign: 'center'}}>
-              <Button onClick={this.submitOptin} variant="contained"
-                      color="primary"
-                      className={classes.spaces}>Opt In</Button>
-              <Button onClick={this.submitVote} variant="contained"
-                      color="primary"
-                      className={classes.spaces}>Vote</Button>
-            </div>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}/>
-      </Grid>
+            <Grid item xs={3}/>
+          </Grid>
+      }
     </div>
   }
 }
