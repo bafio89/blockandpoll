@@ -1,6 +1,7 @@
 package com.pollalgorand.rest.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pollalgorand.rest.domain.exceptions.IllegalPollParameterException;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class Poll {
   private LocalDateTime endVotingTime;
   private List<String> options;
   private String question;
+  @JsonIgnore
   private String mnemonicKey;
   private String description;
 
