@@ -29,10 +29,12 @@ class MenuBar extends React.Component {
           <IconButton edge="start" color="inherit" aria-label="menu">
             <MenuIcon/>
           </IconButton>
+          <a href={'/#'} style={{'textDecoration': 'none', 'color':'white', 'display':'contents'}}>
           <Typography variant="h6" className={classes.title}>
             Block 'n' Poll
           </Typography>
-          <Button color="inherit">Login</Button>
+          </a>
+            <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
     </div>
