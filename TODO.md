@@ -1,6 +1,5 @@
 TODO
 
-- [ ] Mettere legenda insieme alla lista di opzioni.
 - [ ] spiegare meglio cosa usare come passphrase
 - [ ] aggiugnere che non salveremo la passphrase 
 - [ ] Evitare i too many request. 
@@ -9,11 +8,11 @@ TODO
 
 - [ ] Check sul numero di opzioni possibili (a 60 ? )
 - [ ] Recuperare voti da blockchain + mostrare voti dei poll.
-  - [x] Repository
-      - [ ] Aggiungere test per corner case?
-  - [x] UseCAse
-  - [x] Endpoint 
-  - [x] Frontend in order to retrieve the single poll.
+    - [x] Repository
+  - [ ] Aggiungere test per corner case?
+    - [x] UseCAse
+    - [x] Endpoint 
+    - [x] Frontend in order to retrieve the single poll.
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
 - [ ] sistemare logica date appena viene creato poll
@@ -25,6 +24,7 @@ TODO
 - [ ] Gestire errori lato frontend in modo piu specifico
   (in particolare il too many request di purestake).
 
+- [x] Mettere legenda insieme alla lista di opzioni.
 - [x] Rimouvere mnemonic key dalla response
 - [x] Link to homepage nella barra
 - [x] Gestire piu opzioni in creazione lato TEAL

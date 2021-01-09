@@ -246,8 +246,6 @@ class Poll extends React.Component {
                             <TableCell align="right">Votes</TableCell>
                           </TableRow>
                         </TableHead>
-                        <OptionVoteChart optionsVotes={this.state.optionsVotes
-                            ? this.state.optionsVotes.optionsVotes : ''}/>
                         <TableBody>
                           {this.state.optionsVotes ? Object.keys(
                               this.state.optionsVotes.optionsVotes).map(
@@ -263,6 +261,8 @@ class Poll extends React.Component {
                         </TableBody>
                       </Table>
                     </TableContainer>
+                    <OptionVoteChart optionsVotes={this.state.optionsVotes
+                        ? this.state.optionsVotes.optionsVotes : ''}/>
                   </Grid>
                   <Grid item xs={1}>
                     <Divider/>

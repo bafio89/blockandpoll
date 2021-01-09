@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class Poll {
 
-  public static final int NAME_MAXIMUM_LENGHT = 30;
+  public static final int NAME_MAXIMUM_LENGHT = 45;
   public static final int OPTION_MAXIMUM_LENGHT = 30;
   private String name;
 

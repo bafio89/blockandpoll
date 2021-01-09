@@ -27,7 +27,7 @@ class OptionVoteChart extends React.Component{
           }]
     }
     return (
-          <CanvasJSChart containerProps={{height:'300px', width: '150%'}} options = {options}/>
+          <CanvasJSChart containerProps={{height:'300px', width: '100%'}} options = {options}/>
     );
   }
 }
