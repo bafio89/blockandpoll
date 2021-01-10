@@ -8,12 +8,14 @@ import static java.util.stream.Collectors.toMap;
 import com.algorand.algosdk.crypto.Address;
 import com.algorand.algosdk.v2.client.common.IndexerClient;
 import com.algorand.algosdk.v2.client.common.Response;
+import com.algorand.algosdk.v2.client.indexer.LookupApplicationByID;
 import com.algorand.algosdk.v2.client.model.Account;
 import com.algorand.algosdk.v2.client.model.AccountResponse;
 import com.algorand.algosdk.v2.client.model.AccountsResponse;
 import com.algorand.algosdk.v2.client.model.ApplicationResponse;
 import com.algorand.algosdk.v2.client.model.TealKeyValue;
 import com.pollalgorand.rest.adapter.exceptions.AlgorandInteractionError;
+import com.pollalgorand.rest.adapter.exceptions.ApplicationNotFoundException;
 import com.pollalgorand.rest.domain.ApplicationInfoFromBlockchain;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.repository.BlockchainReadRepository;
@@ -91,7 +93,7 @@ public class AlgorandReadRepository implements BlockchainReadRepository {
     try {
       Thread.sleep(API_TIME_DELAY);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
     List<Address> subscribedAddress = findAddressSubscribedToApplicationBy(poll.getAppId());
     return new ApplicationInfoFromBlockchain(optionsVotes, subscribedAddress.size());
@@ -120,15 +122,23 @@ public class AlgorandReadRepository implements BlockchainReadRepository {
   }
 
   private Map<String, BigInteger> findOptionsVotes(BlockchainPoll poll) {
-    Response<ApplicationResponse> response = null;
+    Response<ApplicationResponse> response;
     try {
-      response = indexerClient.lookupApplicationByID(poll.getAppId()).execute(headers, values);
+      LookupApplicationByID lookupApplicationByID = indexerClient
+          .lookupApplicationByID(poll.getAppId());
+      response = lookupApplicationByID.execute(headers, values);
     } catch (Exception e) {
-      e.printStackTrace();
+      throw new AlgorandInteractionError(e.getMessage());
+    }
+
+    if(response.code() == 200 && response.body().application == null){
+      logger.error(
+          "An error occurs calling algorand blockchain during application info retrieving. Application not found. AppId {}.",
+          poll.getAppId());
+      throw new ApplicationNotFoundException(poll.getAppId());
     }
 
     if (response.code() == 200) {
-
       return response.body().application.params.globalState.stream()
           .filter(keysRepresentingOption(poll.getOptions()))
           .collect(toMap((tealKeyValue -> decodeString(tealKeyValue.key)),

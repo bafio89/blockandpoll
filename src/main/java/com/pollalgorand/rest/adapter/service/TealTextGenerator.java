@@ -10,7 +10,7 @@ import org.apache.commons.io.IOUtils;
 
 public class TealTextGenerator {
 
-  public static final String OPTIONS_PLACEHOLDER = "OPTIONS_PLACEHOLDER";
+  public static final String OPTIONS_PLACEHOLDER = "OPTIONS_PLACEHOLDER\n";
   private final String APPROVAL_PROGRAM_PATH = "/teal/vote.teal";
 
   private String firstOptionTemplate = "txna ApplicationArgs 1\n"
@@ -25,9 +25,9 @@ public class TealTextGenerator {
   public String generateTealTextWithParams(List<String> options) {
 
     String firstOption = firstOptionTemplate.replace("OPTION", options.get(0));
-    options.subList(1, options.size()-1);
 
-    String otherOptions = options.stream().map(option -> optionTextTemplate.replace("OPTION", option))
+    String otherOptions = options.stream().skip(1)
+        .map(option -> optionTextTemplate.replace("OPTION", option))
         .collect(joining());
 
     String optionsTeal = firstOption.concat(otherOptions);

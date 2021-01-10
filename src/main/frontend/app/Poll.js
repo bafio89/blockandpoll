@@ -24,6 +24,7 @@ import MenuBar from "./MenuBar";
 import OptionVoteChart from "./OptionVoteChart";
 import {Alert} from "@material-ui/lab";
 import {CircularProgress, LinearProgress} from "@material-ui/core";
+import Disclaimer from "./Disclaimer";
 
 const useStyles = () => ({
   spaces: {
@@ -108,7 +109,7 @@ class Poll extends React.Component {
           });
         }.bind(this));
       } else {
-        throw new Error(response.status);
+        window.location.reload();
       }
     }.bind(this));
   }
@@ -333,6 +334,7 @@ class Poll extends React.Component {
                              onChange={this.handleMnemonicKeyChange}
                              className={classes.size}
                   />
+                  <Disclaimer/>
                 </FormControl>
                 <Alert style={{display: this.state.alert.display}}
                        severity={this.state.alert.severity}>{this.state.alert.text}</Alert>

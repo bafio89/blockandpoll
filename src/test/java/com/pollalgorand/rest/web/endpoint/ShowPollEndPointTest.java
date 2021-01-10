@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.pollalgorand.rest.adapter.exceptions.AlgorandInteractionError;
+import com.pollalgorand.rest.adapter.exceptions.ApplicationNotFoundException;
 import com.pollalgorand.rest.domain.ApplicationInfoFromBlockchain;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.EnrichedBlockchainPoll;
@@ -73,6 +75,35 @@ public class ShowPollEndPointTest {
         .andExpect(content().string(objectMapper.writeValueAsString(enrichedBlockchainPoll)));
   }
 
+  @Test
+  public void whenServerGoesInError() throws Exception {
+
+    context.checking(new Expectations(){{
+      oneOf(retrievePollUseCase).findPollByAppId(APP_ID);
+      will(throwException(new AlgorandInteractionError("AN ERROR")));
+    }});
+
+    mockMvc.perform(get("/poll/" + APP_ID)
+        .accept(APPLICATION_JSON)
+        .contentType(APPLICATION_JSON))
+        .andExpect(status().is5xxServerError())
+        .andExpect(content().string("An error occurs calling algorand blockchain. AN ERROR"));
+  }
+
+  @Test
+  public void whenApplicationIsNotFound() throws Exception{
+
+    context.checking(new Expectations(){{
+      oneOf(retrievePollUseCase).findPollByAppId(APP_ID);
+      will(throwException(new ApplicationNotFoundException(APP_ID)));
+    }});
+
+    mockMvc.perform(get("/poll/" + APP_ID)
+        .accept(APPLICATION_JSON)
+        .contentType(APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(content().string("Impossible to find application with id: 123"));
+  }
 
   private BlockchainPoll expectedBlockchainPoll() {
     return new BlockchainPoll(APP_ID, "POLL_NAME", "QUESTION", now, now, now, now,

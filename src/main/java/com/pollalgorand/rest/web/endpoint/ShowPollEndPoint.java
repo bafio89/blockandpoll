@@ -3,6 +3,7 @@ package com.pollalgorand.rest.web.endpoint;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.pollalgorand.rest.adapter.exceptions.AlgorandInteractionError;
+import com.pollalgorand.rest.adapter.exceptions.ApplicationNotFoundException;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.model.EnrichedBlockchainPoll;
 import com.pollalgorand.rest.domain.usecase.RetrievePollUseCase;
@@ -31,23 +32,28 @@ public class ShowPollEndPoint {
   }
 
   @GetMapping("/polls")
-  public ResponseEntity<List<BlockchainPoll>> retrievePolls(){
+  public ResponseEntity<List<BlockchainPoll>> retrievePolls() {
 
     logger.info("Arrived request for poll retrieving");
     return ResponseEntity.ok(retrievePollUseCase.retrievePolls());
   }
 
   @GetMapping("/poll/{appId}")
-  public ResponseEntity<EnrichedBlockchainPoll> retrievePollBy(@PathVariable long appId){
+  public ResponseEntity<EnrichedBlockchainPoll> retrievePollBy(@PathVariable long appId) {
 
     logger.info("Arrived request for poll retrieving");
     return ResponseEntity.ok(retrievePollUseCase.findPollByAppId(appId));
   }
 
   @ExceptionHandler(AlgorandInteractionError.class)
-  public ResponseEntity serverError(RuntimeException e){
+  public ResponseEntity serverError(RuntimeException e) {
     logger.error("An error occurred.", e);
     return status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+  }
+
+  @ExceptionHandler(ApplicationNotFoundException.class)
+  public ResponseEntity resourceNotFound(RuntimeException e) {
+    return status(HttpStatus.NOT_FOUND).body(e.getMessage());
   }
 
 }
