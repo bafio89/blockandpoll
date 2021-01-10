@@ -9,6 +9,7 @@ import static org.junit.rules.ExpectedException.none;
 import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.crypto.Address;
 import com.algorand.algosdk.v2.client.common.IndexerClient;
+import com.pollalgorand.rest.adapter.exceptions.ApplicationNotFoundException;
 import com.pollalgorand.rest.domain.ApplicationInfoFromBlockchain;
 import com.pollalgorand.rest.domain.model.BlockchainPoll;
 import com.pollalgorand.rest.domain.request.OptinAppRequest;
@@ -24,6 +25,7 @@ import org.junit.rules.ExpectedException;
 public class AlgorandReadRepositoryIT {
 
   public static final int API_TIME_DELAY = 2000;
+  public static final long NOT_EXISTENT_APP_ID = 123L;
   IndexerClient indexerClient;
   private AlgorandReadRepository algorandReadRepository;
 
@@ -59,11 +61,24 @@ public class AlgorandReadRepositoryIT {
   @Test
   public void findApplicationInfo() {
     HashMap<String, BigInteger> optionsVotes = new HashMap<>();
-    optionsVotes.put("prosciutto", BigInteger.valueOf(2));
+    optionsVotes.put("prosciutto", BigInteger.valueOf(3));
     optionsVotes.put("melone", BigInteger.valueOf(1));
 
-    ApplicationInfoFromBlockchain expectedApplicationInfo = new ApplicationInfoFromBlockchain(optionsVotes, 3);
-    BlockchainPoll poll = new BlockchainPoll(13334224L, "", "", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), asList("melone", "prosciutto"), "", "");
-    assertThat(algorandReadRepository.findApplicationInfoBy(poll), is(expectedApplicationInfo));
+    ApplicationInfoFromBlockchain expectedApplicationInfo = new ApplicationInfoFromBlockchain(optionsVotes, 4);
+    assertThat(algorandReadRepository.findApplicationInfoBy(aPoll(13334224L)), is(expectedApplicationInfo));
+  }
+
+  @Test
+  public void whenRetrieveApplicationIsNotFound() {
+
+    expectedException.expect(ApplicationNotFoundException.class);
+    expectedException.expectMessage("Impossible to find application with id: 123");
+
+    algorandReadRepository.findApplicationInfoBy(aPoll(NOT_EXISTENT_APP_ID));
+  }
+
+  private BlockchainPoll aPoll(long appId) {
+    return new BlockchainPoll(appId, "", "", LocalDateTime.now(), LocalDateTime.now(),
+        LocalDateTime.now(), LocalDateTime.now(), asList("melone", "prosciutto"), "", "");
   }
 }

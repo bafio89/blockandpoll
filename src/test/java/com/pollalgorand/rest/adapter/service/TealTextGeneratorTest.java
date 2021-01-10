@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class TealTextGeneratorTest {
 
-  private final String PATH = "teal/vote.teal";
+  private final String PATH = "teal/expectedVote.teal";
 
   private TealTextGenerator tealTextGenerator;
 
