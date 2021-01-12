@@ -23,6 +23,7 @@ import org.junit.rules.ExpectedException;
 public class AlgorandApplicationServiceTest {
 
   public static final long APPLICATION_INDEX = 123L;
+  public static final String TRANSACTION_ID = "999";
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -51,13 +52,11 @@ public class AlgorandApplicationServiceTest {
   @Test
   public void applicationIdIsRetrieved() throws Exception {
 
-    String transactionId = "999";
-
     PendingTransactionResponse pendingTransactionResponse = new PendingTransactionResponse();
     pendingTransactionResponse.applicationIndex = APPLICATION_INDEX;
 
     context.checking(new Expectations() {{
-      oneOf(algodClient).PendingTransactionInformation(transactionId);
+      oneOf(algodClient).PendingTransactionInformation(TRANSACTION_ID);
       will(returnValue(pendingTransactionInformation));
 
       oneOf(pendingTransactionInformation).execute(headers, values);
@@ -68,21 +67,20 @@ public class AlgorandApplicationServiceTest {
 
     }});
 
-    assertThat(APPLICATION_INDEX, is(algorandApplicationService.getApplicationId(transactionId)));
+    assertThat(APPLICATION_INDEX, is(algorandApplicationService.getApplicationId(TRANSACTION_ID)));
   }
 
   @Test
   public void whenThereIsAnError() {
-    String transactionId = "999";
 
     context.checking(new Expectations() {{
-      oneOf(algodClient).PendingTransactionInformation(transactionId);
+      oneOf(algodClient).PendingTransactionInformation(TRANSACTION_ID);
       will(throwException(new RuntimeException("AN ERROR")));
     }});
 
     expectedException.expect(RetrievingApplicationIdException.class);
     expectedException.expectMessage("Impossible to get Application id for transaction: 999. Error message: AN ERROR");
 
-    algorandApplicationService.getApplicationId(transactionId);
+    algorandApplicationService.getApplicationId(TRANSACTION_ID);
   }
 }

@@ -1,7 +1,10 @@
 TODO
 
 - [ ] spiegare meglio cosa usare come passphrase
+- [ ] Rivedere tutto e rifattorizzare cio che si puo
+- [ ] Spostare dominio e pulire repository
 - [ ] Evitare i too many request. (auto relaod dopo errore?(Metterlo nel caso di 429 magari ) )
+- [ ] sistemare logica date appena viene creato poll
 - [ ] distinguere testnet/mainnet
 - [ ] Modificare teal rimuovendo i commenti?
 - [ ] Gestire errori lato frontend in modo piu specifico
@@ -9,9 +12,7 @@ TODO
   (in particolare il too many request di purestake).
 - [ ] Far lanciare eccezioni a livello di service e loggare a livello di repository
 - [ ] Rendere log più utili (con parametri etc..).
-- [ ] sistemare logica date appena viene creato poll
 - [ ] Dire all sdk di restituire errori piu parlanti 
-- [ ] Rivedere tutto e rifattorizzare cio che si puo
 - [ ] non visualizzare il tasto di optin in caso di voto 
   già aperto e intervallo optin e voto sono sovrapposti
 

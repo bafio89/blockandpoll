@@ -29,6 +29,7 @@ public class BuildApplicationCreateTransactionServiceTest {
 
   public static final String A_POLL_NAME = "A_POLL_NAME";
   public static final String SENDER_ADDRESS = "GM5YGY4ICDLE27NCVFR6OS7JIIXSGYI6SQIF5IPKQTTGO2YIJU5YOZDP2A";
+  public static final String INVALID_SENDER_ADDRESS = "INVALID_SENDER_ADDRESS";
   public static byte[] A_START_SUBS_BLOCK_NUMBER = convertLongToByteArray(1L);
   public static byte[] A_END_SUBS_BLOCK_NUMBER = convertLongToByteArray(2L);
   public static byte[] A_START_VOTE_BLOCK_NUMBER = convertLongToByteArray(3L);
@@ -51,9 +52,6 @@ public class BuildApplicationCreateTransactionServiceTest {
 
   @Mock
   private Response response;
-
-  private final String[] headers = {"X-API-Key"};
-  private final String[] values = {"KmeYVcOTUFayYL9uVy9mI9d7dDewlWth7pprTlo9"};
 
   private BuildApplicationCreateTransactionService buildApplicationCreateTransactionService;
 
@@ -95,9 +93,7 @@ public class BuildApplicationCreateTransactionServiceTest {
   }
 
   @Test
-  public void whenSenderAddressIsNotValid() throws Exception {
-
-    TransactionParametersResponse transactionParametersResponse = aTransactionParametersResponse();
+  public void whenSenderAddressIsNotValid() {
 
     context.checking(new Expectations() {{
       oneOf(blockchainParameterService).getParameters();
@@ -108,8 +104,7 @@ public class BuildApplicationCreateTransactionServiceTest {
 
     buildApplicationCreateTransactionService
         .buildTransaction(pollTealParams, approvalProgram, clearStateProgram,
-            "INVALID_SENDER_ADDRESS");
-
+            INVALID_SENDER_ADDRESS);
   }
 
   private TransactionParametersResponse aTransactionParametersResponse() {

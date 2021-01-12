@@ -30,9 +30,9 @@ import com.pollalgorand.rest.domain.usecase.CreatePollUseCase;
 import com.pollalgorand.rest.domain.usecase.OptinUseCase;
 import com.pollalgorand.rest.domain.usecase.RetrievePollUseCase;
 import com.pollalgorand.rest.domain.usecase.VoteUseCase;
+import com.pollalgorand.rest.web.adapter.OptinRequestConverter;
 import com.pollalgorand.rest.web.adapter.PollRequestAdapter;
 import com.pollalgorand.rest.web.adapter.VoteRequestConverter;
-import com.pollalgorand.rest.web.endpoint.OptinRequestConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

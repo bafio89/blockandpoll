@@ -13,11 +13,11 @@ public class TealTextGenerator {
   public static final String OPTIONS_PLACEHOLDER = "OPTIONS_PLACEHOLDER\n";
   private final String APPROVAL_PROGRAM_PATH = "/teal/vote.teal";
 
-  private String firstOptionTemplate = "txna ApplicationArgs 1\n"
+  private final String firstOptionTemplate = "txna ApplicationArgs 1\n"
       + "byte \"OPTION\"\n"
       + "==\n";
 
-  private String optionTextTemplate = "txna ApplicationArgs 1\n"
+  private final String optionTextTemplate = "txna ApplicationArgs 1\n"
       + "byte \"OPTION\"\n"
       + "==\n"
       + "||\n";
@@ -30,10 +30,8 @@ public class TealTextGenerator {
         .map(option -> optionTextTemplate.replace("OPTION", option))
         .collect(joining());
 
-    String optionsTeal = firstOption.concat(otherOptions);
-
     return readFile(APPROVAL_PROGRAM_PATH)
-        .replace(OPTIONS_PLACEHOLDER, optionsTeal);
+        .replace(OPTIONS_PLACEHOLDER, firstOption.concat(otherOptions));
   }
 
   private String readFile(String path) {

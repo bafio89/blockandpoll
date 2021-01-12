@@ -19,8 +19,8 @@ class CreatePoll extends React.Component {
       question: '',
       mnemonicKey: '',
       name: '',
-      options: [{id: 0, idElement: 'Option 0', val: '', error: false},
-        {id: 1, idElement: 'Option 1', val: '', error: false}],
+      options: [{id: 0, idElement: 'Option 1', val: '', error: false},
+        {id: 1, idElement: 'Option 2', val: '', error: false}],
       description: '',
       startSubDate: '',
       endSubDate: '',
@@ -111,7 +111,7 @@ class CreatePoll extends React.Component {
     let options = this.state.options
     options.push({
       id: this.state.options.length,
-      idElement: "Option " + this.state.options.length,
+      idElement: "Option " + (this.state.options.length + 1),
       value: '',
       error: false
     })

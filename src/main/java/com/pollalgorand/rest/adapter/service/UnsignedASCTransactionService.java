@@ -53,7 +53,7 @@ public class UnsignedASCTransactionService {
       lastRound = algodClient.GetStatus().execute(headers, values).body().lastRound;
     } catch (Exception e) {
       logger.error("Something goes wrong getting last blockchain round", e);
-      throw new NodeStatusException(e);
+      throw new NodeStatusException(e.getMessage());
     }
     return lastRound;
   }

@@ -7,6 +7,7 @@ import com.algorand.algosdk.account.Account;
 import com.pollalgorand.rest.adapter.exceptions.InvalidMnemonicKeyException;
 import com.pollalgorand.rest.adapter.service.AccountCreatorService;
 import com.pollalgorand.rest.domain.request.OptinAppRequest;
+import com.pollalgorand.rest.web.adapter.OptinRequestConverter;
 import com.pollalgorand.rest.web.request.OptinRequest;
 import java.security.GeneralSecurityException;
 import org.jmock.Expectations;

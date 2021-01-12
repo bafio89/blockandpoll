@@ -34,7 +34,7 @@ class MenuBar extends React.Component {
             Block 'n' Poll
           </Typography>
           </a>
-            <Button color="inherit">Login</Button>
+            <Button color="inherit">Testnet</Button>
         </Toolbar>
       </AppBar>
     </div>

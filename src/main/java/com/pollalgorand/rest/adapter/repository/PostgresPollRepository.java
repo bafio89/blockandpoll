@@ -63,19 +63,19 @@ public class PostgresPollRepository implements PollRepository {
     return fromEntityToDomain(jdbcTemplate.query(RETRIEVE_POLLS_JOIN, blockchainPollMapper()));
   }
 
-  private ResultSetExtractor<List<PollEntity>> blockchainPollMapper() {
-    return JdbcTemplateMapperFactory
-        .newInstance()
-        .addKeys("id")
-        .newResultSetExtractor(PollEntity.class);
-  }
-
   @Override
   public Optional<BlockchainPoll> findBy(long appId) {
 
     return fromEntityToDomain(
         jdbcTemplate.query(RETRIEVE_POLL_BY_APP_ID + "'" + appId + "'", blockchainPollMapper()))
         .stream().findFirst();
+  }
+
+  private ResultSetExtractor<List<PollEntity>> blockchainPollMapper() {
+    return JdbcTemplateMapperFactory
+        .newInstance()
+        .addKeys("id")
+        .newResultSetExtractor(PollEntity.class);
   }
 
   private List<BlockchainPoll> fromEntityToDomain(List<PollEntity> pollEntities) {

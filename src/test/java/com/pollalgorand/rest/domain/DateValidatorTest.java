@@ -15,6 +15,8 @@ import org.junit.Test;
 
 public class DateValidatorTest {
 
+  public static final LocalDateTime START_DATE = LocalDateTime.of(2020, 11, 30, 0, 0);
+  public static final LocalDateTime END_DATE = LocalDateTime.of(2020, 12, 31, 0, 0);
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery(){{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -33,9 +35,6 @@ public class DateValidatorTest {
   @Test
   public void whenNowIsBetweenDates() {
 
-    LocalDateTime start = LocalDateTime.of(2020, 11, 30, 0, 0);
-    LocalDateTime end = LocalDateTime.of(2020, 12, 31, 0, 0);
-
     LocalDateTime now = LocalDateTime.of(2020, 12, 27, 0,0);
 
     context.checking(new Expectations(){{
@@ -43,14 +42,11 @@ public class DateValidatorTest {
       will(returnValue(now));
     }});
 
-    assertTrue(dateValidator.isNowInInterval(start,end));
+    assertTrue(dateValidator.isNowInInterval(START_DATE, END_DATE));
   }
 
   @Test
   public void whenNowIsAfterEnd() {
-
-    LocalDateTime start = LocalDateTime.of(2020, 11, 30, 0, 0);
-    LocalDateTime end = LocalDateTime.of(2020, 12, 31, 0, 0);
 
     LocalDateTime now = LocalDateTime.of(2021, 12, 27, 0,0);
 
@@ -59,14 +55,11 @@ public class DateValidatorTest {
       will(returnValue(now));
     }});
 
-    assertFalse(dateValidator.isNowInInterval(start,end));
+    assertFalse(dateValidator.isNowInInterval(START_DATE, END_DATE));
   }
 
   @Test
   public void whenNowIsBeforeStart() {
-
-    LocalDateTime start = LocalDateTime.of(2020, 11, 30, 0, 0);
-    LocalDateTime end = LocalDateTime.of(2020, 12, 31, 0, 0);
 
     LocalDateTime now = LocalDateTime.of(2019, 12, 27, 0,0);
 
@@ -75,6 +68,6 @@ public class DateValidatorTest {
       will(returnValue(now));
     }});
 
-    assertFalse(dateValidator.isNowInInterval(start,end));
+    assertFalse(dateValidator.isNowInInterval(START_DATE, END_DATE));
   }
 }

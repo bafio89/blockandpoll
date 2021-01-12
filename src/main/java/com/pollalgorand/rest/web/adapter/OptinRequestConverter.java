@@ -1,4 +1,4 @@
-package com.pollalgorand.rest.web.endpoint;
+package com.pollalgorand.rest.web.adapter;
 
 import com.pollalgorand.rest.adapter.service.AccountCreatorService;
 import com.pollalgorand.rest.domain.request.OptinAppRequest;

@@ -40,10 +40,10 @@ public class BuildApplicationCreateTransactionService {
           .build();
     } catch (IllegalArgumentException e) {
       logger.error("Something goes wrong with Sender Address transaction", e);
-      throw new InvalidSenderAddressException(e);
+      throw new InvalidSenderAddressException(e.getMessage());
     } catch (Exception e) {
       logger.error("Something goes wrong getting blockchain parameters transaction", e);
-      throw new BlockChainParameterException(e);
+      throw new BlockChainParameterException(e.getMessage());
     }
     return transaction;
   }
