@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.fiorella</groupId>
-	<artifactId>pollAlgorand</artifactId>
+	<artifactId>blockAndPoll</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Pollgorand</name>
+	<name>BlockAndPoll</name>
 	<description>Poll project on blockchain technology</description>
 
 	<properties>

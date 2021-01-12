@@ -112,7 +112,7 @@ class CreatePoll extends React.Component {
     options.push({
       id: this.state.options.length,
       idElement: "Option " + (this.state.options.length + 1),
-      value: '',
+      val: '',
       error: false
     })
     this.setState({options: options});
@@ -126,9 +126,12 @@ class CreatePoll extends React.Component {
 
       let optionsArray = []
       this.state.options.map(
-          option => option.val !== '' && option.val !== undefined
-              ? optionsArray.push(option.val) : '')
-
+          (option) => {
+            if (option.val !== '' && option.val !== undefined){
+              optionsArray.push(option.val)
+          }
+          })
+debugger;
       fetch("/createpoll/signedtx",
           {
             method: 'POST',
@@ -155,7 +158,7 @@ class CreatePoll extends React.Component {
   }
 
   handleResponse() {
-    return (response) => {
+    return (response) => {debugger
       this.setState({linearBarDisplay: 'none'})
       if (response.ok) {
         this.setState({
@@ -206,26 +209,6 @@ class CreatePoll extends React.Component {
       }
     })
 
-    // if (this.state.options.length === 2) {
-    //   this.state.options.map(option => {
-    //     if (option.val === '') {
-    //       optionsArray.push(this.buildErrorOption(option))
-    //       canSubmit = false
-    //     } else {
-    //       optionsArray.push(this.buildValidOption(option))
-    //     }
-    //   })
-    // } else {
-    //   this.state.options.map(option => {
-    //     if (option.id < this.state.options.length - 1 && (option.val
-    //         === '' || option.val === undefined)) {
-    //       optionsArray.push(this.buildErrorOption(option))
-    //       canSubmit = false
-    //     } else {
-    //       optionsArray.push(this.buildValidOption(option))
-    //     }
-    //   })
-    // }
     this.setState({options: optionsArray})
     return canSubmit
   }
