@@ -1,12 +1,11 @@
 TODO
 
-- [ ] spiegare meglio cosa usare come passphrase
 - [ ] Rivedere tutto e rifattorizzare cio che si puo
-- [ ] Spostare dominio e pulire repository
-- [ ] Evitare i too many request. (auto relaod dopo errore?(Metterlo nel caso di 429 magari ) )
 - [ ] sistemare logica date appena viene creato poll
-- [ ] distinguere testnet/mainnet
 - [ ] Modificare teal rimuovendo i commenti?
+- [ ] spiegare meglio cosa usare come passphrase
+- [ ] Evitare i too many request. (auto relaod dopo errore?(Metterlo nel caso di 429 magari ) )
+- [ ] Spostare dominio e pulire repository
 - [ ] Gestire errori lato frontend in modo piu specifico
 - [ ] Aggiungere exception handler
   (in particolare il too many request di purestake).
@@ -16,6 +15,7 @@ TODO
 - [ ] non visualizzare il tasto di optin in caso di voto 
   già aperto e intervallo optin e voto sono sovrapposti
 
+- [x] distinguere testnet/mainnet
 - [x] aggiugnere che non salveremo la passphrase
 - [x] Recuperare voti da blockchain + mostrare voti dei poll.
   - [x] Repository

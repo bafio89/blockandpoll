@@ -9,7 +9,7 @@ import Paper from "@material-ui/core/Paper";
 
 import MenuBar from "./MenuBar";
 import {Alert} from "@material-ui/lab";
-import {LinearProgress} from "@material-ui/core";
+import {LinearProgress, Tooltip} from "@material-ui/core";
 
 class CreatePoll extends React.Component {
 
@@ -81,6 +81,7 @@ class CreatePoll extends React.Component {
 
   handleOptionChange(event) {
     let optionsArray = []
+
     this.state.options.map(option => option.idElement === event.target.id ?
         optionsArray.push({
           id: option.id,
@@ -116,10 +117,10 @@ class CreatePoll extends React.Component {
       error: false
     })
     this.setState({options: options});
-
   }
 
-  createPoll() {
+  createPoll(event) {
+    event.preventDefault()
     this.setState({linearBarDisplay: 'flex'})
 
     if (this.validateParams()) {
@@ -131,7 +132,7 @@ class CreatePoll extends React.Component {
               optionsArray.push(option.val)
           }
           })
-debugger;
+
       fetch("/createpoll/signedtx",
           {
             method: 'POST',
@@ -292,6 +293,7 @@ debugger;
                                      className={classes.spaces}/>
                   ) : ''}
                   <br/>
+                  <Tooltip title={"Selecting today we will assume that the subscription starts now"}>
                   <TextField
                       required
                       id="date"
@@ -304,6 +306,8 @@ debugger;
                       onChange={this.handleStartSubDateChange}
                       className={classes.spaces}
                   />
+                  </Tooltip>
+                  <Tooltip title={"we will consider the midnight of the selected day"}>
                   <TextField
                       required
                       id="date"
@@ -316,6 +320,8 @@ debugger;
                       value={this.state.endSubDate || ''}
                       onChange={this.handleEndSubDateChange}
                   />
+                  </Tooltip>
+                  <Tooltip title={"Selecting today we will assume that the voting starts now"}>
                   <TextField
                       required
                       id="date"
@@ -328,6 +334,8 @@ debugger;
                       value={this.state.startVotingDate || ''}
                       onChange={this.handleStartVotingDateChange}
                   />
+                  </Tooltip>
+                  <Tooltip title={"we will consider the midnight of the selected day"}>
                   <TextField
                       required
                       id="date"
@@ -340,6 +348,7 @@ debugger;
                       value={this.state.endVotingDate || ''}
                       onChange={this.handleEndVotingDateChange}
                   />
+                  </Tooltip>
                   <TextField
                       error={this.state.errorMnemonicKey}
                       required
