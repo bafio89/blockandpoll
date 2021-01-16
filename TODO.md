@@ -1,6 +1,7 @@
 TODO
 
 - [ ] Rivedere tutto e rifattorizzare cio che si puo
+- [ ] Colore grigio su poll non ancora aperti.
 - [ ] sistemare logica date appena viene creato poll
 - [ ] Modificare teal rimuovendo i commenti?
 - [ ] spiegare meglio cosa usare come passphrase
