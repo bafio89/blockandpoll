@@ -9,7 +9,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
 import Brightness1Icon from '@material-ui/icons/Brightness1';
-import {green, red, yellow} from '@material-ui/core/colors';
+import {green, grey, red, yellow} from '@material-ui/core/colors';
 import TextField from "@material-ui/core/TextField";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Divider from "@material-ui/core/Divider";
@@ -58,6 +58,12 @@ const useStyles = () => ({
     verticalAlign: 'top',
     position: 'absolute',
     color: yellow[500]
+  },
+  greyIcon: {
+    margin: '15px',
+    verticalAlign: 'top',
+    position: 'absolute',
+    color: grey[500]
   },
   circularProgress: {
     display: 'flex',

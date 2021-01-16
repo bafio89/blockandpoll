@@ -1,6 +1,6 @@
 
 # Block'n'Poll
-**Block'n'Poll** is a blockchain polling web application that allows users to easily create permissionless polls and vote on Algorand blockchain.
+[Block'n'Poll]((https://blockandpoll.herokuapp.com/)) is a blockchain polling web application that allows users to easily create permissionless polls and vote on Algorand blockchain.
 
 ## Why voting on blockchain?
 Although voting processes require particular attention to privacy, especially in the government sphere, simple polls are instead a good use case for blockchain technology, which ensures a public, verifiable, tamper-proof and uncensored global voting process. Furthermore, a blockchain polling system enables use cases in which response incentive mechanisms can be built. Even if the web app hosting domain is shut down, anyone still have the possibility to express his/her vote just using an Algorand node.

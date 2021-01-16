@@ -256,12 +256,12 @@ class CreatePoll extends React.Component {
                       onSubmit={this.createPoll}
                       style={{'textAlign': 'left'}}>
                   <TextField error={this.state.errorQuestion} required
-                             id="question" label="Poll question"
+                             id="question" label="Poll Question"
                              variant="outlined" value={this.state.question}
                              onChange={this.handleQuestionChange}
                              className={classes.size}/>
                   <TextField error={this.state.errorName} required id="pollName"
-                             label="Name" variant="outlined"
+                             label="Poll Name" variant="outlined"
                              value={this.state.name || ''}
                              onChange={this.handleNameChange}
                              className={classes.size}/>

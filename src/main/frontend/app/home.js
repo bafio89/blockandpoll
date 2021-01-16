@@ -16,9 +16,10 @@ class Home extends React.Component {
           <Typography align={'center'} style={{marginTop: '15px'}} variant="h2">Let's
             Block'n'Poll</Typography>
           <Typography align={'center'} style={{marginTop: '5px'}} variant="h5">Block'n'Poll
-            is a web application that
-            allow users to create and vote for polls, saving this
-            informations on Algorand Blockchain</Typography>
+            is a blockchain polling web application. Create your own
+            permissionless, public, verifiable, tamper-proof poll on Algorand
+            blockchain!
+          </Typography>
           <Typography align={'center'} variant="h5">Try
             now one of the most efficient Blockchain
             in the world!</Typography>

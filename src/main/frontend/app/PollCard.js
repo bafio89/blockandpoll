@@ -2,7 +2,7 @@ import React from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import {green, red, yellow} from "@material-ui/core/colors";
+import {green, grey, red, yellow} from "@material-ui/core/colors";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -36,13 +36,17 @@ const useStyles = () => ({
   yellowIcon: {
     display: 'inline-block',
     color: yellow[500]
+  },
+  greyIcon: {
+    display: 'inline-block',
+    color: grey[500]
   }
 });
 
 export function getIconColor(classes, pollStatus) {
   return pollStatus === 'Expired' ? classes.redIcon
       : pollStatus === 'Subscription open' ? classes.yellowIcon
-          : classes.greenIcon;
+          : pollStatus === 'Not yet open' ? classes.greyIcon :  classes.greenIcon;
 }
 
 class PollCard extends React.Component {
