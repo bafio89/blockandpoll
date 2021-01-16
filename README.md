@@ -29,7 +29,7 @@ Block'n'Poll web-app implements the following use-cases:
 
 ## Starting the web application
 
-I you want to start locally your application you have to create you database schema in your PosgresSQL database. You can find it in databse_schema.sql
+If you want to start locally your application you have to create you database schema in your PosgresSQL database. You can find it in databse_schema.sql
 After this you have to start the java application through the main and start the frontend using the command *'npm run start'* from the relative path /src/main/frontend/
 Now you can reach the application at the link http://localhost/9090
 
