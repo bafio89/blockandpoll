@@ -29,7 +29,11 @@ Block'n'Poll web-app implements the following use-cases:
 
 ## Starting the web application
 
-[Block'n'Poll](https://blockandpoll.herokuapp.com/)
+I you want to start locally your application you have to create you database schema in your PosgresSQL database. You can find it in databse_schema.sql
+After this you have to start the java application through the main and start the frontend using the command *'npm run start'* from the relative path /src/main/frontend/
+Now you can reach the application at the link http://localhost/9090
+
+You can find the application deployed at this link [Block'n'Poll](https://blockandpoll.herokuapp.com/)
 
 When you first open the application you have to wait some minutes in order to allow [Hekoru](https://www.heroku.com/) to start the application (being a free account the host turns off the deployed application when unused).
 
