@@ -1,1 +1,1 @@
-web: java -jar target/blockandpoll-0.0.1-SNAPSHOT.jar
+web: java -jar target/blockandpoll-1.0.0.jar

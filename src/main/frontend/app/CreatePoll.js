@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import MenuBar from "./MenuBar";
 import {Alert} from "@material-ui/lab";
 import {LinearProgress, Tooltip} from "@material-ui/core";
+import Disclaimer from "./Disclaimer";
 
 class CreatePoll extends React.Component {
 
@@ -361,6 +362,7 @@ class CreatePoll extends React.Component {
                       onChange={this.handleMnemonicKeyChange}
                       className={classes.size}
                   />
+                  <Disclaimer/>
                   <br/>
                   <div style={{textAlign: 'center'}}>
                     <Alert style={{display: this.state.alert.display}}

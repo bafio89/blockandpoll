@@ -1,7 +1,7 @@
 DEPLOYARE su HEROKU
 
 (installare plugin nel caso il comando deploy non sia riconosciuto : heroku plugins:install java)
-usare comando: heroku deploy:jar target/blockandpoll-0.0.1-SNAPSHOT.jar --app blockandpoll
+usare comando: heroku deploy:jar target/blockandpoll-1.0.0.jar --app blockandpoll
 
 aggiunto system.properties  con proprietà java.runtime.version=11, per dire a heroku
  di usare la jdk 11 
