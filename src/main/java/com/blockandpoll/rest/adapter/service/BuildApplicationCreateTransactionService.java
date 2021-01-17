@@ -8,6 +8,8 @@ import com.algorand.algosdk.transaction.Transaction;
 import com.blockandpoll.rest.adapter.PollTealParams;
 import com.blockandpoll.rest.adapter.exceptions.BlockChainParameterException;
 import com.blockandpoll.rest.adapter.exceptions.InvalidSenderAddressException;
+import com.google.common.primitives.Bytes;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,8 @@ import org.slf4j.LoggerFactory;
 public class BuildApplicationCreateTransactionService {
 
   public static final int STATIC_GLOBAL_VARIABLES_NUMBER = 4;
+  public static final String APPLICATION_TAG = "[blockandpoll][permissionless] ";
+
   private Logger logger = LoggerFactory.getLogger(BuildApplicationCreateTransactionService.class);
 
   private BlockchainParameterService blockchainParameterService;
@@ -30,6 +34,7 @@ public class BuildApplicationCreateTransactionService {
     try {
       transaction = Transaction.ApplicationCreateTransactionBuilder()
           .sender(sender)
+          .note(Bytes.concat(APPLICATION_TAG.getBytes(StandardCharsets.UTF_8), pollTealParams.getQuestion()))
           .args(arguments(pollTealParams))
           .suggestedParams(blockchainParameterService.getParameters())
           .approvalProgram(approvalProgram)

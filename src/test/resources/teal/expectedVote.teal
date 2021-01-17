@@ -1,3 +1,4 @@
+#pragma version 2
 // check if the app is being created
 // if so save creator
 int 0

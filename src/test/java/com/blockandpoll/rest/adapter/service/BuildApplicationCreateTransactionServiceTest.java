@@ -30,6 +30,8 @@ public class BuildApplicationCreateTransactionServiceTest {
   public static final String A_POLL_NAME = "A_POLL_NAME";
   public static final String SENDER_ADDRESS = "GM5YGY4ICDLE27NCVFR6OS7JIIXSGYI6SQIF5IPKQTTGO2YIJU5YOZDP2A";
   public static final String INVALID_SENDER_ADDRESS = "INVALID_SENDER_ADDRESS";
+  public static final String QUESTION = "QUESTION";
+  public static final String APPLICATION_TAG = "[blockandpoll][permissionless] ";
   public static byte[] A_START_SUBS_BLOCK_NUMBER = convertLongToByteArray(1L);
   public static byte[] A_END_SUBS_BLOCK_NUMBER = convertLongToByteArray(2L);
   public static byte[] A_START_VOTE_BLOCK_NUMBER = convertLongToByteArray(3L);
@@ -68,7 +70,7 @@ public class BuildApplicationCreateTransactionServiceTest {
 
     pollTealParams = new PollTealParams(A_POLL_NAME.getBytes(UTF_8),
         A_START_SUBS_BLOCK_NUMBER, A_END_SUBS_BLOCK_NUMBER, A_START_VOTE_BLOCK_NUMBER,
-        A_END_VOTE_BLOCK_NUMBER, OPTIONS_IN_BYTE, SENDER_ADDRESS.getBytes(UTF_8));
+        A_END_VOTE_BLOCK_NUMBER, OPTIONS_IN_BYTE, QUESTION.getBytes(UTF_8));
   }
 
   @Test
@@ -121,6 +123,7 @@ public class BuildApplicationCreateTransactionServiceTest {
       TransactionParametersResponse transactionParametersResponse) {
     return Transaction.ApplicationCreateTransactionBuilder()
         .sender(SENDER_ADDRESS)
+        .note(APPLICATION_TAG.concat(QUESTION).getBytes(UTF_8))
         .args(asList(A_START_SUBS_BLOCK_NUMBER,
             A_END_SUBS_BLOCK_NUMBER,
             A_START_VOTE_BLOCK_NUMBER,

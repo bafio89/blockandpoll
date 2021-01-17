@@ -12,7 +12,7 @@ public class PollTealParams {
   private byte[] startVotingTime;
   private byte[] endVotingTime;
   private List<String> options;
-  private byte[] sender;
+  private byte[] question;
 
   public PollTealParams() {
   }
@@ -20,14 +20,14 @@ public class PollTealParams {
   public PollTealParams(byte[] name, byte[] startSubscriptionTime, byte[] endSubscriptionTime,
       byte[] startVotingTime,
       byte[] endVotingTime,
-      List<String> options, byte[] sender) {
+      List<String> options, byte[] question) {
     this.name = name;
     this.startSubscriptionTime = startSubscriptionTime;
     this.endSubscriptionTime = endSubscriptionTime;
     this.startVotingTime = startVotingTime;
     this.endVotingTime = endVotingTime;
     this.options = options;
-    this.sender = sender;
+    this.question = question;
   }
 
   public byte[] getStartSubscriptionTime() {
@@ -50,8 +50,8 @@ public class PollTealParams {
     return options;
   }
 
-  public byte[] getSender() {
-    return sender;
+  public byte[] getQuestion() {
+    return question;
   }
 
   @Override
@@ -69,7 +69,7 @@ public class PollTealParams {
         Arrays.equals(startVotingTime, that.startVotingTime) &&
         Arrays.equals(endVotingTime, that.endVotingTime) &&
         Objects.equals(options, that.options) &&
-        Arrays.equals(sender, that.sender);
+        Arrays.equals(question, that.question);
   }
 
   @Override
@@ -80,7 +80,7 @@ public class PollTealParams {
     result = 31 * result + Arrays.hashCode(endSubscriptionTime);
     result = 31 * result + Arrays.hashCode(startVotingTime);
     result = 31 * result + Arrays.hashCode(endVotingTime);
-    result = 31 * result + Arrays.hashCode(sender);
+    result = 31 * result + Arrays.hashCode(question);
     return result;
   }
 
@@ -93,7 +93,7 @@ public class PollTealParams {
         ", startVotingTime=" + Arrays.toString(startVotingTime) +
         ", endVotingTime=" + Arrays.toString(endVotingTime) +
         ", options=" + options +
-        ", sender=" + Arrays.toString(sender) +
+        ", sender=" + Arrays.toString(question) +
         '}';
   }
 }
