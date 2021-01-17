@@ -16,7 +16,12 @@ Block'n'Poll web-app implements the following use-cases:
 
 1. **Showing existing polls:** in the landing page a dashboard shows created polls in small frames, highlighting basic polls' information. By clicking on any frame the user can open the poll's page with more details.
 
-2. **Poll creation:** the user can create a poll, entering the required information like: poll question, poll name and poll options, specifying the time frame in which it is allowed to opt-in and vote for the poll. In this first version of the web-app, users interaction happens on the front-end through their **mnemonic key** (which is not stored in any way by the web app), signing required transactions to create poll's Smart Contract application on blockchain.
+2. **Poll creation:** the user can create a poll, entering the required information like: poll question, 
+   poll name and poll options, specifying the time frame in which it is allowed to opt-in and vote for the poll.
+   In this first version of the web-app, users interaction happens on the front-end through their **mnemonic key**
+   (which is not stored in any way by the web app), signing required transactions to create poll's Smart Contract application on blockchain.
+   On poll creations the question is saved on chain into transaction note field starting with the tag `[blockandpoll][permissionless]`.
+   You can retrieve all the polls searching for the tag with [Algorand Indexer](https://developer.algorand.org/docs/features/indexer/).   
 
 3. **Poll visualisation:** the user can open a poll displayed in the landing page in order to get a detailed view of poll's information, like: poll name, poll question, opt-in time frame, vote time frame, number of Algorand accounts subscribed to the poll and the number of votes received by each option. An histogram chart shows the votes summary.
 
@@ -29,8 +34,8 @@ Block'n'Poll web-app implements the following use-cases:
 
 ## Starting the web application
 
-If you want to start locally your application you have to create you database schema in your PosgresSQL database. You can find it in *databse_schema.sql*
-After this you have to start the java application through the main and start the frontend using the command *'npm run start'* from the relative path */src/main/frontend/*
+If you want to start locally your application you have to create you database schema in your PosgresSQL database. You can find it in `databse_schema.sql`
+After this you have to start the java application through the main and start the frontend using the command `'npm run start'` from the relative path `/src/main/frontend/`
 Now you can reach the application at the link http://localhost/9090
 
 You can find the application deployed at this link [Block'n'Poll](https://blockandpoll.herokuapp.com/)
