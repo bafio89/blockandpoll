@@ -30,8 +30,6 @@ public class UnsignedASCTransactionServiceTest {
 
   public static final String SENDER_ADDRESS = "Q4LQ3VZT2H5YE6RPGXJVHAY32KXBWT527VVTUF75UVSYLMDARDEUNPIN5Y";
   public static final String MNEMONIC_KEY = "share gentle refuse logic shield drift earth initial must match aware they perfect chair say jar harvest echo symbol cave ring void prepare above adult";
-  public static final String INVALID_SENDER_ADDRESS = "INVALID SENDER ADDRESS";
-  public static final String WRONG_SENDER_ADDRESS_ERROR_MESSAGE = "Something went wrong with sender address during transaction creation: A message error";
   public static final long LAST_ROUND = 1L;
   public static byte[] A_BLOCK_NUMBER;
   public static byte[] A_START_SUBS_BLOCK_NUMBER;

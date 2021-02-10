@@ -176,7 +176,7 @@ class CreatePoll extends React.Component {
           this.setState({
             alert: {
               display: 'flex',
-              text: 'Something goes wrong! ' + message +'. Please retry',
+              text: 'Something goes wrong! ' + message,
               severity: 'error'
             }
           })
