@@ -32,7 +32,7 @@ class CreatePoll extends React.Component {
       errorDescription: false,
       errorOptions: false,
       errorMnemonicKey: false,
-      alert: {display: 'none', text:'', severity:''},
+      alert: {display: 'none', text: '', severity: ''},
       linearBarDisplay: 'none'
     }
 
@@ -129,9 +129,9 @@ class CreatePoll extends React.Component {
       let optionsArray = []
       this.state.options.map(
           (option) => {
-            if (option.val !== '' && option.val !== undefined){
+            if (option.val !== '' && option.val !== undefined) {
               optionsArray.push(option.val)
-          }
+            }
           })
 
       fetch("/createpoll/signedtx",
@@ -160,7 +160,7 @@ class CreatePoll extends React.Component {
   }
 
   handleResponse() {
-    return (response) => {debugger
+    return (response) => {
       this.setState({linearBarDisplay: 'none'})
       if (response.ok) {
         this.setState({
@@ -171,13 +171,17 @@ class CreatePoll extends React.Component {
           }
         })
       } else {
-        this.setState({
-          alert: {
-            display: 'flex',
-            text: 'Something goes wrong! Please retry',
-            severity: 'error'
-          }
-        })
+
+        response.text().then(message => {
+          this.setState({
+            alert: {
+              display: 'flex',
+              text: 'Something goes wrong! ' + message +'. Please retry',
+              severity: 'error'
+            }
+          })
+        });
+
       }
     };
   }
@@ -294,61 +298,65 @@ class CreatePoll extends React.Component {
                                      className={classes.spaces}/>
                   ) : ''}
                   <br/>
-                  <Tooltip title={"Selecting today we will assume that the subscription starts now"}>
-                  <TextField
-                      required
-                      id="date"
-                      label="start subscription date"
-                      type="date"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      value={this.state.startSubDate || ''}
-                      onChange={this.handleStartSubDateChange}
-                      className={classes.spaces}
-                  />
+                  <Tooltip
+                      title={"Selecting today we will assume that the subscription starts now"}>
+                    <TextField
+                        required
+                        id="date"
+                        label="start subscription date"
+                        type="date"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        value={this.state.startSubDate || ''}
+                        onChange={this.handleStartSubDateChange}
+                        className={classes.spaces}
+                    />
                   </Tooltip>
-                  <Tooltip title={"we will consider the midnight of the selected day"}>
-                  <TextField
-                      required
-                      id="date"
-                      label="end subscription date"
-                      type="date"
-                      className={classes.spaces}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      value={this.state.endSubDate || ''}
-                      onChange={this.handleEndSubDateChange}
-                  />
+                  <Tooltip
+                      title={"we will consider the midnight of the selected day"}>
+                    <TextField
+                        required
+                        id="date"
+                        label="end subscription date"
+                        type="date"
+                        className={classes.spaces}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        value={this.state.endSubDate || ''}
+                        onChange={this.handleEndSubDateChange}
+                    />
                   </Tooltip>
-                  <Tooltip title={"Selecting today we will assume that the voting starts now"}>
-                  <TextField
-                      required
-                      id="date"
-                      label="start voting date"
-                      type="date"
-                      className={classes.spaces}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      value={this.state.startVotingDate || ''}
-                      onChange={this.handleStartVotingDateChange}
-                  />
+                  <Tooltip
+                      title={"Selecting today we will assume that the voting starts now"}>
+                    <TextField
+                        required
+                        id="date"
+                        label="start voting date"
+                        type="date"
+                        className={classes.spaces}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        value={this.state.startVotingDate || ''}
+                        onChange={this.handleStartVotingDateChange}
+                    />
                   </Tooltip>
-                  <Tooltip title={"we will consider the midnight of the selected day"}>
-                  <TextField
-                      required
-                      id="date"
-                      label="end voting date"
-                      type="date"
-                      className={classes.spaces}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      value={this.state.endVotingDate || ''}
-                      onChange={this.handleEndVotingDateChange}
-                  />
+                  <Tooltip
+                      title={"we will consider the midnight of the selected day"}>
+                    <TextField
+                        required
+                        id="date"
+                        label="end voting date"
+                        type="date"
+                        className={classes.spaces}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        value={this.state.endVotingDate || ''}
+                        onChange={this.handleEndVotingDateChange}
+                    />
                   </Tooltip>
                   <TextField
                       error={this.state.errorMnemonicKey}

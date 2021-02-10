@@ -175,14 +175,17 @@ class Poll extends React.Component {
           window.location.reload();
         }.bind(this), 5000)
       } else {
-        console.log(this.state)
-        this.setState({
-          alert: {
-            display: 'flex',
-            text: 'Something goes wrong! Please retry',
-            severity: 'error'
-          }
+        response.text().then(message => {
+          this.setState({
+            alert: {
+              display: 'flex',
+              text: 'Something goes wrong! ' + message + ' Please retry',
+              severity: 'error'
+            }
+          })
         })
+
+
       }
     };
   }

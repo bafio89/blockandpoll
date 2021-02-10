@@ -1,8 +1,6 @@
 package com.blockandpoll.rest.adapter.repository;
 
 import com.algorand.algosdk.transaction.Transaction;
-import com.blockandpoll.rest.adapter.exceptions.OptinException;
-import com.blockandpoll.rest.adapter.exceptions.VoteException;
 import com.blockandpoll.rest.adapter.service.BuildOptinTransactionService;
 import com.blockandpoll.rest.adapter.service.BuildVoteTransactionService;
 import com.blockandpoll.rest.adapter.service.TransactionWriterService;
@@ -41,7 +39,7 @@ public class AlgorandWriteRepository implements BlockchainWriteRepository {
     } catch (Exception e) {
       logger.error("Something goes wrong sending transaction subscribing for app id {} from address {}",
           optinAppRequest.getAppId(), optinAppRequest.getAccount().getAddress().toString(), e);
-      throw new OptinException(optinAppRequest.getAppId(), optinAppRequest.getAccount().getAddress().toString());
+      throw e;
     }
   }
 
@@ -56,7 +54,7 @@ public class AlgorandWriteRepository implements BlockchainWriteRepository {
     } catch (Exception e) {
       logger.error("Something goes wrong sending vote transaction for app id {} from address {}",
           voteAppRequest.getAppId(), voteAppRequest.getAccount().getAddress().toString(), e);
-      throw new VoteException(voteAppRequest.getAppId(), voteAppRequest.getAccount().getAddress().toString());
+      throw e;
     }
   }
 }

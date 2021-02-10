@@ -32,13 +32,6 @@ public class PollTest {
 
   }
 
-  private Poll aPollWith(LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
-      LocalDateTime startVotingTime, LocalDateTime endVotingTime) {
-    return new Poll(A_NAME, startSubscriptionTime,
-        endSubscriptionTime,
-        startVotingTime, endVotingTime, emptyList(), "", "mnemonicKey", "description");
-  }
-
   @Test
   public void whenStartVotingDateIsAfterEndVotingDate() {
 
@@ -122,5 +115,12 @@ public class PollTest {
     Poll poll = aPollWith(startSubscriptionTime, endSubscriptionTime, startVotingTime, endVotingTime);
 
     assertThat(poll.pollStatus(), is("Not yet open"));
+  }
+
+  private Poll aPollWith(LocalDateTime startSubscriptionTime, LocalDateTime endSubscriptionTime,
+      LocalDateTime startVotingTime, LocalDateTime endVotingTime) {
+    return new Poll(A_NAME, startSubscriptionTime,
+        endSubscriptionTime,
+        startVotingTime, endVotingTime, emptyList(), "", "mnemonicKey", "description");
   }
 }

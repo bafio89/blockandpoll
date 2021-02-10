@@ -1,7 +1,5 @@
 package com.blockandpoll.rest.adapter.repository;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.algorand.algosdk.account.Account;
 import com.algorand.algosdk.transaction.Transaction;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
@@ -25,8 +23,6 @@ import org.junit.rules.ExpectedException;
 
 public class AlgorandWriteRepositoryVoteTest {
 
-  public static final byte[] A_BYTE_ARRAY = "A_BYTE_ARRAY".getBytes(UTF_8);
-  public static final String TRANSACTION_ID = "666";
   public static final String AN_OPTION = "AN OPTION";
   public static final long APP_ID = 123L;
 
