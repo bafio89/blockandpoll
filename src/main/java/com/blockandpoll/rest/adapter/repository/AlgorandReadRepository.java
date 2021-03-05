@@ -67,6 +67,7 @@ public class AlgorandReadRepository implements BlockchainReadRepository {
     }
   }
 
+  @Override
   public Boolean hasAddressAlreadyVotedFor(long appId, Address address) {
     Response<AccountResponse> response;
     try {

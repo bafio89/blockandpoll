@@ -20,6 +20,7 @@ public class BuildOptinTransactionServiceTest {
 
   public static final long APP_ID = 123L;
   public static final String MNEMONIC_KEY = "share gentle refuse logic shield drift earth initial must match aware they perfect chair say jar harvest echo symbol cave ring void prepare above adult";
+
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setImposteriser(ClassImposteriser.INSTANCE);
@@ -40,7 +41,7 @@ public class BuildOptinTransactionServiceTest {
   @Test
   public void happyPath() {
 
-    Transaction expectedOptinTransaction = aTransactionWith();
+    Transaction expectedOptinTransaction = aTransaction();
 
     context.checking(new Expectations(){{
       oneOf(blockchainParameterService).getParameters();
@@ -53,7 +54,7 @@ public class BuildOptinTransactionServiceTest {
     assertThat(transaction, is(expectedOptinTransaction));
   }
 
-  private Transaction aTransactionWith() {
+  private Transaction aTransaction() {
 
     return Transaction.ApplicationOptInTransactionBuilder()
         .suggestedParams(aTransactionParametersResponse())
