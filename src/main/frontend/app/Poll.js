@@ -122,7 +122,7 @@ class Poll extends React.Component {
 
   submitOptin() {
     this.setState({linearBarDisplay: 'flex'})
-    if (this.validateParams()) {
+    if (this.validateMnemonicKey()) {
       fetch("/optin/poll/" + this.state.poll.appId,
           {
             method: 'POST',
@@ -194,6 +194,10 @@ class Poll extends React.Component {
     if (this.state.selectedOption === '') {
       return false
     }
+    return this.validateMnemonicKey();
+  }
+
+  validateMnemonicKey() {
     if (this.state.mnemonicKey === '' || this.state.mnemonicKey === undefined) {
       this.setState({errorMnemonickey: true})
       return false
