@@ -17,7 +17,7 @@ public class TealProgramFactory {
   private final String CLEAR_STATE_PROGRAM_PATH = "/teal/vote_opt_out.teal";
 
   private final String[] headers = {"X-API-Key"};
-  private final String[] values = {"KmeYVcOTUFayYL9uVy9mI9d7dDewlWth7pprTlo9"};
+  private final String[] values = {"INSERT HERE YOUR PURESTAKE API TOKEN"};
 
 
   private AlgodClient algodClient;
